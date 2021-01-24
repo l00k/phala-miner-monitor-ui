@@ -36,7 +36,6 @@ export default class MinerStore
         }
 
         const existing = this.miners.find(_miner => _miner.id === miner.id);
-        console.log(existing, miner, this.miners)
         if (existing) {
             Object.assign(existing, miner);
         }
