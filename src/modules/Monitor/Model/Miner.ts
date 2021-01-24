@@ -1,6 +1,6 @@
 import Account from '#/Monitor/Model/Account';
 import { StoreModel } from '@/core/Store';
-import { InitializerList, Property, Object } from '@100k/intiv-js-tools/InitializerList';
+import { InitializerList, Property, InitObject } from '@100k/intiv-js-tools/InitializerList';
 
 
 export enum MinerStatus
@@ -13,7 +13,7 @@ export enum MinerStatus
 @StoreModel('Monitor/Miner')
 @InitializerList()
 export default class Miner
-    extends Object<Account>
+    extends InitObject<Account>
 {
 
     @Property()

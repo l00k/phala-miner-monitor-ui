@@ -1,10 +1,10 @@
 import { StoreModel } from '@/core/Store';
-import { InitializerList, Property, Object } from '@100k/intiv-js-tools/InitializerList';
+import { InitializerList, Property, InitObject } from '@100k/intiv-js-tools/InitializerList';
 
 @StoreModel('Monitor/Account')
 @InitializerList()
 export default class Account
-    extends Object<Account>
+    extends InitObject<Account>
 {
 
     @Property()
