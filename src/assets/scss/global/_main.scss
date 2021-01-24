@@ -1,0 +1,20 @@
+html {
+    font-size: 14px;
+    -webkit-overflow-scrolling: auto;
+}
+
+body, button, input, select, textarea {
+    font-size: 14px;
+    font-variant: small-caps;
+    -webkit-overflow-scrolling: auto;
+}
+
+#app {
+    margin: 50px auto;
+    width: 1024px;
+    max-width: 95vw;
+}
+
+.button {
+    text-transform: capitalize;
+}

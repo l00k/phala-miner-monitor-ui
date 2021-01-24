@@ -1,0 +1,16 @@
+@import "~bulma/sass/utilities/initial-variables";
+@import "~bulma/sass/utilities/functions";
+@import "../variables";
+@import "../mixins";
+
+.modal {
+    &-content {
+        border-radius: 4px;
+    }
+    
+    .card {
+        &-header-title {
+            padding: 0.75rem 1rem;
+        }
+    }
+}

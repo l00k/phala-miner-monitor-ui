@@ -1,0 +1,13 @@
+@import "~bulma/sass/utilities/initial-variables";
+@import "~bulma/sass/utilities/functions";
+@import "../variables";
+@import "../mixins";
+
+.select select {
+    padding-top: calc(0.5em - 5px);
+    padding-bottom: calc(0.5em - 5px);
+
+    option {
+        color: rgb(255, 255, 255);
+    }
+}
