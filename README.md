@@ -1,4 +1,4 @@
-# [https://phala-miner-monitor.100k.dev/](phala-miner-monitor)
+# [phala-miner-monitor](https://phala-miner-monitor.100k.dev/)
 Tool to monitor miners status (and possible more)
 
 ![Preview](preview.jpg)
