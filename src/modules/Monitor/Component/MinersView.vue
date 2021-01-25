@@ -26,7 +26,7 @@
                             <div class="miner-name">
                                 <span>{{ miner.name }}</span>
                                 <span>
-                                    <b-icon v-if="miner.status === MinerStatus.Loading" pack="fas" icon="circle-notch" class="fa-spin" type="is-primary"></b-icon>
+                                    <b-icon v-if="miner.status === ApiResourceStatus.Fetching" pack="fas" icon="circle-notch" class="fa-spin" type="is-primary"></b-icon>
                                 </span>
                             </div>
                         </b-table-column>
@@ -119,13 +119,15 @@
 
 <script lang="ts">
 import MinerFormView from '#/Monitor/Component/Miner/FormView.vue';
-import Miner, { MinerStatus } from '#/Monitor/Model/Miner';
+import Account from '#/Monitor/Model/Account';
+import { ApiResourceStatus } from '#/Monitor/Model/ApiResource';
+import Miner from '#/Monitor/Model/Miner';
 import ScannerService from '#/Monitor/Service/ScannerService';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv-js-tools/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
-import _ from 'lodash';
+import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 
@@ -144,7 +146,7 @@ export default class MinersView
     extends BaseComponent
 {
 
-    protected MinerStatus = MinerStatus;
+    protected ApiResourceStatus = ApiResourceStatus;
 
     @Ref()
     protected minerFormView : MinerFormView;
@@ -166,7 +168,7 @@ export default class MinersView
 
     protected showMinerForm(miner : Miner)
     {
-        const managedMiner = new Miner(miner ? _.cloneDeep(miner) : {});
+        const managedMiner = new Miner(miner ? cloneDeep(miner) : {});
         this.isMinerFormModalVisible = true;
 
         this.$nextTick(() => {

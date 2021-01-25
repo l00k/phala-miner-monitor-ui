@@ -41,6 +41,7 @@
 
 <script lang="ts">
 import { Component } from '@/core/Vue/Annotations';
+import { ToastProgrammatic as Toast } from 'buefy';
 import { Prop } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 
@@ -65,7 +66,12 @@ export default class HoldersView
 
     protected submit()
     {
-        this.$store.commit('Monitor/Miner/submitMiner', this.miner);
+        Toast.open({
+            message: 'Created!',
+            type: 'is-success',
+            position: 'is-bottom-right',
+        });
+
         this.$emit('submit', this.miner);
     }
 

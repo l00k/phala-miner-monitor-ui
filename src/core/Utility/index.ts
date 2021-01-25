@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import moment from 'moment';
 
 
 function ucfirst(str : string)
@@ -8,17 +8,17 @@ function ucfirst(str : string)
 
 function formatDate(date : Date)
 {
-    return format(date, 'yyyy-MM-dd');
+    return moment(date).format('YYYY-MM-dd');
 }
 
 function formatTime(date : Date)
 {
-    return format(date, 'HH:mm:ss');
+    return moment(date).format('HH:mm:ss');
 }
 
 function formatDatetime(date : Date)
 {
-    return format(date, 'yyyy-MM-dd HH:mm:ss');
+    return moment(date).format('YYYY-MM-dd HH:mm:ss');
 }
 
 export {

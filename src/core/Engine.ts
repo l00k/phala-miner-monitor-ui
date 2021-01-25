@@ -1,19 +1,14 @@
 import ModuleLoader from '@/core/Loader/ModuleLoader';
-
 import ServiceLoader from '@/core/Loader/ServiceLoader';
-
 import StoreManager from '@/core/Store/StoreManager';
 import App from '@/core/Vue/App.vue';
 import { Configuration } from '@100k/intiv-js-tools/Configuration';
 import { EventBus } from '@100k/intiv-js-tools/EventBus';
-
 import { Inject, Singleton } from '@100k/intiv-js-tools/ObjectManager';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Vuex, { Store as VuexStore, Store } from 'vuex';
 
-// deployment mode
-const env = process.env.NODE_ENV || 'production';
 
 
 @Singleton()
@@ -44,14 +39,14 @@ class Engine
     {
         this.serviceLoader.load();
 
-        // load modules
-        await this.moduleLoader.load([ 'Model' ]);
-
         // load routes and init router
         this.vueRouter = new VueRouter({
             mode: 'history',
             base: process.env.BASE_URL,
         });
+
+        // load models
+        await this.moduleLoader.load(['Model']);
 
         this.vuexStore = new Vuex.Store({
             plugins: [
@@ -59,8 +54,8 @@ class Engine
             ]
         });
 
-        // load modules
-        await this.moduleLoader.load([ 'Observer', 'Page', 'Store' ]);
+        // load other modules components
+        await this.moduleLoader.load(['Observer', 'Page', 'Store']);
 
         // init app
         this.vue = new Vue({
