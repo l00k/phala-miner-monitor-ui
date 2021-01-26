@@ -7,7 +7,7 @@ import { EventBus } from '@100k/intiv-js-tools/EventBus';
 import { Inject, Singleton } from '@100k/intiv-js-tools/ObjectManager';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Vuex, { Store as VuexStore, Store } from 'vuex';
+import Vuex, { Store as VuexStore } from 'vuex';
 
 
 
@@ -46,16 +46,15 @@ class Engine
         });
 
         // load models
-        await this.moduleLoader.load(['Model']);
-
         this.vuexStore = new Vuex.Store({
             plugins: [
-                StoreManager.getVuexPersister
+                StoreManager.getVuexPersister,
             ]
         });
 
         // load other modules components
-        await this.moduleLoader.load(['Observer', 'Page', 'Store']);
+        await import('./Store/Database');
+        await this.moduleLoader.load(['Model', 'Observer', 'Page', 'Store']);
 
         // init app
         this.vue = new Vue({
@@ -72,7 +71,7 @@ class Engine
         return this.vueRouter;
     }
 
-    public getVuexStore() : Store<any>
+    public getVuexStore() : VuexStore<any>
     {
         return this.vuexStore;
     }

@@ -1,6 +1,7 @@
 import Account from '#/Monitor/Model/Account';
-import { StoreModel } from '@/core/Store';
-import { InitializerList, Property, InitObject } from '@100k/intiv-js-tools/InitializerList';
+import ApiResource from '#/Monitor/Model/ApiResource';
+import { Model } from '@/core/Store';
+import { InitializerList, Property } from '@100k/intiv-js-tools/InitializerList';
 
 
 export enum MinerStatus
@@ -10,10 +11,10 @@ export enum MinerStatus
 }
 
 
-@StoreModel('Monitor/Miner')
+@Model('Monitor/Miner')
 @InitializerList()
 export default class Miner
-    extends InitObject<Account>
+    extends ApiResource
 {
 
     @Property()
@@ -30,16 +31,5 @@ export default class Miner
 
     @Property()
     public nodeIp : string;
-
-    @Property()
-    public fire : number = 0;
-
-    @Property()
-    public status : MinerStatus = MinerStatus.Ready;
-
-    public get fireReadable() : string
-    {
-        return (this.fire / 1000000000000).toFixed(2) + ' tPHA';
-    }
 
 }

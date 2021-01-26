@@ -1,22 +1,24 @@
+import AbstractModel from '@/core/Store/AbstractModel';
 import { Store } from 'vuex';
 import { plainToClass } from 'class-transformer';
 import { ConstructorType } from './def';
 
 
 type Models = {
-    [storeModelKey : string] : ConstructorType<any>
+    [storeModelKey : string] : typeof AbstractModel
 }
 
-type ModelsMap = Map<ConstructorType<any>, string>;
+type ModelsMap = Map<typeof AbstractModel, string>;
 
 export default class StoreManager
 {
 
-    protected static readonly STORAGE_KEY = 'config';
+    protected static readonly STORAGE_KEY = 'appStorage';
 
     protected static models : Models = {};
 
     protected static modelsMap : ModelsMap = new Map();
+
 
     protected static serialize(state) : string
     {
@@ -29,11 +31,12 @@ export default class StoreManager
         for (const property in object) {
             const value = object[property];
             if (value instanceof Object) {
-                const Type = value.constructor.prototype;
-
-                const storeModelKey = this.modelsMap.get(Type);
-                if (storeModelKey) {
-                    value['__storeModelKey'] = storeModelKey;
+                if (value instanceof AbstractModel) {
+                    const Type = value.constructor.prototype;
+                    const storeModelKey = this.modelsMap.get(Type);
+                    if (storeModelKey) {
+                        value['__storeModelKey'] = storeModelKey;
+                    }
                 }
 
                 this._serializeTraverse(value);
@@ -90,10 +93,10 @@ export default class StoreManager
         return !!storedState[module];
     }
 
-    public static registerStoreModel(storeModelKey : string, Model : ConstructorType<any>)
+    public static registerStoreModel(modelName : string, Model : typeof AbstractModel)
     {
-        this.models[storeModelKey] = Model;
-        this.modelsMap.set(Model.prototype, storeModelKey);
+        this.models[modelName] = Model;
+        this.modelsMap.set(Model, modelName);
     }
 
 }

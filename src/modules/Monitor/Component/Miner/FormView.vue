@@ -66,6 +66,8 @@ export default class HoldersView
 
     protected submit()
     {
+        Miner.persist(this.miner)
+
         Toast.open({
             message: 'Created!',
             type: 'is-success',

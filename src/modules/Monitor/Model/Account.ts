@@ -1,10 +1,12 @@
-import { StoreModel } from '@/core/Store';
-import { InitializerList, Property, InitObject } from '@100k/intiv-js-tools/InitializerList';
+import ApiResource from '#/Monitor/Model/ApiResource';
+import { Model } from '@/core/Store';
+import { InitializerList, Property } from '@100k/intiv-js-tools/InitializerList';
 
-@StoreModel('Monitor/Account')
+
+@Model('Monitor/Account')
 @InitializerList()
 export default class Account
-    extends InitObject<Account>
+    extends ApiResource
 {
 
     @Property()
@@ -12,6 +14,9 @@ export default class Account
 
     @Property()
     public balance : number = 0;
+
+    @Property()
+    public fire : number = 0;
 
     public get addressShort() : string
     {
@@ -24,6 +29,11 @@ export default class Account
     public get balanceReadable() : string
     {
         return (this.balance / 1000000000000).toFixed(2) + ' tPHA';
+    }
+
+    public get fireReadable() : string
+    {
+        return (this.fire / 1000000000000).toFixed(2) + ' tPHA';
     }
 
 }

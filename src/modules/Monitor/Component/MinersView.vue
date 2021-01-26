@@ -81,7 +81,7 @@
                             :numeric="true"
                         >
                             <div class="account-data account-data--fire">
-                                {{ miner.fireReadable }}
+                                {{ miner.accountStash.fireReadable }}
                             </div>
                         </b-table-column>
 
@@ -154,15 +154,26 @@ export default class MinersView
     @Inject()
     protected scannerService : ScannerService = null;
 
-    @MinerStore.State('miners')
-    protected miners : Miner[];
+    protected miners : Miner[] = [];
 
     protected isMinerFormModalVisible : boolean = false;
 
     protected isLoading : boolean = false;
 
-    public created()
+
+    public async created()
     {
+        Miner.truncate();
+
+        const miner = new Miner()
+        miner.name = 'sample'
+        miner.accountController.address = '45zw4CxqhGzSqffUu9ijSzBaZgzSDsyUP5mC2ayKvp5rJRb9'
+        miner.accountStash.address = '43JoyjJ6ysNr1cLxwW997gWHf6w8V9zWWS6JkgsVQ1tZ4ziK'
+
+        Miner.persist(miner)
+
+        this.miners = await Miner.findAll();
+
         this.scannerService.fetch(this.miners);
     }
 
