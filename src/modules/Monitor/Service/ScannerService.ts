@@ -61,7 +61,7 @@ export default class ScannerService
         }
 
         const updateExtrinsics = async(account : Account) => {
-            const batchSize = 100;
+            const batchSize = 50;
 
             const toUpdate = {
                 lastExtrinsicBlock: null,
@@ -77,7 +77,7 @@ export default class ScannerService
             const promises = [];
 
             let done = false;
-            for (let page = 1; !done; ++page) {
+            for (let page = 0; !done; ++page) {
                 const { data: { extrinsics: extrinsicsBatch } } = await this.subscanApi.getExtrinsics({
                     module: 'phalamodule',
                     call: 'sync_worker_message',
@@ -95,20 +95,21 @@ export default class ScannerService
                     const promise = this.subscanApi.getExtrinsicDetails({ hash: extrinsic.extrinsic_hash, })
                         .then(({ data: extrinsicDetails }) => {
                             extrinsic.details = extrinsicDetails;
-                            newExtrinsics.unshift(extrinsic);
                             --account.fetchingQueue;
                         });
+
+                    newExtrinsics.unshift(extrinsic);
                     promises.push(promise);
 
                     ++account.fetchingQueue;
                 }
 
-                await Promise.all(promises);
-
                 if (extrinsicsBatch.length < batchSize) {
                     break;
                 }
             }
+
+            await Promise.all(promises);
 
             // update account
             for (const extrinsic of newExtrinsics) {

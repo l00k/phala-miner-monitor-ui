@@ -17,7 +17,7 @@ export default class SubscanApi
     extends AbstractService
 {
 
-    protected static readonly BASE_URL : string = 'http://localhost:8010/proxy/api/';
+    protected static readonly BASE_URL : string = 'http://192.168.0.103:8010/proxy/api/';
 
     public async getExtrinsics(params : any = {}, config : AxiosRequestConfig = {}) : Promise<SubscanResult>
     {
