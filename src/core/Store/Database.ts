@@ -7,17 +7,13 @@ import { Module, Mutation, VuexModule, Action } from 'vuex-module-decorators';
 import AbstractModel from './AbstractModel';
 
 
-type Table = {
-    [id : string] : AbstractModel
-}
 type Tables = {
-    [modelName : string] : Table
+    [modelName : string] : AbstractModel<any>[]
 }
 
 type Payload = {
     model : typeof AbstractModel,
-    object? : AbstractModel,
-    id? : string,
+    object? : AbstractModel<any>,
 }
 
 @Module({
@@ -33,11 +29,27 @@ export default class Database
 
     public tables : Tables = {};
 
+    public get findAll()
+    {
+        return (model : typeof AbstractModel) => {
+            return this.tables[model.modelName] || [];
+        }
+    }
+
+    public get findOne()
+    {
+        return (model : typeof AbstractModel, id : string) => {
+            return this.tables[model.modelName]
+                ? this.tables[model.modelName].find(object => object.id === id)
+                : null;
+        }
+    }
+
     @Mutation
     public async persist({ model, object } : Payload)
     {
         if (!this.tables[model.modelName]) {
-            this.tables[model.modelName] = {};
+            this.tables[model.modelName] = [];
         }
 
         const table = this.tables[model.modelName];
@@ -46,12 +58,12 @@ export default class Database
             object.id = uuidv4();
         }
 
-        const existing = table[object.id];
+        const existing = table.find(_object => _object.id === object.id);
         if (existing) {
             Object.assign(existing, object);
         }
         else {
-            table[object.id] = object;
+            table.push(object);
         }
     }
 
@@ -63,33 +75,16 @@ export default class Database
             return;
         }
 
-        if (table[object.id]) {
-            Vue.delete(table, object.id);
+        const found = table.findIndex(_object => _object.id === object.id);
+        if (found !== -1) {
+            this.tables[model.modelName].splice(found, 1);
         }
     }
 
     @Mutation
     public async truncate({ model } : Payload)
     {
-        this.tables[model.modelName] = {};
-    }
-
-    @Action
-    public findAll({ model } : Payload) : AbstractModel[]
-    {
-        const table = this.context.state.tables[model.modelName];
-        return table
-            ? Object.values(table)
-            : [];
-    }
-
-    @Action
-    public findOne({ model, id } : Payload) : AbstractModel | null
-    {
-        const table = this.context.state.tables[model.modelName];
-        return table
-            ? table[id]
-            : null;
+        this.tables[model.modelName] = [];
     }
 
 }

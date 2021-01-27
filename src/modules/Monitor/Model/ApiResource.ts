@@ -11,14 +11,17 @@ export enum ApiResourceStatus
 
 
 @InitializerList()
-export default class ApiResource
-    extends AbstractModel
+export default class ApiResource<T>
+    extends AbstractModel<T>
 {
 
     @Property()
     public status : ApiResourceStatus = ApiResourceStatus.New;
 
     @Property()
-    public lastUpdate : Date = new Date();
+    public lastUpdate : Date;
+
+    @Property()
+    public fetchingQueue : number;
 
 }

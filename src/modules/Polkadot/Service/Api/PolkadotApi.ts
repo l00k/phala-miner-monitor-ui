@@ -48,9 +48,21 @@ export default class PolkadotApi
         this.lastHeader = await this.api.rpc.chain.getHeader();
     }
 
-    public async queryAt<Result>(modulePath : string, blockHash : H256, ...args : any[]) : Promise<Result>
+    public async queryAt<Result>(modulePath : string, block : string | number | H256, ...args : any[]) : Promise<Result>
     {
         await this.apiPromise;
+
+        let blockHash = null;
+        if (typeof block === 'string') {
+            blockHash = this.api.createType('H256', block);
+        }
+        else if (typeof block === 'number') {
+            blockHash = await this.api.rpc.chain.getBlockHash(block);
+        }
+        else {
+            blockHash = block;
+        }
+
         const module = modulePath.split('.').reduce((o, key) => o && o[key] ? o[key] : null, <any> this.api.query);
         return <Promise<Result>> (<ApiModule> module).at(blockHash, ...args);
     }

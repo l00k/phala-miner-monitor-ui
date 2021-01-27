@@ -4,11 +4,12 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build"
+        "build": "vue-cli-service build",
+        "proxy": "lcp --proxyUrl https://phala.subscan.io/"
     },
     "main": "main.js",
     "dependencies": {
-        "@100k/intiv-js-tools": "^0.2.5",
+        "@100k/intiv-js-tools": "^0.2.6",
         "@fortawesome/fontawesome-free": "^5.15.2",
         "@polkadot/api": "^3.5.1",
         "@polkadot/vue-identicon": "^0.66.3",
@@ -45,6 +46,7 @@
         "@vue/cli-plugin-typescript": "^4.5.11",
         "@vue/cli-plugin-vuex": "~4.2.0",
         "@vue/cli-service": "~4.2.0",
+        "local-cors-proxy": "^1.1.0",
         "node-sass": "^4.14.1",
         "sass": "^1.32.5",
         "sass-loader": "^8.0.2",

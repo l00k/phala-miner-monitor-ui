@@ -7,6 +7,6 @@ export default function Model(modelName: string)
 {
     return (Target : typeof AbstractModel) => {
         Target.modelName = modelName;
-        StoreManager.registerStoreModel(modelName, Target);
+        StoreManager.registerModel(modelName, Target);
     };
 }

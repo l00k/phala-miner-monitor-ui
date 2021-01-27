@@ -8,7 +8,7 @@ function ucfirst(str : string)
 
 function formatDate(date : Date)
 {
-    return moment(date).format('YYYY-MM-dd');
+    return moment(date).format('YYYY-MM-DD');
 }
 
 function formatTime(date : Date)
@@ -18,7 +18,7 @@ function formatTime(date : Date)
 
 function formatDatetime(date : Date)
 {
-    return moment(date).format('YYYY-MM-dd HH:mm:ss');
+    return moment(date).format('YYYY-MM-DD HH:mm:ss');
 }
 
 export {

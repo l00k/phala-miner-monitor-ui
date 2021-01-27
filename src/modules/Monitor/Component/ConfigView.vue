@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="card-footer">
-            <div class="app-name">Phala miner monitor</div>
+            <div class="app-name">Phala account monitor</div>
             <div class="build-info">{{ buildInfo }}</div>
         </div>
     </div>

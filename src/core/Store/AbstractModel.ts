@@ -5,8 +5,8 @@ import { Store as VuexStore } from 'vuex';
 import Database from './Database';
 
 
-export default class AbstractModel
-    extends InitObject<AbstractModel>
+export default class AbstractModel<T>
+    extends InitObject<T>
 {
 
     public static modelName : string;
@@ -18,16 +18,14 @@ export default class AbstractModel
         return ObjectManager.getInstance(Engine).getVuexStore();
     }
 
-    public static findAll<T>() : Promise<T[]>
+    public static findAll<T>() : T[]
     {
-        return this.getDatabase()
-            .dispatch('Database/findAll', { model: this });
+        return this.getDatabase().getters['Database/findAll'](this);
     }
 
-    public static findOne<T>(id : string) : Promise<T>
+    public static findOne<T>(id : string) : T
     {
-        return this.getDatabase()
-            .dispatch('Database/findOne', { model: this, id });
+        return this.getDatabase().getters['Database/findAll'](this, id);
     }
 
     public static persist<T>(object : T) : void

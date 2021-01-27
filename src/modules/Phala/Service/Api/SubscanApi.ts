@@ -1,5 +1,6 @@
 import AbstractService from '@/core/Service/AbstractService';
 import { Singleton } from '@100k/intiv-js-tools/ObjectManager';
+import { AxiosRequestConfig } from 'axios';
 
 
 export type SubscanResult = {
@@ -16,27 +17,33 @@ export default class SubscanApi
     extends AbstractService
 {
 
-    protected static readonly BASE_URL : string = 'https://phala.subscan.io/api/';
+    protected static readonly BASE_URL : string = 'http://localhost:8010/proxy/api/';
 
-    public async getExtincts(data : any = {}, config : any = {}) : Promise<SubscanResult>
+    public async getExtrinsics(params : any = {}, config : AxiosRequestConfig = {}) : Promise<SubscanResult>
     {
-        data = {
-            page: 0,
+        params = {
+            page: 1,
             row: 25,
-            _: (new Date().getTime()),
-            ...data
+            ...params
         };
 
         config = {
-            headers: {
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache',
-                'Expires': '0',
-            },
-            ...config
+            withCredentials: false,
+            ...config,
         };
 
-        return await this.http.post('scan/extrinsics', data, config)
+        return await this.http.post('scan/extrinsics', params, config)
+            .then((response) => response.data);
+    }
+
+    public async getExtrinsicDetails(params : any = {}, config : AxiosRequestConfig = {}) : Promise<SubscanResult>
+    {
+        config = {
+            withCredentials: false,
+            ...config,
+        };
+
+        return await this.http.post('scan/extrinsic', params, config)
             .then((response) => response.data);
     }
 

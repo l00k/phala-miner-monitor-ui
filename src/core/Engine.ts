@@ -46,15 +46,19 @@ class Engine
         });
 
         // load models
+        await this.moduleLoader.load(['Model']);
+
+        // setup store and database
         this.vuexStore = new Vuex.Store({
             plugins: [
                 StoreManager.getVuexPersister,
             ]
         });
 
-        // load other modules components
         await import('./Store/Database');
-        await this.moduleLoader.load(['Model', 'Observer', 'Page', 'Store']);
+
+        // load other modules components
+        await this.moduleLoader.load(['Observer', 'Page', 'Store']);
 
         // init app
         this.vue = new Vue({

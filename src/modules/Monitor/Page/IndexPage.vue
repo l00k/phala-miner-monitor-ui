@@ -4,7 +4,8 @@
         <div class="columns justify-spece-between">
             <div class="column is-12">
                 <ConfigView/>
-                <MinersView/>
+                <AccountView :type="AccountType.Stash"/>
+                <AccountView :type="AccountType.Controller"/>
             </div>
         </div>
 
@@ -12,40 +13,45 @@
 </template>
 
 <script lang="ts">
-import { DependencyInjection, Inject } from '@100k/intiv-js-tools/ObjectManager';
-
-import { Component } from 'vue-property-decorator';
-import { namespace } from 'vuex-class';
-
-import BaseComponent from '@/core/Vue/BaseComponent.vue';
-import { Route } from '@/core/Vue/Annotations';
-
+import AccountView from '#/Monitor/Component/AccountView.vue';
 import ConfigView from '#/Monitor/Component/ConfigView.vue';
-import MinersView from '#/Monitor/Component/MinersView.vue';
+import { Route, Component } from '@/core/Vue/Annotations';
+import BaseComponent from '@/core/Vue/BaseComponent.vue';
+import { namespace } from 'vuex-class';
+import Account, { AccountType } from '../Model/Account';
 
-import ParachainApi from '#/Phala/Service/Api/ParachainApi';
-import SubscanApi from '#/Phala/Service/Api/SubscanApi';
 
-
-const MinerStore = namespace('Monitor/Miner');
+const AccountStore = namespace('Monitor/Account');
 
 @Route('/', 'monitor')
 @Component({
     components: {
+        AccountView,
         ConfigView,
-        MinersView,
     }
 })
-@DependencyInjection()
 export default class IndexPage
     extends BaseComponent
 {
 
-    @Inject()
-    protected subscanApi : SubscanApi;
+    protected AccountType = AccountType;
 
-    @Inject()
-    protected parachainApi : ParachainApi;
+    public created()
+    {
+        // Account.truncate();
+        //
+        // const stashAccount = new Account();
+        // stashAccount.type = AccountType.Stash;
+        // stashAccount.name = 'Stash';
+        // stashAccount.address = '41u4kqTaYz2CwvbUuo6PWUkyijYG13U2Q11WcheSYSB2EB2M';
+        // Account.persist(stashAccount);
+        //
+        // const controllerAccount = new Account();
+        // controllerAccount.type = AccountType.Controller;
+        // controllerAccount.name = 'sample';
+        // controllerAccount.address = '43XR9kveUUvKEsWm6zAMgav84XY7SoeNFzPjWYwzwnsPRBoG';
+        // Account.persist(controllerAccount);
+    }
 
 }
 </script>
