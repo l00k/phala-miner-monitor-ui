@@ -4,14 +4,12 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build",
+        "build": "API_URL=http://localhost:8084/graphql vue-cli-service build",
         "proxy": "lcp --proxyUrl https://phala.subscan.io/"
     },
     "main": "main.js",
     "dependencies": {
         "@100k/intiv": "^0.5.1",
-        "@fortawesome/fontawesome-free": "^5.15.2",
-        "@polkadot/api": "^3.5.1",
         "@polkadot/vue-identicon": "^0.66.3",
         "apollo-boost": "^0.4.9",
         "apollo-client": "^2.6.10",

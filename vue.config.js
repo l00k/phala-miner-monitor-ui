@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-//const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 class IntiPathResolverPlugin
 {
@@ -30,6 +29,8 @@ function generateUniqueBuildInfo () {
     const random = 10000 + Math.round(Math.random() * 89999)
     return `v${date.getFullYear()}.${date.getMonth()}.${date.getDay()}.${date.getHours()}.${date.getMinutes()}-${random}`
 }
+
+const env = process.env.NODE_ENV || 'production';
 
 module.exports = {
     runtimeCompiler: true,
@@ -63,12 +64,26 @@ module.exports = {
             port: 4000
         };
 
+        const apiUrl = env === 'production'
+            ? process.env.API_URL
+            : 'http://localhost:8084/graphql';
+
+        const appData = JSON.stringify({
+            apiUrl,
+            buildInfo: generateUniqueBuildInfo(),
+        });
+        console.log(appData)
+
         config.plugins.push(
             new webpack.DefinePlugin({
-                __BUILD_INFO__: JSON.stringify(generateUniqueBuildInfo()),
+                __APP_DATA__: JSON.stringify(appData)
             }),
-            //new BundleAnalyzerPlugin()
-        )
+        );
+
+        if (env !== 'production') {
+            // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+            // config.plugins.push(new BundleAnalyzerPlugin());
+        }
 
         config.module.rules.push({
             test: /\.mjs$/,

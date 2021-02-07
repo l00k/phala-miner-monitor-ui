@@ -4,11 +4,12 @@ import ApolloClient from 'apollo-boost';
 import Clipboard from 'clipboard';
 import { ToastProgrammatic as Toast } from 'buefy';
 
+declare const window;
+
 export default {
     apollo: () => {
-        const configuration = ObjectManager.getInstance(Configuration);
         return new ApolloClient({
-            uri: configuration.get<string>('apollo.uri'),
+            uri: window.appData.apiUrl,
         })
     },
     clipboard: () => {
