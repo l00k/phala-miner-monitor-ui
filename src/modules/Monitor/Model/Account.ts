@@ -1,30 +1,29 @@
-import ApiResource from '#/Monitor/Model/ApiResource';
 import Reward from '#/Monitor/Model/Reward';
-import { Model } from '@/core/Store';
+import { Model, AbstractModel } from '@/core/Store';
 import { InitializerList, Property } from '@100k/intiv-js-tools/InitializerList';
 
 
 export enum AccountType
 {
-    Stash = 'stash',
-    Controller = 'controller',
+    PayoutTarget = 'payoutTarget',
+    Miner = 'miner',
 }
 
 
 @Model('Monitor/Account')
 @InitializerList()
 export default class Account
-    extends ApiResource<Account>
+    extends AbstractModel<Account>
 {
-
-    @Property()
-    public type : AccountType;
 
     @Property()
     public address : string;
 
     @Property()
-    public name : string;
+    public lastUpdate : Date;
+
+    @Property()
+    public name : string = '';
 
     @Property()
     public balance : number = 0;
@@ -33,10 +32,10 @@ export default class Account
     public fire : number = 0;
 
     @Property()
-    public lastExtrinsicDate : Date;
+    public isStash : boolean = false;
 
     @Property()
-    public lastExtrinsicBlock : number = 0;
+    public isMiner : boolean = false;
 
     @Property({ arrayOf: Reward })
     public rewards : Reward[] = [];
@@ -57,6 +56,18 @@ export default class Account
     public get fireReadable() : string
     {
         return (this.fire / 1000000000000).toFixed(2) + ' tPHA';
+    }
+
+    public get types() : AccountType[]
+    {
+        const types = [];
+        if (this.isStash) {
+            types.push(AccountType.PayoutTarget);
+        }
+        if (this.isMiner) {
+            types.push(AccountType.Miner);
+        }
+        return types;
     }
 
 }

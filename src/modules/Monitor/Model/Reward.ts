@@ -1,6 +1,12 @@
-import ApiResource from '#/Monitor/Model/ApiResource';
 import { Model, AbstractModel } from '@/core/Store';
 import { InitializerList, Property } from '@100k/intiv-js-tools/InitializerList';
+
+
+export enum PayoutReason
+{
+    Online = 'online',
+    Compute = 'compute',
+}
 
 
 @Model('Monitor/Reward')
@@ -14,6 +20,9 @@ export default class Reward
 
     @Property()
     public date : Date;
+
+    @Property()
+    public reason : PayoutReason;
 
     public get fireReadable() : string
     {

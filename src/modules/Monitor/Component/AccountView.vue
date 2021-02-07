@@ -18,7 +18,6 @@
                     ref="accounts"
                     :data="accounts"
                     :loading="isLoading"
-                    :row-class="account => account.status === ApiResourceStatus.Fetching ? 'account-list__row--loading' : ''"
                     class="accounts-list"
                 >
                     <template slot-scope="{ row: account }">
@@ -45,10 +44,6 @@
                         >
                             <div class="account-name">
                                 <span>{{ account.name }}</span>
-                                <span v-if="account.status === ApiResourceStatus.Fetching">
-                                    <b-icon pack="fas" icon="circle-notch" class="fa-spin" type="is-primary"></b-icon>
-                                    {{ account.fetchingQueue }} new extrinsics
-                                </span>
                             </div>
                         </b-table-column>
 
@@ -71,14 +66,12 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="type === AccountType.Controller"
-                            field="lastExtrinsicDate"
-                            label="Last Extrinsic"
+                            field="lastUpdate"
+                            label="Last update"
                             :sortable="true"
                             :datatype="true"
                         >
-                            <span v-if="account.lastExtrinsicDate">{{ account.lastExtrinsicDate | formatDatetime }}</span>
-                            <span v-if="!account.lastExtrinsicDate">-</span>
+                            <span>{{ account.lastUpdate | formatDatetime }}</span>
                         </b-table-column>
 
                         <b-table-column
@@ -117,7 +110,7 @@
 import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
 import Account, { AccountType } from '#/Monitor/Model/Account';
 import { ApiResourceStatus } from '#/Monitor/Model/ApiResource';
-import ScannerService from '#/Monitor/Service/ScannerService';
+import MonitorApi from '#/Monitor/Service/ScannerService';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv-js-tools/ObjectManager';
@@ -151,7 +144,7 @@ export default class AccountsView
     protected accountFormView : AccountFormView;
 
     @Inject()
-    protected scannerService : ScannerService = null;
+    protected scannerService : MonitorApi = null;
 
     protected isAccountFormModalVisible : boolean = false;
 
@@ -160,7 +153,7 @@ export default class AccountsView
     protected get accounts() : Account[]
     {
         return Account.findAll<Account>()
-            .filter(account => account.type === this.type);
+            .filter(account => account.types.indexOf(this.type) !== -1);
     }
 
     public async created()

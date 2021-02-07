@@ -1,9 +1,9 @@
-import { ReleaseSymbol, Singleton } from '@100k/intiv-js-tools/ObjectManager';
-
+import { ReleaseSymbol, Singleton } from '@100k/intiv/ObjectManager';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiTypes, StorageEntryBase } from '@polkadot/api/types';
 import { H256, Header } from '@polkadot/types/interfaces/runtime';
 import { AnyFunction, AnyTuple } from '@polkadot/types/types';
-import { ApiTypes, StorageEntryBase } from '@polkadot/api/types';
+import { AugmentedRpc } from '@polkadot/rpc-core/types';
 
 
 export type ApiModule = StorageEntryBase<ApiTypes, AnyFunction, AnyTuple>;
@@ -16,11 +16,15 @@ export default class PolkadotApi
 
     protected wsProvider : WsProvider;
 
-    protected api : ApiPromise;
-
     protected apiPromise : Promise<ApiPromise>;
 
-    protected lastHeader : Header;
+    #api : ApiPromise;
+
+    public async api() : Promise<ApiPromise>
+    {
+        await this.apiPromise;
+        return this.#api;
+    }
 
     public constructor()
     {
@@ -44,8 +48,15 @@ export default class PolkadotApi
 
     protected async bindApi(api : ApiPromise)
     {
-        this.api = api;
-        this.lastHeader = await this.api.rpc.chain.getHeader();
+        this.#api = api;
+    }
+
+    public async rpc<Result>(modulePath : string, ...args : any[]) : Promise<Result>
+    {
+        await this.apiPromise;
+
+        const rpc = modulePath.split('.').reduce((o, key) => o && o[key] ? o[key] : null, <any> this.#api.rpc);
+        return <Promise<Result>> (<AugmentedRpc<(...args : any[]) => any>> rpc)(...args);
     }
 
     public async queryAt<Result>(modulePath : string, block : string | number | H256, ...args : any[]) : Promise<Result>
@@ -54,23 +65,24 @@ export default class PolkadotApi
 
         let blockHash = null;
         if (typeof block === 'string') {
-            blockHash = this.api.createType('H256', block);
+            blockHash = this.#api.createType('H256', block);
         }
         else if (typeof block === 'number') {
-            blockHash = await this.api.rpc.chain.getBlockHash(block);
+            blockHash = await this.#api.rpc.chain.getBlockHash(block);
         }
         else {
             blockHash = block;
         }
 
-        const module = modulePath.split('.').reduce((o, key) => o && o[key] ? o[key] : null, <any> this.api.query);
+        const module = modulePath.split('.').reduce((o, key) => o && o[key] ? o[key] : null, <any> this.#api.query);
         return <Promise<Result>> (<ApiModule> module).at(blockHash, ...args);
     }
 
     public async queryAtNow<Result>(modulePath : string, ...args : any[]) : Promise<Result>
     {
         await this.apiPromise;
-        return this.queryAt(modulePath, this.lastHeader.hash, ...args);
+        const lastHeader = await this.#api.rpc.chain.getHeader();
+        return this.queryAt(modulePath, lastHeader.hash, ...args);
     }
 
 }

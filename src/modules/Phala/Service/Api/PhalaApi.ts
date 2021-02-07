@@ -1,23 +1,21 @@
-import { Singleton } from '@100k/intiv-js-tools/ObjectManager';
-import { ApiPromise } from '@polkadot/api';
-
 import PolkadotApi from '#/Polkadot/Service/Api/PolkadotApi';
-
+import { Singleton } from '@100k/intiv/ObjectManager';
+import { ApiPromise } from '@polkadot/api';
 import PhalaParachainTypes from '../../etc/phala-types.json';
 
 
 @Singleton()
-export default class ParachainApi
+export default class PhalaApi
     extends PolkadotApi
 {
 
-    protected static readonly API_WS_URL : string = 'wss://poc3a.phala.network/ws';
+    protected static readonly API_WS_URL : string = 'ws://10.147.17.79:9944/ws';
 
     protected createApi() : Promise<any>
     {
         return ApiPromise.create({
             provider: this.wsProvider,
-            types: <any> PhalaParachainTypes,
+            types: PhalaParachainTypes,
         }).then((api) => this.bindApi(api));
     }
 
