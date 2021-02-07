@@ -18,10 +18,7 @@ class ServiceLoader
         const services = require('@/config/services').default;
 
         for (let [name, service] of Object.entries(services)) {
-            if (isArrowFunction(service)) {
-                service = await (<Function> service)();
-            }
-
+            service = await (<Function> service)();
             ObjectManager.bindService(service, name);
         }
     }

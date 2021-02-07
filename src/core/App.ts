@@ -4,11 +4,8 @@ import StoreManager from '@/core/Store/StoreManager';
 import AppComponent from '@/core/Vue/AppComponent.vue';
 import { Configuration } from '@100k/intiv/Configuration';
 import { EventBus } from '@100k/intiv/EventBus';
-import { Inject, Singleton, ObjectManager } from '@100k/intiv/ObjectManager';
-import ApolloClient from 'apollo-boost';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { Inject, Singleton } from '@100k/intiv/ObjectManager';
 import Vue from 'vue';
-import VueApollo from 'vue-apollo';
 import VueRouter from 'vue-router';
 import Vuex, { Store as VuexStore } from 'vuex';
 
@@ -35,8 +32,6 @@ export default class App
 
     protected vueRouter : VueRouter;
 
-    protected apolloProvider : VueApollo;
-
     public async run()
     {
         // load configuration
@@ -44,7 +39,7 @@ export default class App
         this.configuration.load(configData);
 
         // load services
-        this.serviceLoader.load();
+        await this.serviceLoader.load();
 
         // load routes and init router
         this.vueRouter = new VueRouter({
@@ -67,18 +62,11 @@ export default class App
         // load other modules components
         await this.moduleLoader.load([ 'Observer', 'Page', 'Store' ]);
 
-        // create apollo provider
-        const apolloClient = ObjectManager.getService<ApolloClient<InMemoryCache>>('apollo');
-        this.apolloProvider = new VueApollo({
-            defaultClient: apolloClient,
-        });
-
         // init app
         this.vue = new Vue({
             router: this.vueRouter,
             store: this.vuexStore,
             render: h => h(AppComponent),
-            apolloProvider: this.apolloProvider,
         });
 
         await this.vue.$mount('#app');

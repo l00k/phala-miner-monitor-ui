@@ -1,7 +1,6 @@
 import { Singleton, Inject } from '@100k/intiv/ObjectManager';
+import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import gql from 'graphql-tag'
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloClient } from 'apollo-client';
 import Account from '#/Monitor/Model/Account'
 
 @Singleton()
@@ -51,15 +50,6 @@ getAccounts(addresses: ${addressesJson}) {
                 account.setData(rawAcocunt);
             }
         }
-    }
-
-    public async fetchSingleAccount(accounts : string[] = []) : Promise<void>
-    {
-        const rawData = await this.apollo.query({
-            query: gql`query getAccounts(addresses: ["4281YSs23igo3TVMDFezHMgrAN4pzRBKDi6sN6Zr9MjpNA4j"]) Account`
-        });
-
-        console.log(rawData)
     }
 
 }

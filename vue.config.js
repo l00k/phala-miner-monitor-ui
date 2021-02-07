@@ -64,15 +64,15 @@ module.exports = {
             port: 4000
         };
 
-        const apiUrl = env === 'production'
-            ? 'http://phala-miner-monitor.100k.dev.test:8084/graphql'
-            : 'http://localhost:8084/graphql';
+        let apiUrl = 'http://phala-miner-monitor.100k.dev.test:8084/graphql';
+        // if (env !== 'production') {
+        //     apiUrl = 'http://localhost:8084/graphql';
+        // }
 
         const appData = JSON.stringify({
             apiUrl,
             buildInfo: generateUniqueBuildInfo(),
         });
-        console.log(appData)
 
         config.plugins.push(
             new webpack.DefinePlugin({
