@@ -64,7 +64,7 @@ module.exports = {
             port: 4000
         };
 
-        let apiUrl = 'http://phala-miner-monitor.100k.dev.test:8084/graphql';
+        let apiUrl = 'https://phala-miner-monitor2.100k.dev:8084/graphql';
         // if (env !== 'production') {
         //     apiUrl = 'http://localhost:8084/graphql';
         // }
