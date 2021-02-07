@@ -65,7 +65,7 @@ module.exports = {
         };
 
         const apiUrl = env === 'production'
-            ? process.env.API_URL
+            ? 'http://phala-miner-monitor.100k.dev.test:8084/graphql'
             : 'http://localhost:8084/graphql';
 
         const appData = JSON.stringify({

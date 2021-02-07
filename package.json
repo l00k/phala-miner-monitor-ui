@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "API_URL=http://localhost:8084/graphql vue-cli-service build",
+        "build": "vue-cli-service build",
         "proxy": "lcp --proxyUrl https://phala.subscan.io/"
     },
     "main": "main.js",
