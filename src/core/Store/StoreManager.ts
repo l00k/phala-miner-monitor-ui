@@ -56,7 +56,8 @@ export default class StoreManager
                 if (modelName) {
                     delete value['__modelName'];
                     const Model = this.models[modelName];
-                    object[property] = new Model(value);
+                    object[property] = new Model();
+                    object[property].setData(value);
                 }
 
                 this._deserializeTraverse(object[property]);

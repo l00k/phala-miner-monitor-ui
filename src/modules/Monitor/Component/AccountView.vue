@@ -57,12 +57,23 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="type === AccountType.PayoutTarget"
                             field="fire"
                             label="Fire"
                             :sortable="true"
                             :numeric="true"
                         >
                             {{ account.fireReadable }}
+                        </b-table-column>
+
+                        <b-table-column
+                            v-if="type === AccountType.Miner"
+                            field="fireMined"
+                            label="Fire mined"
+                            :sortable="true"
+                            :numeric="true"
+                        >
+                            {{ account.fireMinedReadable }}
                         </b-table-column>
 
                         <b-table-column
@@ -109,11 +120,10 @@
 <script lang="ts">
 import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
 import Account, { AccountType } from '#/Monitor/Model/Account';
-import { ApiResourceStatus } from '#/Monitor/Model/ApiResource';
-import MonitorApi from '#/Monitor/Service/ScannerService';
+import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
-import { Inject } from '@100k/intiv-js-tools/ObjectManager';
+import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref, Prop } from 'vue-property-decorator';
@@ -135,7 +145,6 @@ export default class AccountsView
 {
 
     protected AccountType = AccountType;
-    protected ApiResourceStatus = ApiResourceStatus;
 
     @Prop()
     protected type : AccountType;
@@ -144,7 +153,7 @@ export default class AccountsView
     protected accountFormView : AccountFormView;
 
     @Inject()
-    protected scannerService : MonitorApi = null;
+    protected monitorApi : MonitorApi = null;
 
     protected isAccountFormModalVisible : boolean = false;
 
@@ -158,12 +167,15 @@ export default class AccountsView
 
     public async created()
     {
-        this.scannerService.fetch(this.accounts);
+        this.monitorApi.fetchAccounts(this.accounts);
     }
 
     protected showAccountForm(account : Account)
     {
-        const managedAccount = new Account(account ? cloneDeep(account) : { type: this.type });
+        const managedAccount = new Account();
+        if (account) {
+            managedAccount.setData(cloneDeep(account));
+        }
         this.isAccountFormModalVisible = true;
 
         this.$nextTick(() => {
@@ -175,7 +187,8 @@ export default class AccountsView
     {
         this.isAccountFormModalVisible = false;
         if (account) {
-            this.scannerService.fetchSingle(account);
+            const newAccounts = this.accounts.filter(_account => _account.id === account.id)
+            this.monitorApi.fetchAccounts(newAccounts);
         }
     }
 

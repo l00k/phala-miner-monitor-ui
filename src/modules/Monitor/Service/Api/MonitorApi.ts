@@ -1,46 +1,65 @@
-import AbstractService from '@/core/Service/AbstractService';
-import { Singleton } from '@100k/intiv/ObjectManager';
-import { ApolloClient, NormalizedCacheObject, InMemoryCache, gql } from '@apollo/client';
-
-
-export type SubscanResult = {
-    code : number,
-    message : string,
-    ttl : number,
-    data : {
-        [index : string] : any
-    }
-};
-
+import { Singleton, Inject } from '@100k/intiv/ObjectManager';
+import gql from 'graphql-tag'
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClient } from 'apollo-client';
+import Account from '#/Monitor/Model/Account'
 
 @Singleton()
 export default class MonitorApi
 {
 
-    protected static readonly BASE_URL : string = '';
+    @Inject('apollo')
+    protected apollo : ApolloClient<InMemoryCache>;
 
-    protected graphQlApi : ApolloClient<NormalizedCacheObject>;
-
-    constructor()
+    public async fetchAccounts(accounts : Account[] = []) : Promise<void>
     {
-        if (!MonitorApi.BASE_URL) {
-            throw Error('Base URL has to be defined in Service class');
+        const addresses = accounts
+            .map(account => account.address)
+            .filter(address => !!address);
+
+        if (!addresses.length) {
+            return;
         }
 
-        this.graphQlApi = new ApolloClient({
-            uri: 'http://localhost:8080/graphq/',
-            cache: new InMemoryCache(),
+        const addressesJson = JSON.stringify(addresses);
+
+        const { data: { getAccounts: rawAccounts } } = await this.apollo.query({
+            query: gql`query {
+getAccounts(addresses: ${addressesJson}) {
+    address,
+    balance,
+    fire,
+    fireMined,
+    lastUpdate,
+    isPayoutTarget,
+    isMiner,
+    minedRewards {
+        date,
+        fire
+    },
+    receivedRewards {
+        date,
+        fire
+    }
+}
+            }`
         });
+
+        for (const rawAcocunt of rawAccounts) {
+            const account = accounts.find(_account => _account.address === rawAcocunt.address);
+            if (account) {
+                account.setData(rawAcocunt);
+            }
+        }
     }
 
-    public async getAccounts(accounts : string[] = []) : Promise<Account[]>
+    public async fetchSingleAccount(accounts : string[] = []) : Promise<void>
     {
-        const rawData = await this.graphQlApi.query({
-            query: gql`getAccounts(addresses: ["4281YSs23igo3TVMDFezHMgrAN4pzRBKDi6sN6Zr9MjpNA4j"]) Account`
+        const rawData = await this.apollo.query({
+            query: gql`query getAccounts(addresses: ["4281YSs23igo3TVMDFezHMgrAN4pzRBKDi6sN6Zr9MjpNA4j"]) Account`
         });
 
-
-        return [];
+        console.log(rawData)
     }
 
 }

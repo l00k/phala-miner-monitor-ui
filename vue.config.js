@@ -59,6 +59,9 @@ module.exports = {
         config.optimization.minimize = false
         config.devtool = 'source-map'
         config.resolve.plugins = [new IntiPathResolverPlugin()]
+        config.devServer = {
+            port: 4000
+        };
 
         config.plugins.push(
             new webpack.DefinePlugin({

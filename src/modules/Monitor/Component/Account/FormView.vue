@@ -3,14 +3,9 @@
         <be-block title="Account form">
             <template>
                 <form @submit.prevent="submit">
-                    <b-field label="Type" label-position="on-border">
-                        <b-select v-model="account.type">
-                            <option
-                                v-for="_type in AccountType"
-                                :value="_type"
-                                :key="_type"
-                            >{{ _type | ucfirst }}</option>
-                        </b-select>
+                    <b-field class="mb-4">
+                        <b-checkbox v-model="account.isMiner">Miner</b-checkbox>
+                        <b-checkbox v-model="account.isPayoutTarget">Payout Target</b-checkbox>
                     </b-field>
 
                     <b-field label="Address" label-position="on-border">

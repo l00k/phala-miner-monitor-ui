@@ -1,21 +1,22 @@
-import Engine from '@/core/Engine';
-import { InitObject } from '@100k/intiv-js-tools/InitializerList';
-import { ObjectManager } from '@100k/intiv-js-tools/ObjectManager';
+import App from '@/core/App';
+import { Initializable } from '@100k/intiv/Initializable';
+import { ObjectManager } from '@100k/intiv/ObjectManager';
 import { Store as VuexStore } from 'vuex';
 import Database from './Database';
 
 
 export default class AbstractModel<T>
-    extends InitObject<T>
+    extends Initializable<AbstractModel<T>>
 {
 
     public static modelName : string;
 
     public id : string = null;
 
+
     public static getDatabase() : VuexStore<Database>
     {
-        return ObjectManager.getInstance(Engine).getVuexStore();
+        return ObjectManager.getInstance(App).getVuexStore();
     }
 
     public static findAll<T>() : T[]

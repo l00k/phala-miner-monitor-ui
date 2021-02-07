@@ -1,5 +1,5 @@
-import { ObjectManager, Singleton } from '@100k/intiv-js-tools/ObjectManager';
-import { isArrowFunction } from '@100k/intiv-js-tools/Utility';
+import { ObjectManager, Singleton } from '@100k/intiv/ObjectManager';
+import { isArrowFunction } from '@100k/intiv/Utility';
 
 
 type Callback = (data : any, previousResult : any) => any;

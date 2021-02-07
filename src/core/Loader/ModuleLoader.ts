@@ -1,5 +1,5 @@
-import { Singleton } from '@100k/intiv-js-tools/ObjectManager';
-import { InitiationException } from '@100k/intiv-js-tools/Exception';
+import { Singleton } from '@100k/intiv/ObjectManager';
+import { InitiationException } from '@100k/intiv/Exception';
 
 
 type Callback = (data : any, previousResult : any) => any;

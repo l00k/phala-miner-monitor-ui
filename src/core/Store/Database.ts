@@ -1,6 +1,6 @@
-import Engine from '@/core/Engine';
+import App from '@/core/App';
 import { StoreManager } from '@/core/Store';
-import { ObjectManager } from '@100k/intiv-js-tools/ObjectManager';
+import { ObjectManager } from '@100k/intiv/ObjectManager';
 import { v4 as uuidv4 } from 'uuid';
 import Vue from 'vue';
 import { Module, Mutation, VuexModule, Action } from 'vuex-module-decorators';
@@ -18,7 +18,7 @@ type Payload = {
 
 @Module({
     dynamic: true,
-    store: ObjectManager.getInstance(Engine).getVuexStore(),
+    store: ObjectManager.getInstance(App).getVuexStore(),
     preserveState: StoreManager.isModulePersisted('Database'),
     namespaced: true,
     name: 'Database',

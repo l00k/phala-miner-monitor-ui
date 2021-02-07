@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import qs from 'qs';
 
 
-class AbstractService
+export default class AbstractService
 {
 
     protected static readonly BASE_URL : string;
@@ -34,6 +34,3 @@ class AbstractService
         });
     }
 }
-
-
-export default AbstractService;

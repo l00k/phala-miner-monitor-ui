@@ -1,7 +1,5 @@
 import validateJs from 'validate.js';
 
-import { isset } from '@100k/intiv-js-tools/Utility';
-
 
 type PropertyValidationErrors = {
     rule : string,
@@ -14,7 +12,7 @@ type MethodValidationErrors = {
 validateJs.formatters.intiv = function(errors : any[]) {
     let result : MethodValidationErrors = {};
     errors.map((error) => {
-        if (!isset(() => result[error.attribute])) {
+        if (!result[error.attribute]) {
             result[error.attribute] = [];
         }
 

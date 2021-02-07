@@ -1,5 +1,5 @@
 import { Model, AbstractModel } from '@/core/Store';
-import { InitializerList, Property } from '@100k/intiv-js-tools/InitializerList';
+import { Initializable, Property, Initialize } from '@100k/intiv/Initializable';
 
 
 export enum PayoutReason
@@ -10,7 +10,6 @@ export enum PayoutReason
 
 
 @Model('Monitor/Reward')
-@InitializerList()
 export default class Reward
     extends AbstractModel<Reward>
 {

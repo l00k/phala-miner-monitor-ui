@@ -1,6 +1,6 @@
 import Reward from '#/Monitor/Model/Reward';
 import { Model, AbstractModel } from '@/core/Store';
-import { InitializerList, Property } from '@100k/intiv-js-tools/InitializerList';
+import { Initialize, Property } from '@100k/intiv/Initializable';
 
 
 export enum AccountType
@@ -11,7 +11,6 @@ export enum AccountType
 
 
 @Model('Monitor/Account')
-@InitializerList()
 export default class Account
     extends AbstractModel<Account>
 {
@@ -32,13 +31,19 @@ export default class Account
     public fire : number = 0;
 
     @Property()
-    public isStash : boolean = false;
+    public fireMined : number = 0;
+
+    @Property()
+    public isPayoutTarget : boolean = false;
 
     @Property()
     public isMiner : boolean = false;
 
     @Property({ arrayOf: Reward })
-    public rewards : Reward[] = [];
+    public minedRewards : Reward[] = [];
+
+    @Property({ arrayOf: Reward })
+    public recievedRewards : Reward[] = [];
 
     public get addressShort() : string
     {
@@ -58,10 +63,15 @@ export default class Account
         return (this.fire / 1000000000000).toFixed(2) + ' tPHA';
     }
 
+    public get fireMinedReadable() : string
+    {
+        return (this.fireMined / 1000000000000).toFixed(2) + ' tPHA';
+    }
+
     public get types() : AccountType[]
     {
         const types = [];
-        if (this.isStash) {
+        if (this.isPayoutTarget) {
             types.push(AccountType.PayoutTarget);
         }
         if (this.isMiner) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { ObjectManager } from '@100k/intiv-js-tools/ObjectManager';
+import { ObjectManager } from '@100k/intiv/ObjectManager';
 import { Component, Vue } from 'vue-property-decorator';
 import { ToastProgrammatic } from 'buefy';
 
@@ -28,8 +28,7 @@ export default class BaseComponent
     public async handleRequest(
         callback : () => void,
         options : HandleRequestOptions
-    )
-    {
+    ) {
         options = {
             msgSuccess: 'Success',
             msgFail: 'Failed',

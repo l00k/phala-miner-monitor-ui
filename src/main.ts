@@ -1,30 +1,23 @@
+import App from '@/core/App';
+import { ObjectManager } from '@100k/intiv/ObjectManager';
+import Buefy from 'buefy';
 import Vue from 'vue';
+import VueApollo from 'vue-apollo';
+import VueRouter from 'vue-router';
+import Vuex from 'vuex';
+
 
 Vue.config.productionTip = false;
 
-// vuex registration
-import Vuex from 'vuex';
+Vue.use(VueApollo);
 Vue.use(Vuex);
-
-// router registration
-import VueRouter from 'vue-router';
 Vue.use(VueRouter);
-
-// buefy registration
-import Buefy from 'buefy';
 Vue.use(Buefy);
 
-// import extensions
-import '@/core/Vue';
-import '@/core/ext/validate-js';
-import '@/core/Vue/Buefy';
-
-// run engine
-import { ObjectManager } from '@100k/intiv-js-tools/ObjectManager';
-import Engine from '@/core/Engine';
-
+require('@/core/Vue');
+require('@/core/ext/validate-js');
+require('@/core/Vue/Buefy');
 
 (async() => {
-    const engine = ObjectManager.getInstance(Engine);
-    await engine.run();
+    ObjectManager.getInstance(App).run();
 })();

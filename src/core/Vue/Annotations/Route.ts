@@ -1,6 +1,6 @@
 import { RouteConfig } from 'vue-router';
-import { ObjectManager } from '@100k/intiv-js-tools/ObjectManager';
-import Engine from '@/core/Engine';
+import { ObjectManager } from '@100k/intiv/ObjectManager';
+import App from '@/core/App';
 
 
 export default function Route(path : string, name : string, options : Partial<RouteConfig> = {})
@@ -13,7 +13,7 @@ export default function Route(path : string, name : string, options : Partial<Ro
             ...options
         };
 
-        ObjectManager.getInstance(Engine)
+        ObjectManager.getInstance(App)
             .getVueRouter()
             .addRoutes([ routeRecord ]);
     };

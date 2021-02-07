@@ -9,7 +9,7 @@ import { Component } from 'vue-property-decorator';
 import BaseComponent from './BaseComponent.vue';
 
 @Component
-export default class App
+export default class AppComponent
     extends BaseComponent
 {
 }
