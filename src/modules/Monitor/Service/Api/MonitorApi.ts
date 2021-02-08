@@ -32,6 +32,11 @@ getAccounts(addresses: ${addressesJson}) {
     lastUpdate,
     isPayoutTarget,
     isMiner,
+    extrinsics {
+        date,
+        action,
+        isSuccessful
+    },
     minedRewards {
         date,
         fire

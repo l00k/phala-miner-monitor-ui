@@ -14,6 +14,12 @@ export default class AbstractModel<T>
     public id : string = null;
 
 
+    public constructor(data? : Partial<AbstractModel<T>>)
+    {
+        super();
+        this.setData(data);
+    }
+
     public static getDatabase() : VuexStore<Database>
     {
         return ObjectManager.getInstance(App).getVuexStore();

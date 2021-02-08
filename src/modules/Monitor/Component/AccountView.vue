@@ -33,7 +33,7 @@
                                     class="js-clipboard account-icon"
                                     :data-clipboard-text="account.address"
                                 />
-                                <span>{{ account.addressShort }}</span>
+                                <span>{{ account.address | formatAddress }}</span>
                             </div>
                         </b-table-column>
 
@@ -53,7 +53,7 @@
                             :sortable="true"
                             :numeric="true"
                         >
-                            {{ account.balanceReadable }}
+                            {{ account.balance | formatCoin }}
                         </b-table-column>
 
                         <b-table-column
@@ -63,9 +63,8 @@
                             :sortable="true"
                             :numeric="true"
                         >
-                            {{ account.fireReadable }}
+                            {{ account.fire | formatCoin }}
                         </b-table-column>
-
                         <b-table-column
                             v-if="type === AccountType.Miner"
                             field="fireMined"
@@ -73,16 +72,51 @@
                             :sortable="true"
                             :numeric="true"
                         >
-                            {{ account.fireMinedReadable }}
+                            {{ account.fireMined | formatCoin }}
                         </b-table-column>
 
                         <b-table-column
+                            v-if="type === AccountType.PayoutTarget"
                             field="lastUpdate"
                             label="Last update"
                             :sortable="true"
                             :datatype="true"
                         >
                             <span>{{ account.lastUpdate | formatDatetime }}</span>
+                        </b-table-column>
+                        <b-table-column
+                            v-if="type === AccountType.Miner"
+                            label="Last extrinsics"
+                        >
+                            <table class="records-table">
+                                <tr v-for="extrinsic of account.extrinsics">
+                                    <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
+                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}" >{{ extrinsic.action }}</td>
+                                </tr>
+                            </table>
+                        </b-table-column>
+
+                        <b-table-column
+                            v-if="type === AccountType.PayoutTarget"
+                            label="Last rewards"
+                        >
+                            <table class="records-table">
+                                <tr v-for="reward of account.receivedRewards">
+                                    <td :title="reward.date | formatDatetime">{{ reward.date | formatTime }}</td>
+                                    <td>{{ reward.fire | formatCoin }}</td>
+                                </tr>
+                            </table>
+                        </b-table-column>
+                        <b-table-column
+                            v-if="type === AccountType.Miner"
+                            label="Last rewards"
+                        >
+                            <table class="records-table">
+                                <tr v-for="reward of account.minedRewards">
+                                    <td :title="reward.date | formatDatetime">{{ reward.date | formatTime }}</td>
+                                    <td>{{ reward.fire | formatCoin }}</td>
+                                </tr>
+                            </table>
                         </b-table-column>
 
                         <b-table-column
@@ -215,9 +249,7 @@ export default class AccountsView
             height: 1.5em;
             padding: 0 8px;
         }
-
         td {
-            min-height: 32px;
             vertical-align: middle;
         }
     }
@@ -230,8 +262,6 @@ export default class AccountsView
     }
 
     .account-address {
-        height: 32px;
-
         .account-icon {
             cursor: pointer;
         }
@@ -254,5 +284,25 @@ export default class AccountsView
             }
         }
     }
+}
+
+.content {
+    .records-table {
+        width: auto;
+
+        td {
+            padding: 0;
+            font-size: 0.7rem;
+            border: none;
+        }
+        td:last-child {
+            padding-left: 10px;
+            text-align: right;
+        }
+    }
+}
+
+.extrinsic--failed {
+    color: red;
 }
 </style>

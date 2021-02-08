@@ -1,3 +1,4 @@
+import Extrinsic from '#/Monitor/Model/Extrinsic';
 import Reward from '#/Monitor/Model/Reward';
 import { Model, AbstractModel } from '@/core/Store';
 import { Initialize, Property } from '@100k/intiv/Initializable';
@@ -43,30 +44,10 @@ export default class Account
     public minedRewards : Reward[] = [];
 
     @Property({ arrayOf: Reward })
-    public recievedRewards : Reward[] = [];
+    public receivedRewards : Reward[] = [];
 
-    public get addressShort() : string
-    {
-        if (!this.address) {
-            return '';
-        }
-        return this.address.substr(0, 8) + '...' + this.address.substr(-8);
-    }
-
-    public get balanceReadable() : string
-    {
-        return (this.balance / 1000000000000).toFixed(2) + ' tPHA';
-    }
-
-    public get fireReadable() : string
-    {
-        return (this.fire / 1000000000000).toFixed(2) + ' tPHA';
-    }
-
-    public get fireMinedReadable() : string
-    {
-        return (this.fireMined / 1000000000000).toFixed(2) + ' tPHA';
-    }
+    @Property({ arrayOf: Extrinsic })
+    public extrinsics : Extrinsic[] = [];
 
     public get types() : AccountType[]
     {

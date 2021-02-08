@@ -2,19 +2,10 @@
     <div class="card mb-4 m-context__connection">
         <header class="card-header">
             <div class="card-header-title is-justify-content-space-between">
-                <span>Config</span>
+                <div class="app-name">Phala account monitor</div>
+                <div class="build-info">{{ buildInfo }}</div>
             </div>
         </header>
-        <div class="card-content">
-            <div class="content">
-
-
-            </div>
-        </div>
-        <div class="card-footer">
-            <div class="app-name">Phala account monitor</div>
-            <div class="build-info">{{ buildInfo }}</div>
-        </div>
     </div>
 </template>
 
@@ -48,12 +39,9 @@ export default class ConfigView
 }
 
 .app-name {
-    padding: 10px 15px;
-    font-size: 0.8rem;
 }
 
 .build-info {
-    padding: 10px 15px;
     font-size: 0.7rem;
 }
 </style>

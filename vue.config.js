@@ -1,4 +1,5 @@
-const webpack = require('webpack');
+const webpack = require('webpack')
+const moment = require('moment')
 
 class IntiPathResolverPlugin
 {
@@ -27,10 +28,10 @@ class IntiPathResolverPlugin
 function generateUniqueBuildInfo () {
     const date = new Date()
     const random = 10000 + Math.round(Math.random() * 89999)
-    return `v${date.getFullYear()}.${date.getMonth()}.${date.getDay()}.${date.getHours()}.${date.getMinutes()}-${random}`
+    return 'v' + moment().format('YYYY.MM.DD.HHmmss') + '-' + random
 }
 
-const env = process.env.NODE_ENV || 'production';
+const env = process.env.NODE_ENV || 'production'
 
 module.exports = {
     runtimeCompiler: true,
@@ -62,23 +63,18 @@ module.exports = {
         config.resolve.plugins = [new IntiPathResolverPlugin()]
         config.devServer = {
             port: 4000
-        };
-
-        let apiUrl = 'https://phala-miner-monitor2.100k.dev:8084/graphql';
-        // if (env !== 'production') {
-        //     apiUrl = 'http://localhost:8084/graphql';
-        // }
+        }
 
         const appData = JSON.stringify({
-            apiUrl,
+            apiUrl: 'https://phala-miner-monitor2.100k.dev:8084/graphql',
             buildInfo: generateUniqueBuildInfo(),
-        });
+        })
 
         config.plugins.push(
             new webpack.DefinePlugin({
                 __APP_DATA__: JSON.stringify(appData)
             }),
-        );
+        )
 
         if (env !== 'production') {
             // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;

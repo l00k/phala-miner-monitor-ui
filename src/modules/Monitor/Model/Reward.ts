@@ -15,17 +15,12 @@ export default class Reward
 {
 
     @Property()
-    public fire : number = 0;
+    public fire : number;
 
     @Property()
     public date : Date;
 
     @Property()
     public reason : PayoutReason;
-
-    public get fireReadable() : string
-    {
-        return (this.fire / 1000000000000).toFixed(2) + ' tPHA';
-    }
 
 }

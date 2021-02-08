@@ -21,6 +21,7 @@
         "lightweight-charts": "^2.0.0",
         "lodash-es": "^4.17.20",
         "moment": "^2.29.1",
+        "numeral": "^2.0.6",
         "qs": "^6.9.6",
         "reflect-metadata": "^0.1.13",
         "uuid": "^8.3.2",
