@@ -57,4 +57,13 @@ getAccounts(addresses: ${addressesJson}) {
         }
     }
 
+    public async findMinersByPayoutTarget(account : Account) : Promise<string[]>
+    {
+        const { data: { getMinersByPayoutTarget: rawAccounts } } = await this.apollo.query({
+            query: gql`query { getMinersByPayoutTarget(payoutTarget: "${account.address}") { address } }`
+        });
+
+        return rawAccounts.map(rawAccount => rawAccount.address);
+    }
+
 }

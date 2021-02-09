@@ -61,4 +61,10 @@ export default class Account
         return types;
     }
 
+    public constructor(data? : Partial<Account>)
+    {
+        super();
+        this.setData(data);
+    }
+
 }

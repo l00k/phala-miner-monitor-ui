@@ -133,6 +133,12 @@
                                 type="is-danger"
                                 @click="deleteAccount(account)"
                             >Delete</b-button>
+                            <b-button
+                                v-if="type === AccountType.PayoutTarget"
+                                size="is-small"
+                                type="is-light"
+                                @click="findMiners(account)"
+                            >Find miners</b-button>
                         </b-table-column>
                     </template>
                 </be-table>
@@ -159,6 +165,7 @@ import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
+import { ToastProgrammatic as Toast } from 'buefy';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref, Prop } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
@@ -237,6 +244,59 @@ export default class AccountsView
                 Account.delete(account);
             }
         });
+    }
+
+    protected async findMiners(account : Account)
+    {
+        const confirmed = await this.confirm({
+            title: 'Find miners',
+            message: 'Only already indexed account will be found. Your miner has to submit successful syncWorkerState to be indexed.',
+            confirmText: 'Search miners',
+            type: 'is-primary',
+        });
+        if (!confirmed) {
+            return;
+        }
+
+        const oldMinerAddresses = Account.findAll<Account>()
+            .filter(account => account.types.indexOf(AccountType.Miner) !== -1)
+            .map(account => account.address);
+
+        const foundMinerAddresses = await this.monitorApi.findMinersByPayoutTarget(account);
+        const newMinerAddresses = foundMinerAddresses
+            .filter(_foundMinerAddress => oldMinerAddresses.indexOf(_foundMinerAddress) === -1);
+
+        if (newMinerAddresses.length) {
+            const confirmed = await this.confirm({
+                title: 'Find miners',
+                message: `${newMinerAddresses.length} new miners has been found. Would you like to add them?`,
+                confirmText: 'Add miners',
+                type: 'is-success',
+            });
+
+            if (confirmed) {
+                for (const address of newMinerAddresses) {
+                    const account = new Account({
+                        address,
+                        isMiner: true,
+                    });
+                    Account.persist(account);
+                }
+
+                Toast.open({
+                    message: `${newMinerAddresses.length} new miners addded`,
+                    type: 'is-success',
+                    position: 'is-bottom-right',
+                });
+            }
+        }
+        else {
+            Toast.open({
+                message: 'Nothing found',
+                type: 'is-danger',
+                position: 'is-bottom-right',
+            });
+        }
     }
 
 }

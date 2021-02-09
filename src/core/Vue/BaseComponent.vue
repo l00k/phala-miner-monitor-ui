@@ -1,5 +1,6 @@
 <script lang="ts">
 import { ObjectManager } from '@100k/intiv/ObjectManager';
+import { BDialogConfig } from 'buefy/types/components';
 import { Component, Vue } from 'vue-property-decorator';
 import { ToastProgrammatic } from 'buefy';
 
@@ -55,6 +56,21 @@ export default class BaseComponent
 
             throw e;
         }
+    }
+
+    public async confirm(options: BDialogConfig): Promise<boolean>
+    {
+        return new Promise((resolve, reject) => {
+            this.$buefy.dialog.confirm({
+                ...options,
+                onConfirm() {
+                    resolve(true);
+                },
+                onCancel() {
+                    resolve(false);
+                },
+            });
+        })
     }
 
 }

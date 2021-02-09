@@ -16,4 +16,10 @@ export default class Extrinsic
     @Property()
     public isSuccessful : boolean;
 
+    public constructor(data? : Partial<Extrinsic>)
+    {
+        super();
+        this.setData(data);
+    }
+
 }

@@ -23,4 +23,10 @@ export default class Reward
     @Property()
     public reason : PayoutReason;
 
+    public constructor(data? : Partial<Reward>)
+    {
+        super();
+        this.setData(data);
+    }
+
 }

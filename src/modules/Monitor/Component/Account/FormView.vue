@@ -59,10 +59,11 @@ export default class FormView
 
     protected submit()
     {
+        const isNew = !this.account.id;
         Account.persist(this.account)
 
         Toast.open({
-            message: 'Created!',
+            message: isNew ? 'Created!' : 'Saved!',
             type: 'is-success',
             position: 'is-bottom-right',
         });
