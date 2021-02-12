@@ -4,6 +4,7 @@
         <div class="columns justify-spece-between">
             <div class="column is-12">
                 <ConfigView/>
+                <PayoutTargetsView/>
                 <MinersView/>
             </div>
         </div>
@@ -12,7 +13,7 @@
 </template>
 
 <script lang="ts">
-//import PayoutTargetsView from '#/Monitor/Component/PayoutTargetsView.vue';
+import PayoutTargetsView from '#/Monitor/Component/PayoutTargetsView.vue';
 import ConfigView from '#/Monitor/Component/ConfigView.vue';
 import MinersView from '#/Monitor/Component/MinersView.vue';
 import { Route, Component } from '@/core/Vue/Annotations';
@@ -26,7 +27,7 @@ const AccountStore = namespace('Monitor/Account');
 @Component({
     components: {
         MinersView,
-        //PayoutTargetsView,
+        PayoutTargetsView,
         ConfigView,
     }
 })

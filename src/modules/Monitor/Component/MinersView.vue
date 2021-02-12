@@ -8,7 +8,8 @@
                     type="is-success"
                     class="is-pulled-right"
                     @click="showMinerForm()"
-                >Add miner</b-button>
+                >Add miner
+                </b-button>
             </div>
         </header>
         <div class="card-content">
@@ -44,7 +45,7 @@
                                 <Identicon
                                     :size="32"
                                     :value="miner.controllerAccount.address"
-                                    class="js-clipboard miner-icon"
+                                    class="js-clipboard account-icon"
                                     :data-clipboard-text="miner.controllerAccount.address"
                                 />
                                 <span>{{ miner.controllerAccount.address | formatAddress }}</span>
@@ -58,7 +59,7 @@
                                 <Identicon
                                     :size="32"
                                     :value="miner.stashAccount.address"
-                                    class="js-clipboard miner-icon"
+                                    class="js-clipboard account-icon"
                                     :data-clipboard-text="miner.stashAccount.address"
                                 />
                                 <span>{{ miner.stashAccount.address | formatAddress }}</span>
@@ -92,12 +93,17 @@
                         </b-table-column>
 
                         <b-table-column
-                            field="stake"
                             label="Stake"
                             :numeric="true"
                             cell-class="miners-list--cell"
                         >
-                            <span>{{ miner.stake | formatCoin }}</span>
+                            <div class="miner-account miner-account--stake">
+                                {{ miner.controllerAccount.state | formatCoin }}
+                            </div>
+                            <hr/>
+                            <div class="miner-account miner-account--stake">
+                                {{ miner.stashAccount.state | formatCoin }}
+                            </div>
                         </b-table-column>
 
                         <b-table-column
@@ -133,14 +139,20 @@
                             <table class="records-table">
                                 <tr v-for="extrinsic of miner.controllerAccount.extrinsics">
                                     <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}" >{{ extrinsic.action }}</td>
+                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{
+                                            extrinsic.action
+                                        }}
+                                    </td>
                                 </tr>
                             </table>
                             <hr/>
                             <table class="records-table">
                                 <tr v-for="extrinsic of miner.stashAccount.extrinsics">
                                     <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}" >{{ extrinsic.action }}</td>
+                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{
+                                            extrinsic.action
+                                        }}
+                                    </td>
                                 </tr>
                             </table>
                         </b-table-column>
@@ -167,12 +179,14 @@
                                 size="is-small"
                                 type="is-primary"
                                 @click="showMinerForm(miner)"
-                            >Edit</b-button>
+                            >Edit
+                            </b-button>
                             <b-button
                                 size="is-small"
                                 type="is-danger"
                                 @click="deleteMiner(miner)"
-                            >Delete</b-button>
+                            >Delete
+                            </b-button>
                         </b-table-column>
                     </template>
                 </be-table>
@@ -199,9 +213,8 @@ import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
-import { ToastProgrammatic as Toast } from 'buefy';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { Ref, Prop } from 'vue-property-decorator';
+import { Ref } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 
 
@@ -236,7 +249,9 @@ export default class MinersView
 
     public async created()
     {
-        this.monitorApi.fetchMiners(this.miners);
+        this.isLoading = true;
+        await this.monitorApi.fetchMiners(this.miners);
+        this.isLoading = false;
     }
 
     protected showMinerForm(miner : Miner)
@@ -256,7 +271,7 @@ export default class MinersView
     {
         this.isMinerFormModalVisible = false;
         if (miner) {
-            const newMiners = this.miners.filter(_miner => _miner.id === miner.id)
+            const newMiners = this.miners.filter(_miner => _miner.id === miner.id);
             this.monitorApi.fetchMiners(newMiners);
         }
     }
@@ -284,6 +299,7 @@ export default class MinersView
             height: 1.5em;
             padding: 0 8px;
         }
+
         td {
             vertical-align: middle;
         }
@@ -295,6 +311,7 @@ export default class MinersView
                 color: $grey;
             }
         }
+
         &--cell-top {
             vertical-align: top !important;
         }
@@ -307,7 +324,7 @@ export default class MinersView
         align-items: center;
 
         &--address {
-            .miner-icon {
+            .account-icon {
                 cursor: pointer;
             }
 
@@ -333,6 +350,7 @@ export default class MinersView
             font-size: 0.7rem;
             border: none;
         }
+
         td:first-child {
             padding-left: 0;
             text-align: right;

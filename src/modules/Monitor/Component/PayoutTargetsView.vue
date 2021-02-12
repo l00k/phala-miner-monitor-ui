@@ -2,13 +2,14 @@
     <div class="card mb-4 accounts-view">
         <header class="card-header">
             <div class="card-header-title is-justify-content-space-between">
-                <span>{{ type | ucfirst }} accounts</span>
+                <span>Payout Targets</span>
                 <b-button
                     size="is-small"
                     type="is-success"
                     class="is-pulled-right"
                     @click="showAccountForm()"
-                >Add account</b-button>
+                >Add payout target
+                </b-button>
             </div>
         </header>
         <div class="card-content">
@@ -22,6 +23,16 @@
                 >
                     <template slot-scope="{ row: account }">
                         <b-table-column
+                            field="name"
+                            label="Name"
+                            :sortable="true"
+                        >
+                            <div class="account-name">
+                                <span>{{ account.name }}</span>
+                            </div>
+                        </b-table-column>
+
+                        <b-table-column
                             field="address"
                             label="Address"
                             :sortable="true"
@@ -34,16 +45,6 @@
                                     :data-clipboard-text="account.address"
                                 />
                                 <span>{{ account.address | formatAddress }}</span>
-                            </div>
-                        </b-table-column>
-
-                        <b-table-column
-                            field="name"
-                            label="Name"
-                            :sortable="true"
-                        >
-                            <div class="account-name">
-                                <span>{{ account.name }}</span>
                             </div>
                         </b-table-column>
 
@@ -64,30 +65,14 @@
                         >
                             {{ account.fire | formatCoin }}
                         </b-table-column>
-                        <b-table-column
-                            field="fireMined"
-                            label="Fire mined"
-                            :sortable="true"
-                            :numeric="true"
-                        >
-                            {{ account.fireMined | formatCoin }}
-                        </b-table-column>
 
-                        <b-table-column
-                            field="lastUpdate"
-                            label="Last update"
-                            :sortable="true"
-                            :datatype="true"
-                        >
-                            <span>{{ account.lastUpdate | formatDatetime }}</span>
-                        </b-table-column>
                         <b-table-column
                             label="Last extrinsics"
                         >
                             <table class="records-table">
                                 <tr v-for="extrinsic of account.extrinsics">
                                     <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}" >{{ extrinsic.action }}</td>
+                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
                                 </tr>
                             </table>
                         </b-table-column>
@@ -99,16 +84,7 @@
                                 <tr v-for="reward of account.receivedRewards">
                                     <td :title="reward.date | formatDatetime">{{ reward.date | formatTime }}</td>
                                     <td>{{ reward.fire | formatCoin }}</td>
-                                </tr>
-                            </table>
-                        </b-table-column>
-                        <b-table-column
-                            label="Last rewards"
-                        >
-                            <table class="records-table">
-                                <tr v-for="reward of account.minedRewards">
-                                    <td :title="reward.date | formatDatetime">{{ reward.date | formatTime }}</td>
-                                    <td>{{ reward.fire | formatCoin }}</td>
+                                    <td>{{ reward.reason }}</td>
                                 </tr>
                             </table>
                         </b-table-column>
@@ -121,17 +97,20 @@
                                 size="is-small"
                                 type="is-primary"
                                 @click="showAccountForm(account)"
-                            >Edit</b-button>
+                            >Edit
+                            </b-button>
                             <b-button
                                 size="is-small"
                                 type="is-danger"
                                 @click="deleteAccount(account)"
-                            >Delete</b-button>
+                            >Delete
+                            </b-button>
                             <b-button
                                 size="is-small"
                                 type="is-light"
                                 @click="findMiners(account)"
-                            >Find miners</b-button>
+                            >Find miners
+                            </b-button>
                         </b-table-column>
                     </template>
                 </be-table>
@@ -144,7 +123,7 @@
         >
             <AccountFormView
                 ref="accountFormView"
-                @submit="hideAccountForm"
+                @account:save="hideAccountForm"
             />
         </b-modal>
     </div>
@@ -153,6 +132,7 @@
 <script lang="ts">
 import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
 import Account from '#/Monitor/Model/Account';
+import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
@@ -160,7 +140,7 @@ import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
 import { ToastProgrammatic as Toast } from 'buefy';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { Ref, Prop } from 'vue-property-decorator';
+import { Ref } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 
 
@@ -195,7 +175,9 @@ export default class PayoutTargetsView
 
     public async created()
     {
-        //this.monitorApi.fetchAccounts(this.accounts);
+        this.isLoading = true;
+        await this.monitorApi.fetchAccounts(this.accounts);
+        this.isLoading = false;
     }
 
     protected showAccountForm(account : Account)
@@ -215,8 +197,8 @@ export default class PayoutTargetsView
     {
         this.isAccountFormModalVisible = false;
         if (account) {
-            const newAccounts = this.accounts.filter(_account => _account.id === account.id)
-            //this.monitorApi.fetchAccounts(newAccounts);
+            const newAccounts = this.accounts.filter(_account => _account.id === account.id);
+            this.monitorApi.fetchAccounts(newAccounts);
         }
     }
 
@@ -245,32 +227,29 @@ export default class PayoutTargetsView
             return;
         }
 
-        const oldMinerAddresses = Account.findAll<Account>()
-            .map(account => account.address);
+        const oldMinerAddresses = Miner.findAll<Miner>()
+            .map(miner => miner.controllerAccount.address);
 
-        const foundMinerAddresses = await this.monitorApi.findMinersByPayoutTarget(account);
-        const newMinerAddresses = foundMinerAddresses
-            //.filter(_foundMinerAddress => oldMinerAddresses.indexOf(_foundMinerAddress) === -1);
+        const foundMiners : Miner[] = await this.monitorApi.findMinersByPayoutTarget(account);
+        const newMiners : Miner[] = foundMiners
+            .filter(_foundMiner => oldMinerAddresses.indexOf(_foundMiner.controllerAccount.address) === -1);
 
-        if (newMinerAddresses.length) {
+
+        if (newMiners.length) {
             const confirmed = await this.confirm({
                 title: 'Find miners',
-                message: `${newMinerAddresses.length} new miners has been found. Would you like to add them?`,
+                message: `${ newMiners.length } new miners has been found. Would you like to add them?`,
                 confirmText: 'Add miners',
                 type: 'is-success',
             });
 
             if (confirmed) {
-                for (const address of newMinerAddresses) {
-                    const account = new Account({
-                        address,
-                        isMiner: true,
-                    });
-                    Account.persist(account);
+                for (const miner of newMiners) {
+                    Miner.persist(miner);
                 }
 
                 Toast.open({
-                    message: `${newMinerAddresses.length} new miners addded`,
+                    message: `${ newMiners.length } new miners addded`,
                     type: 'is-success',
                     position: 'is-bottom-right',
                 });
@@ -295,15 +274,21 @@ export default class PayoutTargetsView
             height: 1.5em;
             padding: 0 8px;
         }
+
         td {
             vertical-align: middle;
         }
     }
 
-    .account-name {
-        span {
-            margin-right: 10px;
-            vertical-align: middle;
+    .accounts-list {
+        &__row--loading {
+            td {
+                color: $grey;
+            }
+        }
+
+        &--cell-top {
+            vertical-align: top !important;
         }
     }
 
@@ -313,9 +298,10 @@ export default class PayoutTargetsView
         }
 
         span {
+            display: inline-block;
             height: 32px;
             line-height: 32px;
-            margin: 0 0 0 10px !important;;
+            margin-left: 20px;
         }
 
         svg {
@@ -323,28 +309,27 @@ export default class PayoutTargetsView
         }
     }
 
-    .account-list {
-        &__row--loading {
-            td {
-                color: $grey;
-            }
-        }
-    }
-}
-
-.content {
     .records-table {
+        margin: 0 !important;
         width: auto;
 
         td {
-            padding: 0;
+            padding: 0 0 0 10px;
             font-size: 0.7rem;
             border: none;
         }
-        td:last-child {
-            padding-left: 10px;
+
+        td:first-child {
+            padding-left: 0;
             text-align: right;
         }
+    }
+
+    hr {
+        margin: 5px 20%;
+        width: 60%;
+        height: 1px;
+        background-color: #555;
     }
 }
 

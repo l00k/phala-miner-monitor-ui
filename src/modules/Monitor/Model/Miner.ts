@@ -1,4 +1,3 @@
-import Extrinsic from '#/Monitor/Model/Extrinsic';
 import Account from '#/Monitor/Model/Account';
 import Reward from '#/Monitor/Model/Reward';
 import { Model, AbstractModel } from '@/core/Store';
@@ -7,13 +6,14 @@ import gql from 'graphql-tag';
 
 
 export const Fragments = {
-    MinerDefaultData: gql`
+    DefaultData: gql`
 fragment MinerDefaultData on Miner {
     id,
     controllerAccount {
         address,
         balance,
         fire,
+        stake,
         extrinsics {
             date,
             action,
@@ -24,6 +24,7 @@ fragment MinerDefaultData on Miner {
         address,
         balance,
         fire,
+        stake,
         extrinsics {
             date,
             action,
@@ -32,7 +33,6 @@ fragment MinerDefaultData on Miner {
     }
     fireMined,
     score,
-    stake,
     state,
     commission,
     minedRewards {
@@ -42,7 +42,7 @@ fragment MinerDefaultData on Miner {
     }
 }
 `
-}
+};
 
 
 @Model('Monitor/Miner')

@@ -43,22 +43,20 @@ export default class FormView
 {
 
     @Inject()
-    protected monitorApi : MonitorApi = null;
+    protected monitorApi : MonitorApi;
 
     protected miner : Miner = new Miner();
 
     public setMiner(miner : Miner)
     {
         this.miner = miner;
-        this.miner.controllerAccount.address = '45y1d6i4Q2Fv24W6NwYFDveZQ6szpm4swwC581RV2jSTq1fg';
-        this.miner.name = 'sample';
     }
 
     protected async submit()
     {
         const isNew = !this.miner['@id'];
 
-        const result = await this.monitorApi.fetchMinerByController(this.miner);
+        const result = await this.monitorApi.fetchNewMiner(this.miner);
         if (result) {
             Miner.persist(this.miner);
 

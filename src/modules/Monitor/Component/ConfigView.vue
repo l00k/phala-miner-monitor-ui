@@ -10,22 +10,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Ref } from 'vue-property-decorator';
-import { namespace } from 'vuex-class';
-
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
+import { Component } from 'vue-property-decorator';
+
 
 declare const window;
 
 @Component({
-    components: {
-    }
+    components: {}
 })
 export default class ConfigView
     extends BaseComponent
 {
 
-    public get buildInfo(): string
+    public get buildInfo() : string
     {
         return window.appData.buildInfo;
     }

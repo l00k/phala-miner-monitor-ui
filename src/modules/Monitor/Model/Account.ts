@@ -2,7 +2,30 @@ import Extrinsic from '#/Monitor/Model/Extrinsic';
 import Reward from '#/Monitor/Model/Reward';
 import { Model, AbstractModel } from '@/core/Store';
 import { Property } from '@100k/intiv/Initializable';
+import gql from 'graphql-tag';
 
+
+export const Fragments = {
+    DefaultData: gql`
+fragment AccountDefaultData on Account {
+    id,
+    address,
+    balance,
+    fire,
+    stake,
+    extrinsics {
+        date,
+        action,
+        isSuccessful
+    },
+    receivedRewards {
+        date,
+        fire,
+        reason
+    }
+}
+`
+};
 
 @Model('Monitor/Account')
 export default class Account

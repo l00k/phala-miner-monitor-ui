@@ -1,13 +1,8 @@
 <template>
     <div class="account-form">
-        <be-block title="Account form">
+        <be-block title="Payout Target form">
             <template>
                 <form @submit.prevent="submit">
-                    <b-field class="mb-4">
-                        <b-checkbox v-model="account.isMiner">Miner</b-checkbox>
-                        <b-checkbox v-model="account.isPayoutTarget">Payout Target</b-checkbox>
-                    </b-field>
-
                     <b-field label="Address" label-position="on-border">
                         <b-input v-model="account.address"></b-input>
                     </b-field>
@@ -21,7 +16,8 @@
                             type="is-primary"
                             class="is-pulled-right"
                             @click="submit"
-                        >Save</b-button>
+                        >Save
+                        </b-button>
                     </div>
                 </form>
 
@@ -31,14 +27,13 @@
 </template>
 
 <script lang="ts">
-import { Component } from '@/core/Vue/Annotations';
-import { ToastProgrammatic as Toast } from 'buefy';
-import { Prop } from 'vue-property-decorator';
-import { namespace } from 'vuex-class';
-
-import BaseComponent from '@/core/Vue/BaseComponent.vue';
-
 import Account from '#/Monitor/Model/Account';
+import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import { Component } from '@/core/Vue/Annotations';
+import BaseComponent from '@/core/Vue/BaseComponent.vue';
+import { Inject } from '@100k/intiv/ObjectManager/index';
+import { ToastProgrammatic as Toast } from 'buefy';
+import { namespace } from 'vuex-class';
 
 
 const AccountStore = namespace('Monitor/Account');
@@ -48,6 +43,9 @@ export default class FormView
     extends BaseComponent
 {
 
+    @Inject()
+    protected monitorApi : MonitorApi;
+
     protected account : Account = new Account();
 
     public setAccount(account : Account)
@@ -55,18 +53,23 @@ export default class FormView
         this.account = account;
     }
 
-    protected submit()
+    protected async submit()
     {
-        const isNew = !this.account.id;
-        Account.persist(this.account)
+        const isNew = !this.account['@id'];
 
-        Toast.open({
-            message: isNew ? 'Created!' : 'Saved!',
-            type: 'is-success',
-            position: 'is-bottom-right',
-        });
+        const result = await this.monitorApi.fetchNewAccount(this.account);
+        if (result) {
+            Account.persist(this.account);
 
-        this.$emit('submit', this.account);
+            Toast.open({
+                message: isNew ? 'Created!' : 'Saved!',
+                type: 'is-success',
+                position: 'is-bottom-right',
+            });
+
+            this.$emit('account:save', this.account);
+            this.$emit(isNew ? 'account:created' : 'account:updated', this.account);
+        }
     }
 
 }
