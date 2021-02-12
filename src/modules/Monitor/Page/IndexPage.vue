@@ -47,10 +47,8 @@ export default class IndexPage
 
     public async created()
     {
-        super.created();
-
         if (this.storageBuildVersion !== this.buildVersion) {
-            const confirm = this.confirm({
+            const confirm = await this.confirm({
                 title: 'Outdated',
                 message: 'Your storage date is outdated. Monitor may not work properly. Do you want to clear this data?'
             });
