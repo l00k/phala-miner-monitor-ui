@@ -34,5 +34,31 @@ const AccountStore = namespace('Monitor/Account');
 export default class IndexPage
     extends BaseComponent
 {
+
+    @ConfigStore.State('storageBuildVersion')
+    protected storageBuildVersion : string;
+
+    public get buildVersion() : string
+    {
+        return window.appData.buildVersion;
+    }
+
+    public async created()
+    {
+        super.created();
+
+        if (this.storageBuildVersion !== this.buildVersion) {
+            const confirm = this.confirm({
+                title: 'Outdated',
+                message: 'Your storage date is outdated. Monitor may not work properly. Do you want to clear this data?'
+            });
+
+            if (confirm) {
+                window.localStorage.clear();
+                window.location.reload();
+            }
+        }
+    }
+
 }
 </script>

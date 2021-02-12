@@ -31,7 +31,7 @@ function generateUniqueBuildInfo () {
     return 'v' + moment().format('YYYY.MM.DD.HHmmss') + '-' + random
 }
 
-const env = process.env.NODE_ENV || 'production'
+const env = process.env.NODE_ENV || 'production';
 
 module.exports = {
     runtimeCompiler: true,
@@ -65,9 +65,11 @@ module.exports = {
             port: 4000
         }
 
+        const buildVersion = generateUniqueBuildInfo();
+
         const appData = JSON.stringify({
             apiUrl: 'https://phala-miner-monitor2.100k.dev:8084/graphql',
-            buildInfo: generateUniqueBuildInfo(),
+            buildVersion,
         })
 
         config.plugins.push(

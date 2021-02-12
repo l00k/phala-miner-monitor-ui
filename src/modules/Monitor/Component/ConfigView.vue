@@ -3,7 +3,7 @@
         <header class="card-header">
             <div class="card-header-title is-justify-content-space-between">
                 <div class="app-name">Phala account monitor</div>
-                <div class="build-info">{{ buildInfo }}</div>
+                <div class="build-info">{{ buildVersion }}</div>
             </div>
         </header>
     </div>
@@ -23,9 +23,9 @@ export default class ConfigView
     extends BaseComponent
 {
 
-    public get buildInfo() : string
+    public get buildVersion() : string
     {
-        return window.appData.buildInfo;
+        return window.appData.buildVersion;
     }
 
 }

@@ -14,6 +14,8 @@ export default class ContextStore
     extends VuexModule<ContextStore>
 {
 
+    public storageBuildVersion : string;
+
     public visibleColumns : string[] = [
         'name',
         'address',
