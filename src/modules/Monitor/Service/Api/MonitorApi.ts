@@ -45,9 +45,6 @@ ${Fragments.MinerDefaultData}
             }
         }
 
-        console.dir(rawMiners)
-        console.dir(miners)
-
         return true;
     }
 
