@@ -31,7 +31,7 @@ export default class StoreManager
                     const Type = <any> value.constructor;
                     const modelName = Type.modelName;
                     if (modelName) {
-                        value['__modelName'] = modelName;
+                        value['@modelName'] = modelName;
                     }
                 }
 
@@ -52,9 +52,9 @@ export default class StoreManager
         for (const property in object) {
             const value = object[property];
             if (value instanceof Object) {
-                const modelName = value['__modelName'];
+                const modelName = value['@modelName'];
                 if (modelName) {
-                    delete value['__modelName'];
+                    delete value['@modelName'];
                     const Model = this.models[modelName];
                     object[property] = new Model();
                     object[property].setData(value);

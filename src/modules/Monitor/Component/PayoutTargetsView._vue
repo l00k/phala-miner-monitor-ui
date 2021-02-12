@@ -57,7 +57,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="type === AccountType.PayoutTarget"
                             field="fire"
                             label="Fire"
                             :sortable="true"
@@ -66,7 +65,6 @@
                             {{ account.fire | formatCoin }}
                         </b-table-column>
                         <b-table-column
-                            v-if="type === AccountType.Miner"
                             field="fireMined"
                             label="Fire mined"
                             :sortable="true"
@@ -76,7 +74,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="type === AccountType.PayoutTarget"
                             field="lastUpdate"
                             label="Last update"
                             :sortable="true"
@@ -85,7 +82,6 @@
                             <span>{{ account.lastUpdate | formatDatetime }}</span>
                         </b-table-column>
                         <b-table-column
-                            v-if="type === AccountType.Miner"
                             label="Last extrinsics"
                         >
                             <table class="records-table">
@@ -97,7 +93,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="type === AccountType.PayoutTarget"
                             label="Last rewards"
                         >
                             <table class="records-table">
@@ -108,7 +103,6 @@
                             </table>
                         </b-table-column>
                         <b-table-column
-                            v-if="type === AccountType.Miner"
                             label="Last rewards"
                         >
                             <table class="records-table">
@@ -134,7 +128,6 @@
                                 @click="deleteAccount(account)"
                             >Delete</b-button>
                             <b-button
-                                v-if="type === AccountType.PayoutTarget"
                                 size="is-small"
                                 type="is-light"
                                 @click="findMiners(account)"
@@ -159,7 +152,7 @@
 
 <script lang="ts">
 import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
-import Account, { AccountType } from '#/Monitor/Model/Account';
+import Account from '#/Monitor/Model/Account';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
@@ -181,14 +174,9 @@ const AccountStore = namespace('Monitor/Account');
         Identicon,
     }
 })
-export default class AccountsView
+export default class PayoutTargetsView
     extends BaseComponent
 {
-
-    protected AccountType = AccountType;
-
-    @Prop()
-    protected type : AccountType;
 
     @Ref()
     protected accountFormView : AccountFormView;
@@ -202,13 +190,12 @@ export default class AccountsView
 
     protected get accounts() : Account[]
     {
-        return Account.findAll<Account>()
-            .filter(account => account.types.indexOf(this.type) !== -1);
+        return Account.findAll<Account>();
     }
 
     public async created()
     {
-        this.monitorApi.fetchAccounts(this.accounts);
+        //this.monitorApi.fetchAccounts(this.accounts);
     }
 
     protected showAccountForm(account : Account)
@@ -229,7 +216,7 @@ export default class AccountsView
         this.isAccountFormModalVisible = false;
         if (account) {
             const newAccounts = this.accounts.filter(_account => _account.id === account.id)
-            this.monitorApi.fetchAccounts(newAccounts);
+            //this.monitorApi.fetchAccounts(newAccounts);
         }
     }
 
@@ -259,12 +246,11 @@ export default class AccountsView
         }
 
         const oldMinerAddresses = Account.findAll<Account>()
-            .filter(account => account.types.indexOf(AccountType.Miner) !== -1)
             .map(account => account.address);
 
         const foundMinerAddresses = await this.monitorApi.findMinersByPayoutTarget(account);
         const newMinerAddresses = foundMinerAddresses
-            .filter(_foundMinerAddress => oldMinerAddresses.indexOf(_foundMinerAddress) === -1);
+            //.filter(_foundMinerAddress => oldMinerAddresses.indexOf(_foundMinerAddress) === -1);
 
         if (newMinerAddresses.length) {
             const confirmed = await this.confirm({

@@ -38,7 +38,7 @@ import { namespace } from 'vuex-class';
 
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 
-import Account, { AccountType } from '#/Monitor/Model/Account';
+import Account from '#/Monitor/Model/Account';
 
 
 const AccountStore = namespace('Monitor/Account');
@@ -47,8 +47,6 @@ const AccountStore = namespace('Monitor/Account');
 export default class FormView
     extends BaseComponent
 {
-
-    protected AccountType = AccountType;
 
     protected account : Account = new Account();
 

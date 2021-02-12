@@ -1,7 +1,9 @@
+import Account from '#/Monitor/Model/Account';
+import Miner, { Fragments } from '#/Monitor/Model/Miner';
 import { Singleton, Inject } from '@100k/intiv/ObjectManager';
 import { ApolloClient, InMemoryCache } from '@apollo/client/core';
-import gql from 'graphql-tag'
-import Account from '#/Monitor/Model/Account'
+import gql from 'graphql-tag';
+
 
 @Singleton()
 export default class MonitorApi
@@ -10,60 +12,82 @@ export default class MonitorApi
     @Inject('apollo')
     protected apollo : ApolloClient<InMemoryCache>;
 
-    public async fetchAccounts(accounts : Account[] = []) : Promise<void>
-    {
-        const addresses = accounts
-            .map(account => account.address)
-            .filter(address => !!address);
 
-        if (!addresses.length) {
-            return;
+    public async fetchMiners(miners : Miner[] = []) : Promise<boolean>
+    {
+        const ids = miners
+            .map(miner => parseInt(miner.id))
+            .filter(id => !!id);
+
+        if (!ids.length) {
+            return true;
         }
 
-        const addressesJson = JSON.stringify(addresses);
+        const idJson = JSON.stringify(ids);
 
-        const { data: { getAccounts: rawAccounts } } = await this.apollo.query({
-            query: gql`query {
-getAccounts(addresses: ${addressesJson}) {
-    address,
-    balance,
-    fire,
-    fireMined,
-    lastUpdate,
-    isPayoutTarget,
-    isMiner,
-    extrinsics {
-        date,
-        action,
-        isSuccessful
-    },
-    minedRewards {
-        date,
-        fire
-    },
-    receivedRewards {
-        date,
-        fire
-    }
+        const { data: { getMiners: rawMiners } } = await this.apollo.query({
+            query: gql`
+query { 
+    getMiners(ids: ${ idJson }) { ...MinerDefaultData }
 }
-            }`
+${Fragments.MinerDefaultData}
+            `
         });
 
-        for (const rawAcocunt of rawAccounts) {
-            const account = accounts.find(_account => _account.address === rawAcocunt.address);
-            if (account) {
-                account.setData(rawAcocunt);
+        if (!rawMiners || !rawMiners.length) {
+            return false;
+        }
+
+        for (const rawMiner of rawMiners) {
+            const miner = miners.find(_miner => _miner.id === rawMiner.id);
+            if (miner) {
+                miner.setData(rawMiner);
             }
         }
+
+        console.dir(rawMiners)
+        console.dir(miners)
+
+        return true;
     }
 
-    public async findMinersByPayoutTarget(account : Account) : Promise<string[]>
+
+    public async fetchMinerByController(miner : Miner) : Promise<boolean>
     {
-        const { data: { getMinersByPayoutTarget: rawAccounts } } = await this.apollo.query({
-            query: gql`query { getMinersByPayoutTarget(payoutTarget: "${account.address}") { address } }`
+        const { data: { getMinerByController: rawMiner } } = await this.apollo.query({
+            query: gql`
+query { 
+    getMinerByController(address: "${ miner.controllerAccount.address }") { ...MinerDefaultData }
+}
+${Fragments.MinerDefaultData}
+            `
         });
 
-        return rawAccounts.map(rawAccount => rawAccount.address);
+        if (!rawMiner) {
+            return false;
+        }
+
+        miner.setData(rawMiner);
+        return true;
+    }
+
+
+    public async findMinersByPayoutTarget(account : Account) : Promise<Miner[]>
+    {
+        const { data: { getMinersByPayoutTarget: rawMiners } } = await this.apollo.query({
+            query: gql`
+query { 
+    getMinersByPayoutTarget(address: "${ account.address }") { ...MinerDefaultData }
+}
+${Fragments.MinerDefaultData}
+            `
+        });
+
+        if (!rawMiners || rawMiners.length) {
+            return [];
+        }
+
+        return rawMiners.map(rawMiner => new Miner(rawMiner));
     }
 
 }

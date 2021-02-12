@@ -1,14 +1,7 @@
 import Extrinsic from '#/Monitor/Model/Extrinsic';
 import Reward from '#/Monitor/Model/Reward';
 import { Model, AbstractModel } from '@/core/Store';
-import { Initialize, Property } from '@100k/intiv/Initializable';
-
-
-export enum AccountType
-{
-    PayoutTarget = 'payoutTarget',
-    Miner = 'miner',
-}
+import { Property } from '@100k/intiv/Initializable';
 
 
 @Model('Monitor/Account')
@@ -20,9 +13,6 @@ export default class Account
     public address : string;
 
     @Property()
-    public lastUpdate : Date;
-
-    @Property()
     public name : string = '';
 
     @Property()
@@ -31,35 +21,14 @@ export default class Account
     @Property()
     public fire : number = 0;
 
-    @Property()
-    public fireMined : number = 0;
-
-    @Property()
-    public isPayoutTarget : boolean = false;
-
-    @Property()
-    public isMiner : boolean = false;
-
-    @Property({ arrayOf: Reward })
-    public minedRewards : Reward[] = [];
+    @Property({ arrayOf: Extrinsic })
+    public extrinsics : Extrinsic[] = [];
 
     @Property({ arrayOf: Reward })
     public receivedRewards : Reward[] = [];
 
-    @Property({ arrayOf: Extrinsic })
-    public extrinsics : Extrinsic[] = [];
-
-    public get types() : AccountType[]
-    {
-        const types = [];
-        if (this.isPayoutTarget) {
-            types.push(AccountType.PayoutTarget);
-        }
-        if (this.isMiner) {
-            types.push(AccountType.Miner);
-        }
-        return types;
-    }
+    @Property()
+    public updatedAt : Date;
 
     public constructor(data? : Partial<Account>)
     {

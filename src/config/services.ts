@@ -13,16 +13,14 @@ export default {
         });
     },
     clipboard: () => {
-        document.onload = function() {
-            const clipboard = new Clipboard('.js-clipboard');
+        const clipboard = new Clipboard('.js-clipboard');
 
-            clipboard.on('success', function(e) {
-                Toast.open({
-                    message: 'Copied!',
-                    type: 'is-success',
-                    position: 'is-bottom-right',
-                });
+        clipboard.on('success', function(e) {
+            Toast.open({
+                message: 'Copied!',
+                type: 'is-success',
+                position: 'is-bottom-right',
             });
-        }
+        });
     }
 };

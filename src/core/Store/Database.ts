@@ -54,11 +54,11 @@ export default class Database
 
         const table = this.tables[model.modelName];
 
-        if (!object.id) {
-            object.id = uuidv4();
+        if (!object['@id']) {
+            object['@id'] = uuidv4();
         }
 
-        const existing = table.find(_object => _object.id === object.id);
+        const existing = table.find(_object => _object['@id'] === object['@id']);
         if (existing) {
             Object.assign(existing, object);
         }
