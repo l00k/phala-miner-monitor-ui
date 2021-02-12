@@ -46,6 +46,8 @@
                     :data="miners"
                     :loading="isLoading"
                     class="miners-list"
+                    default-sort="score"
+                    default-sort-direction="desc"
                     :key="tableKey"
                 >
                     <template slot-scope="{ row: miner }">

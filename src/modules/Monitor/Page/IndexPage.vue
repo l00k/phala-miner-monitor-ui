@@ -48,16 +48,15 @@ export default class IndexPage
     {
         const storageBuildVersion = window.localStorage.getItem('storageBuildVersion');
         if (storageBuildVersion !== this.buildVersion) {
-            const confirm = await this.confirm({
-                title: 'Outdated',
-                message: 'Your storage date is outdated. Monitor may not work properly. Do you want to clear this data?'
+            this.$buefy.snackbar.open({
+                message: 'Your local storage version seems to be updated. It may happen monitor will not work properly. In such case try to clear local storage (check config section)',
+                type: 'is-warning',
+                position: 'is-top',
+                actionText: 'Hide',
+                indefinite: true,
             });
 
-            if (confirm) {
-                window.localStorage.clear();
-                window.localStorage.setItem('storageBuildVersion', this.buildVersion);
-                window.location.reload();
-            }
+            window.localStorage.setItem('storageBuildVersion', this.buildVersion);
         }
     }
 
