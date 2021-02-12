@@ -37,8 +37,7 @@ export default class IndexPage
     extends BaseComponent
 {
 
-    @ConfigStore.State('storageBuildVersion')
-    protected storageBuildVersion : string;
+    protected  : string;
 
     public get buildVersion() : string
     {
@@ -47,7 +46,8 @@ export default class IndexPage
 
     public async created()
     {
-        if (this.storageBuildVersion !== this.buildVersion) {
+        const storageBuildVersion = window.localStorage.getItem('storageBuildVersion');
+        if (storageBuildVersion !== this.buildVersion) {
             const confirm = await this.confirm({
                 title: 'Outdated',
                 message: 'Your storage date is outdated. Monitor may not work properly. Do you want to clear this data?'
@@ -55,7 +55,7 @@ export default class IndexPage
 
             if (confirm) {
                 window.localStorage.clear();
-                this.$store.dispatch('Monitor/Config/setStorageBuildVersion', this.buildVersion);
+                window.localStorage.setItem('storageBuildVersion', this.buildVersion);
                 window.location.reload();
             }
         }

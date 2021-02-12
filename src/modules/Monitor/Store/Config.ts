@@ -15,8 +15,6 @@ export default class ContextStore
     extends VuexModule<ContextStore>
 {
 
-    public storageBuildVersion : string;
-
     public visibleColumns : string[] = [
         'name',
         'address',
@@ -29,12 +27,6 @@ export default class ContextStore
         'lastExtrinsics',
         'lastRewards'
     ];
-
-    @MutationAction({ mutate: [ 'storageBuildVersion' ] })
-    public async setStorageBuildVersion(storageBuildVersion : string)
-    {
-        return { storageBuildVersion };
-    }
 
     @MutationAction({ mutate: [ 'visibleColumns' ] })
     public async setVisibleColumns(visibleColumns)
