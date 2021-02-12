@@ -1,7 +1,8 @@
 import App from '@/core/App';
 import { StoreManager } from '@/core/Store';
 import { ObjectManager } from '@100k/intiv/ObjectManager';
-import { Module, VuexModule, Mutation, MutationAction } from 'vuex-module-decorators';
+import { Module, VuexModule, MutationAction } from 'vuex-module-decorators';
+
 
 @Module({
     dynamic: true,
@@ -29,12 +30,16 @@ export default class ContextStore
         'lastRewards'
     ];
 
+    @MutationAction({ mutate: [ 'storageBuildVersion' ] })
+    public async setStorageBuildVersion(storageBuildVersion : string)
+    {
+        return { storageBuildVersion };
+    }
+
     @MutationAction({ mutate: [ 'visibleColumns' ] })
     public async setVisibleColumns(visibleColumns)
     {
-        return {
-            visibleColumns
-        }
+        return { visibleColumns };
     }
 
 }

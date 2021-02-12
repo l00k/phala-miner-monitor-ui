@@ -55,6 +55,7 @@ export default class IndexPage
 
             if (confirm) {
                 window.localStorage.clear();
+                this.$store.dispatch('Monitor/Config/setStorageBuildVersion', this.buildVersion);
                 window.location.reload();
             }
         }
