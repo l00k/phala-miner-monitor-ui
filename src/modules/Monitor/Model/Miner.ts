@@ -75,9 +75,6 @@ export default class Miner
     public score : number;
 
     @Property()
-    public stake : number;
-
-    @Property()
     public commisson : number;
 
     @Property()

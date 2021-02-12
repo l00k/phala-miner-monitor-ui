@@ -44,6 +44,9 @@ export default class Account
     @Property()
     public fire : number = 0;
 
+    @Property()
+    public stake : number = 0;
+
     @Property({ arrayOf: Extrinsic })
     public extrinsics : Extrinsic[] = [];
 

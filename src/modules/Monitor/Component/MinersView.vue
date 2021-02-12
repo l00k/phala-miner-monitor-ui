@@ -132,11 +132,11 @@
                             cell-class="miners-list--cell"
                         >
                             <div class="miner-account miner-account--stake">
-                                {{ miner.controllerAccount.state | formatCoin }}
+                                {{ miner.controllerAccount.stake | formatCoin }}
                             </div>
                             <hr/>
                             <div class="miner-account miner-account--stake">
-                                {{ miner.stashAccount.state | formatCoin }}
+                                {{ miner.stashAccount.stake | formatCoin }}
                             </div>
                         </b-table-column>
 
@@ -211,7 +211,7 @@
                         <b-table-column
                             label="Actions"
                             width="50px"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list--cell-actions"
                         >
                             <b-button
                                 size="is-small"
@@ -247,8 +247,10 @@
 import MinerFormView from '#/Monitor/Component/Miner/FormView.vue';
 import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import { DatabaseUpdateEvent } from '@/core/Store/def';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
+import { EventBus } from '@100k/intiv/EventBus';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
 import cloneDeep from 'lodash-es/cloneDeep';
@@ -274,7 +276,10 @@ export default class MinersView
     protected minerFormView : MinerFormView;
 
     @Inject()
-    protected monitorApi : MonitorApi = null;
+    protected eventBus : EventBus;
+
+    @Inject()
+    protected monitorApi : MonitorApi;
 
 
     protected tableKey : number = 0;
@@ -283,19 +288,28 @@ export default class MinersView
 
     protected isLoading : boolean = false;
 
+    protected miners : Miner[] = [];
+
     @ConfigStore.State('visibleColumns')
     protected visibleColumns : string[];
 
-    protected get miners() : Miner[]
+
+    protected async loadMiners()
     {
-        return Miner.findAll<Miner>();
+        this.miners = Miner.findAll<Miner>();
+
+        this.isLoading = true;
+        await this.monitorApi.fetchMiners(this.miners);
+        this.isLoading = false;
     }
 
     public async created()
     {
-        this.isLoading = true;
-        await this.monitorApi.fetchMiners(this.miners);
-        this.isLoading = false;
+        this.eventBus.on('database:update', (data) => {
+            this.loadMiners();
+        });
+
+        this.loadMiners();
     }
 
     protected showMinerForm(miner : Miner)
@@ -336,8 +350,8 @@ export default class MinersView
     @Watch('visibleColumns')
     protected onColumnsChange()
     {
-        ++this.tableKey;
         this.$store.dispatch('Monitor/Config/setVisibleColumns', this.visibleColumns);
+        ++this.tableKey;
     }
 
 }
@@ -365,6 +379,9 @@ export default class MinersView
 
         &--cell-top {
             vertical-align: top !important;
+        }
+        &--cell-actions{
+            text-align: right;
         }
     }
 

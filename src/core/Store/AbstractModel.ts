@@ -1,6 +1,8 @@
 import App from '@/core/App';
+import { EventBus } from '@100k/intiv/EventBus';
 import { Initializable } from '@100k/intiv/Initializable';
 import { ObjectManager } from '@100k/intiv/ObjectManager';
+import Vue from 'vue';
 import { Store as VuexStore } from 'vuex';
 import Database from './Database';
 
@@ -20,6 +22,11 @@ export default class AbstractModel<T>
         this.setData(data);
     }
 
+    public static getEventBus() : EventBus
+    {
+        return ObjectManager.getInstance(EventBus);
+    }
+
     public static getDatabase() : VuexStore<Database>
     {
         return ObjectManager.getInstance(App).getVuexStore();
@@ -37,20 +44,20 @@ export default class AbstractModel<T>
 
     public static persist<T>(object : T) : void
     {
-        return this.getDatabase()
-            .commit('Database/persist', { model: this, object });
+        this.getDatabase().commit('Database/persist', { model: this, object });
+        this.getEventBus().emit('database:update', { model: this, object });
     }
 
     public static delete<T>(object : T) : void
     {
-        return this.getDatabase()
-            .commit('Database/delete', { model: this, object });
+        this.getDatabase().commit('Database/delete', { model: this, object });
+        this.getEventBus().emit('database:update', { model: this, object });
     }
 
     public static truncate() : void
     {
-        return this.getDatabase()
-            .commit('Database/truncate', { model: this });
+        this.getDatabase().commit('Database/truncate', { model: this });
+        this.getEventBus().emit('database:update', { model: this });
     }
 
 }

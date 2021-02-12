@@ -92,6 +92,7 @@
                         <b-table-column
                             label="Actions"
                             width="50px"
+                            cell-class="accounts-list--cell-actions"
                         >
                             <b-button
                                 size="is-small"
@@ -136,6 +137,7 @@ import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
+import { EventBus } from '@100k/intiv/EventBus';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
 import { ToastProgrammatic as Toast } from 'buefy';
@@ -162,19 +164,25 @@ export default class PayoutTargetsView
     protected accountFormView : AccountFormView;
 
     @Inject()
-    protected monitorApi : MonitorApi = null;
+    protected monitorApi : MonitorApi;
+
 
     protected isAccountFormModalVisible : boolean = false;
 
     protected isLoading : boolean = false;
 
-    protected get accounts() : Account[]
+    protected accounts : Account[] = [];
+
+
+    protected loadAccounts()
     {
-        return Account.findAll<Account>();
+        this.accounts = Account.findAll<Account>();
     }
 
     public async created()
     {
+        this.loadAccounts();
+
         this.isLoading = true;
         await this.monitorApi.fetchAccounts(this.accounts);
         this.isLoading = false;
@@ -200,6 +208,8 @@ export default class PayoutTargetsView
             const newAccounts = this.accounts.filter(_account => _account.id === account.id);
             this.monitorApi.fetchAccounts(newAccounts);
         }
+
+        this.loadAccounts();
     }
 
     protected deleteAccount(account : Account)
@@ -233,7 +243,6 @@ export default class PayoutTargetsView
         const foundMiners : Miner[] = await this.monitorApi.findMinersByPayoutTarget(account);
         const newMiners : Miner[] = foundMiners
             .filter(_foundMiner => oldMinerAddresses.indexOf(_foundMiner.controllerAccount.address) === -1);
-
 
         if (newMiners.length) {
             const confirmed = await this.confirm({
@@ -289,6 +298,9 @@ export default class PayoutTargetsView
 
         &--cell-top {
             vertical-align: top !important;
+        }
+        &--cell-actions {
+            text-align: right;
         }
     }
 
