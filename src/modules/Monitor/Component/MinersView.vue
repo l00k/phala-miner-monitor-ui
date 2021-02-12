@@ -15,14 +15,42 @@
         <div class="card-content">
             <div class="content">
 
+                <div class="has-text-right">
+                    <b-dropdown
+                        v-model="visibleColumns"
+                        multiple
+                    >
+                        <template #trigger>
+                            <b-button
+                                type="is-primary is-small"
+                                icon-right="menu-down">
+                                Show columns ({{ visibleColumns.length }})
+                            </b-button>
+                        </template>
+
+                        <b-dropdown-item value="name">Name</b-dropdown-item>
+                        <b-dropdown-item value="address">Address</b-dropdown-item>
+                        <b-dropdown-item value="score">Score</b-dropdown-item>
+                        <b-dropdown-item value="state">State</b-dropdown-item>
+                        <b-dropdown-item value="commission">Commission</b-dropdown-item>
+                        <b-dropdown-item value="stake">Stake</b-dropdown-item>
+                        <b-dropdown-item value="balance">Balance</b-dropdown-item>
+                        <b-dropdown-item value="fireMined">Fire Mined</b-dropdown-item>
+                        <b-dropdown-item value="lastExtrinsics">Last Extrinsics</b-dropdown-item>
+                        <b-dropdown-item value="lastRewards">Last Rewards</b-dropdown-item>
+                    </b-dropdown>
+                </div>
+
                 <be-table
                     ref="miners"
                     :data="miners"
                     :loading="isLoading"
                     class="miners-list"
+                    :key="tableKey"
                 >
                     <template slot-scope="{ row: miner }">
                         <b-table-column
+                            v-if="visibleColumns.indexOf('name') !== -1"
                             field="name"
                             label="Name"
                             :sortable="true"
@@ -32,7 +60,7 @@
                         </b-table-column>
 
                         <b-table-column
-                            field="address"
+                            v-if="visibleColumns.indexOf('address') !== -1"
                             label="Address"
                             :sortable="true"
                             cell-class="miners-list--cell-top"
@@ -67,6 +95,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('score') !== -1"
                             field="score"
                             label="Score"
                             :numeric="true"
@@ -76,6 +105,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('state') !== -1"
                             field="state"
                             label="State"
                             cell-class="miners-list--cell"
@@ -84,6 +114,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('commission') !== -1"
                             field="commission"
                             label="Commission"
                             :numeric="true"
@@ -93,6 +124,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('stake') !== -1"
                             label="Stake"
                             :numeric="true"
                             cell-class="miners-list--cell"
@@ -107,6 +139,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('balance') !== -1"
                             field="balance"
                             label="Balance"
                             :sortable="true"
@@ -123,6 +156,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('fireMined') !== -1"
                             field="fireMined"
                             label="Fire mined"
                             :sortable="true"
@@ -133,6 +167,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('lastExtrinsics') !== -1"
                             label="Last extrinsics"
                             cell-class="miners-list--cell-top"
                         >
@@ -158,6 +193,7 @@
                         </b-table-column>
 
                         <b-table-column
+                            v-if="visibleColumns.indexOf('lastRewards') !== -1"
                             label="Last rewards"
                             cell-class="miners-list--cell"
                         >
@@ -214,13 +250,13 @@ import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { Ref } from 'vue-property-decorator';
+import { Ref, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 
 
 declare const window;
 
-const MinerStore = namespace('Monitor/Miner');
+const ConfigStore = namespace('Monitor/Config');
 
 @Component({
     components: {
@@ -238,9 +274,15 @@ export default class MinersView
     @Inject()
     protected monitorApi : MonitorApi = null;
 
+
+    protected tableKey : number = 0;
+
     protected isMinerFormModalVisible : boolean = false;
 
     protected isLoading : boolean = false;
+
+    @ConfigStore.State('visibleColumns')
+    protected visibleColumns : string[];
 
     protected get miners() : Miner[]
     {
@@ -289,6 +331,13 @@ export default class MinersView
         });
     }
 
+    @Watch('visibleColumns')
+    protected onColumnsChange()
+    {
+        ++this.tableKey;
+        this.$store.dispatch('Monitor/Config/setVisibleColumns', this.visibleColumns);
+    }
+
 }
 </script>
 
@@ -315,6 +364,11 @@ export default class MinersView
         &--cell-top {
             vertical-align: top !important;
         }
+    }
+
+    .dropdown-menu {
+        left: auto;
+        right: 0;
     }
 
     .miner-account {
