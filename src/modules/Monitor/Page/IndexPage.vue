@@ -21,7 +21,7 @@ import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { namespace } from 'vuex-class';
 
 
-const AccountStore = namespace('Monitor/Account');
+const ConfigStore = namespace('Monitor/Config');
 
 @Route('/', 'monitor')
 @Component({
