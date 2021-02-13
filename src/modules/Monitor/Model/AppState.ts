@@ -22,8 +22,6 @@ export default class AppState
     public constructor(data? : Partial<AppState>)
     {
         super();
-
-        console.log(data)
         this.setData(data);
     }
 

@@ -68,7 +68,7 @@
                             cell-class="miners-list--cell-top"
                         >
                             <b-field
-                                label="Controller"
+                                :label="separateStashAccount(miner) ? 'Controller' : ''"
                                 label-position="on-border"
                                 class="miner-account miner-account--address"
                             >
@@ -80,20 +80,23 @@
                                 />
                                 <span>{{ miner.controllerAccount.address | formatAddress }}</span>
                             </b-field>
-                            <hr/>
-                            <b-field
-                                label="Stash"
-                                label-position="on-border"
-                                class="miner-account miner-account--address"
-                            >
-                                <Identicon
-                                    :size="32"
-                                    :value="miner.stashAccount.address"
-                                    class="js-clipboard account-icon"
-                                    :data-clipboard-text="miner.stashAccount.address"
-                                />
-                                <span>{{ miner.stashAccount.address | formatAddress }}</span>
-                            </b-field>
+
+                            <div v-if="separateStashAccount(miner)">
+                                <hr/>
+                                <b-field
+                                    label="Stash"
+                                    label-position="on-border"
+                                    class="miner-account miner-account--address"
+                                >
+                                    <Identicon
+                                        :size="32"
+                                        :value="miner.stashAccount.address"
+                                        class="js-clipboard account-icon"
+                                        :data-clipboard-text="miner.stashAccount.address"
+                                    />
+                                    <span>{{ miner.stashAccount.address | formatAddress }}</span>
+                                </b-field>
+                            </div>
                         </b-table-column>
 
                         <b-table-column
@@ -134,9 +137,11 @@
                             <div class="miner-account miner-account--stake">
                                 {{ miner.controllerAccount.stake | formatCoin }}
                             </div>
-                            <hr/>
-                            <div class="miner-account miner-account--stake">
-                                {{ miner.stashAccount.stake | formatCoin }}
+                            <div v-if="separateStashAccount(miner)">
+                                <hr/>
+                                <div class="miner-account miner-account--stake">
+                                    {{ miner.stashAccount.stake | formatCoin }}
+                                </div>
                             </div>
                         </b-table-column>
 
@@ -151,9 +156,11 @@
                             <div class="miner-account miner-account--balance">
                                 {{ miner.controllerAccount.balance | formatCoin }}
                             </div>
-                            <hr/>
-                            <div class="miner-account miner-account--balance">
-                                {{ miner.stashAccount.balance | formatCoin }}
+                            <div v-if="separateStashAccount(miner)">
+                                <hr/>
+                                <div class="miner-account miner-account--balance">
+                                    {{ miner.stashAccount.balance | formatCoin }}
+                                </div>
                             </div>
                         </b-table-column>
 
@@ -176,22 +183,18 @@
                             <table class="records-table">
                                 <tr v-for="extrinsic of miner.controllerAccount.extrinsics">
                                     <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{
-                                            extrinsic.action
-                                        }}
-                                    </td>
+                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
                                 </tr>
                             </table>
-                            <hr/>
-                            <table class="records-table">
-                                <tr v-for="extrinsic of miner.stashAccount.extrinsics">
-                                    <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{
-                                            extrinsic.action
-                                        }}
-                                    </td>
-                                </tr>
-                            </table>
+                            <div v-if="separateStashAccount(miner)">
+                                <hr/>
+                                <table class="records-table">
+                                    <tr v-for="extrinsic of miner.stashAccount.extrinsics">
+                                        <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
+                                        <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </b-table-column>
 
                         <b-table-column
@@ -310,6 +313,11 @@ export default class MinersView
         });
 
         this.loadMiners();
+    }
+
+    protected separateStashAccount(miner : Miner) : boolean
+    {
+        return miner.controllerAccount.address !== miner.stashAccount.address;
     }
 
     protected showMinerForm(miner : Miner)
