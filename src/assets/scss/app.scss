@@ -1,18 +1,7 @@
-@import "~bulma/sass/utilities/initial-variables";
-@import "~bulma/sass/utilities/functions";
-@import "bulma-overrides";
-
-@import "variables";
-@import "mixins";
-
+@import "./theme/variables";
 @import "~bulma";
+@import "~bulmaswatch/cyborg/overrides";
 @import "~buefy/src/scss/buefy";
-
-@import "bulma-overrides2";
-
-@import "./components/select";
-@import "./components/modal";
-@import "./components/tooltip";
 
 @import "./global/main";
 @import "./global/spacing";

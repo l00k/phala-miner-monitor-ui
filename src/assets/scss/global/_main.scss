@@ -15,6 +15,10 @@ body, button, input, select, textarea {
     max-width: 95vw;
 }
 
+.field.is-floating-label .label:before {
+    display: none;
+}
+
 .button {
     text-transform: capitalize;
 }

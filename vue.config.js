@@ -47,10 +47,7 @@ module.exports = {
             },
             sass: {
                 prependData: `
-                    @import "~bulma/sass/utilities/initial-variables";
-                    @import "~bulma/sass/utilities/functions";
-                    @import "@/assets/scss/_variables.scss";
-                    @import "@/assets/scss/_mixins.scss";
+                    @import "@/assets/scss/theme/_variables.scss";
                 `,
                 sourceMap: true,
             }
