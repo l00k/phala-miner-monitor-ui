@@ -1,5 +1,6 @@
 import Account, { Fragments as AccountFragments } from '#/Monitor/Model/Account';
 import Miner, { Fragments as MinerFragments } from '#/Monitor/Model/Miner';
+import AppState from '#/Monitor/Model/AppState';
 import { Singleton, Inject } from '@100k/intiv/ObjectManager';
 import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import gql from 'graphql-tag';
@@ -141,6 +142,16 @@ ${MinerFragments.DefaultData}
         }
 
         return rawMiners.map(rawMiner => new Miner(rawMiner));
+    }
+
+
+    public async getAppState() : Promise<AppState>
+    {
+        const { data: { getAppState: { data } } } = await this.apollo.query({
+            query: gql`query { getAppState { data } }`
+        });
+
+        return new AppState(JSON.parse(data));
     }
 
 }

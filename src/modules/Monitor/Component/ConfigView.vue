@@ -7,11 +7,15 @@
             </div>
         </header>
         <div class="card-content">
-            <div class="content has-text-right">
+            <div class="content">
+                <div class="is-inline-block">
+                    Crawler sync: {{ appState.lastFetchedBlock }} / {{ appState.currentHeadBlock }}
+                </div>
 
                 <b-button
                     size="is-small"
                     type="is-warning"
+                    class="is-pulled-right"
                     @click="clearLocalStorage()"
                 >Clear local storage
                 </b-button>
@@ -22,8 +26,11 @@
 </template>
 
 <script lang="ts">
+import AppState from '#/Monitor/Model/AppState';
+import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
-import { Component } from 'vue-property-decorator';
+import { Inject } from '@100k/intiv/ObjectManager/index';
 
 
 declare const window;
@@ -34,6 +41,16 @@ declare const window;
 export default class ConfigView
     extends BaseComponent
 {
+
+    @Inject()
+    protected monitorApi : MonitorApi;
+
+    protected appState : AppState = new AppState();
+
+    public async created()
+    {
+        this.appState = await this.monitorApi.getAppState();
+    }
 
     public get buildVersion() : string
     {

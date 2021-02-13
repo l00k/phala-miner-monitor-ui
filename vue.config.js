@@ -35,21 +35,22 @@ function generateUniqueBuildInfo () {
 const env = process.env.NODE_ENV || 'production';
 const isDev = env !== 'production';
 
+
 module.exports = {
     runtimeCompiler: true,
     css: {
-        sourceMap: true,
+        sourceMap: isDev,
         extract: false,
 
         loaderOptions: {
             css: {
-                sourceMap: true,
+                sourceMap: isDev,
             },
             sass: {
                 prependData: `
                     @import "@/assets/scss/theme/_variables.scss";
                 `,
-                sourceMap: true,
+                sourceMap: isDev,
             }
         },
     },
@@ -57,12 +58,14 @@ module.exports = {
         'vuex-module-decorators'
     ],
     configureWebpack (config) {
-        config.optimization.minimize = false
-        config.devtool = 'source-map'
-        config.resolve.plugins = [new IntiPathResolverPlugin()]
-        config.devServer = {
-            port: 4000
+        if (isDev) {
+            config.optimization.minimize = false
+            config.devtool = 'source-map'
+            config.devServer = {
+                port: 4000
+            }
         }
+        config.resolve.plugins = [new IntiPathResolverPlugin()]
 
         const buildVersion = generateUniqueBuildInfo();
 
