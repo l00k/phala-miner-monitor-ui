@@ -59,11 +59,12 @@ module.exports = {
     ],
     configureWebpack (config) {
         if (isDev) {
-            config.optimization.minimize = false
             config.devtool = 'source-map'
-            config.devServer = {
-                port: 4000
-            }
+        }
+
+        config.optimization.minimize = false
+        config.devServer = {
+            port: 4000
         }
         config.resolve.plugins = [new IntiPathResolverPlugin()]
 
@@ -83,7 +84,7 @@ module.exports = {
             }),
         )
 
-        if (env !== 'production') {
+        if (isDev) {
             // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
             // config.plugins.push(new BundleAnalyzerPlugin());
         }
