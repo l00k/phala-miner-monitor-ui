@@ -31,7 +31,9 @@ function generateUniqueBuildInfo () {
     return 'v' + moment().format('YYYY.MM.DD.HHmmss') + '-' + random
 }
 
+
 const env = process.env.NODE_ENV || 'production';
+const isDev = env !== 'production';
 
 module.exports = {
     runtimeCompiler: true,
@@ -67,8 +69,11 @@ module.exports = {
 
         const buildVersion = generateUniqueBuildInfo();
 
+        const apiUrl = !isDev
+            ? 'https://phala-miner-monitor2.100k.dev:8084/graphql'
+            : 'http://localhost:8084/graphql';
         const appData = JSON.stringify({
-            apiUrl: 'https://phala-miner-monitor2.100k.dev:8084/graphql',
+            apiUrl,
             buildVersion,
         })
 
