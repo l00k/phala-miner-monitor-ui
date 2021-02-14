@@ -16,8 +16,6 @@ export default class ContextStore
     extends VuexModule<ContextStore>
 {
 
-    public hiddenEntriesVisibility : string[] = [];
-
     public visibleColumns : string[] = [
         'name',
         'address',
@@ -35,12 +33,6 @@ export default class ContextStore
     public async setVisibleColumns(visibleColumns : string[])
     {
         this.visibleColumns = visibleColumns;
-    }
-
-    @Mutation
-    public async setHiddenEntriesVisibility(hiddenEntriesVisibility : string[])
-    {
-        this.hiddenEntriesVisibility = hiddenEntriesVisibility;
     }
 
 }

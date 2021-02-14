@@ -3,6 +3,8 @@ import Reward from '#/Monitor/Model/Reward';
 import { Model, AbstractModel } from '@/core/Store';
 import { Property } from '@100k/intiv/Initializable';
 import gql from 'graphql-tag';
+import moment from 'moment';
+import { isEmpty } from 'lodash';
 
 
 export const Fragments = {
@@ -82,7 +84,21 @@ export default class Miner
     public name : string = '';
 
     @Property()
-    public visible : boolean = true;
+    public isVisible : boolean = true;
+
+
+    public get isOnline() : boolean
+    {
+        return !isEmpty(this.controllerAccount.extrinsics)
+            && moment().diff(this.controllerAccount.extrinsics[0].date, 'days') < 1;
+    }
+
+    public get isRewarding() : boolean
+    {
+        return !isEmpty(this.minedRewards)
+            && moment().diff(this.minedRewards[0].date, 'days') < 1;
+    }
+
 
     public constructor(data? : Partial<Account>)
     {

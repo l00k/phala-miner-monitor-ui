@@ -8,6 +8,28 @@
     overflow: unset;
 }
 
+.select {
+    select {
+        option {
+            color: $input-color;
+        }
+    }
+}
+
+.control {
+    &.has-icons-left,
+    &.has-icons-right {
+        .select select {
+            padding-left: 2.5em;
+        }
+        .icon {
+            margin: 0 4px;
+        }
+    }
+
+
+}
+
 .b-table {
     thead tr:first-child th {
         position: sticky;

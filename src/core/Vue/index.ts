@@ -1,8 +1,16 @@
-import Vue from 'vue';
-import numeral from 'numeral';
 import { formatDate, formatDatetime, formatTime, ucfirst } from '@/core/Utility';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import numeral from 'numeral';
+import Vue from 'vue';
 
+/*
+ * EXTERNAL COMPONENTS
+ */
+Vue.component('fa-icon', FontAwesomeIcon);
 
+/*
+ * FILTERs
+ */
 Vue.filter('ucfirst', ucfirst);
 Vue.filter('formatDate', formatDate);
 Vue.filter('formatTime', formatTime);
@@ -12,7 +20,9 @@ Vue.filter('consoleLog', function() {
     console.log(...arguments);
 });
 
-// app specific
+/*
+ * APP SPECIFIC
+ */
 // todo maybe shuold be loaded from module?
 
 Vue.filter('formatCoin', function(value) {

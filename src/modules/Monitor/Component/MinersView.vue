@@ -15,22 +15,69 @@
         <div class="card-content">
             <div class="content">
 
-                <div class="mb-4 has-text-right">
-                    <b-field class="is-pulled-left">
-                        <b-button
-                            :type="showHiddenEntries ? 'is-primary' : ''"
+                <div class="has-text-right mb-5">
+                    <b-field
+                        label-position="on-border"
+                        label="Visibility"
+                        class="is-pulled-left mr-2"
+                    >
+                        <b-select
+                            v-model="filters.VisiblityState"
+                            placeholder="Visibility"
                             size="is-small"
-                            @click="switchHiddenEntriesVisibility"
+                            icon-pack="fas"
+                            icon="eye"
                         >
-                            <b-icon
-                                pack="fas"
-                                :icon="showHiddenEntries ? 'eye' : 'eye-slash'"
+                            <option value="any">Show all</option>
+                            <option value="no">Only hidden</option>
+                            <option value="yes">Only visible</option>
+                        </b-select>
+                    </b-field>
+
+                    <b-field
+                        label-position="on-border"
+                        label="Online"
+                        class="is-pulled-left mr-2"
+                    >
+                        <b-tooltip
+                            label="Miner is online when it submited any extrinsic in last 24h"
+                            position="is-top"
+                        >
+                            <b-select
+                                v-model="filters.OnlineState"
+                                placeholder="Online"
                                 size="is-small"
-                                class="is-vcentered"
-                                :key="`showHiddenEntries${showHiddenEntries}`"
-                            />
-                            <span>Show hidden entries</span>
-                        </b-button>
+                                icon-pack="fas"
+                                icon="wifi"
+                            >
+                                <option value="any">Show all</option>
+                                <option value="no">Only offline</option>
+                                <option value="yes">Only online</option>
+                            </b-select>
+                        </b-tooltip>
+                    </b-field>
+
+                    <b-field
+                        label-position="on-border"
+                        label="Rewarding"
+                        class="is-pulled-left mr-2"
+                    >
+                        <b-tooltip
+                            label="Miner has status 'rewarding' when it was rewarded in last 24h"
+                            position="is-top"
+                        >
+                            <b-select
+                                v-model="filters.RewardingState"
+                                placeholder="Rewarding"
+                                size="is-small"
+                                icon-pack="fas"
+                                icon="coins"
+                            >
+                                <option value="any">Show all</option>
+                                <option value="no">Only non rewarding</option>
+                                <option value="yes">Only rewarding</option>
+                            </b-select>
+                        </b-tooltip>
                     </b-field>
 
                     <b-dropdown
@@ -69,13 +116,17 @@
                     default-sort="score"
                     default-sort-direction="desc"
                     class="miners-list"
-                    :key="tableKey"
                 >
                     <template slot="empty">
                         <slot name="empty">
                             <div class="content has-text-grey has-text-centered">
                                 <p>
-                                    <b-icon pack="fas" icon="heart-broken" size="is-small"/>
+                                    <b-icon
+                                        pack="fas"
+                                        icon="heart-broken"
+                                        size="is-small"
+                                        class="is-vcentered"
+                                    />
                                     Nothing here.
                                 </p>
                             </div>
@@ -335,6 +386,23 @@ declare const window;
 
 const ConfigStore = namespace('Monitor/Config');
 
+enum Filters {
+    VisiblityState = 'isVisible',
+    OnlineState = 'isOnline',
+    RewardingState = 'isRewarding',
+}
+
+type FiltersType = {
+    [ filter: string ]: string
+};
+
+const filterValueMap = {
+    'any': null,
+    'no': false,
+    'yes': true,
+}
+
+
 @Component({
     components: {
         MinerFormView,
@@ -345,6 +413,8 @@ export default class MinersView
     extends BaseComponent
 {
 
+    protected Filters = Filters;
+
     @Ref()
     protected minerFormView : MinerFormView;
 
@@ -354,22 +424,15 @@ export default class MinersView
     @Inject()
     protected monitorApi : MonitorApi;
 
-    protected tableKey : number = 0;
-
     protected isMinerFormModalVisible : boolean = false;
 
     protected isLoading : boolean = false;
 
-    protected miners : Miner[] = [];
+    protected filters : FiltersType = {
+        VisiblityState: 'yes'
+    };
 
-    protected get visibleMiners(): Miner[]
-    {
-        if (this.showHiddenEntries) {
-            return this.miners;
-        }
-        return this.miners
-            .filter(miner => miner.visible);
-    }
+    protected miners : Miner[] = [];
 
     protected selectedEntires : any[] = [];
 
@@ -379,9 +442,31 @@ export default class MinersView
     @ConfigStore.State('hiddenEntriesVisibility')
     protected hiddenEntriesVisibility : string[];
 
+
     public get showHiddenEntries(): boolean
     {
         return this.hiddenEntriesVisibility.indexOf('miners') !== -1;
+    }
+
+    protected get visibleMiners(): Miner[]
+    {
+        let miners = this.miners;
+
+        for (const [ filter, field ] of Object.entries(Filters)) {
+            const rawValue = this.filters[filter];
+            const value = rawValue
+                ? filterValueMap[rawValue]
+                : null;
+            console.log(filter, value)
+            if (value !== null) {
+                miners = miners.filter(miner => {
+                    console.log(miner[field], value)
+                    return miner[field] === value;
+                })
+            }
+        }
+
+        return miners;
     }
 
 
@@ -430,19 +515,6 @@ export default class MinersView
         }
     }
 
-    protected async changeVisibilityMiners(miners : Miner[], visible : boolean)
-    {
-        for (const miner of miners) {
-            miner.visible = visible;
-        }
-
-        ToastProgrammatic.open({
-            message: `Visiblity changed for ${ miners.length } miners`,
-            type: 'is-success',
-            position: 'is-bottom-right',
-        });
-    }
-
     protected switchHiddenEntriesVisibility()
     {
         const newValue = this.hiddenEntriesVisibility.indexOf('miners') === -1;
@@ -456,6 +528,22 @@ export default class MinersView
         }
 
         this.$store.commit('Monitor/Config/setHiddenEntriesVisibility', hiddenEntriesVisibility);
+    }
+
+    protected async changeVisibilityMiners(miners : Miner[], visible : boolean)
+    {
+        for (const miner of miners) {
+            miner.isVisible = visible;
+            Miner.persist(miner);
+        }
+
+        ToastProgrammatic.open({
+            message: `Visiblity changed for ${ miners.length } miners`,
+            type: 'is-success',
+            position: 'is-bottom-right',
+        });
+
+        this.selectedEntires = [];
     }
 
     protected async deleteMiners(miners : Miner[])
@@ -479,6 +567,8 @@ export default class MinersView
             type: 'is-success',
             position: 'is-bottom-right',
         });
+
+        this.selectedEntires = [];
     }
 
     @Watch('visibleColumns')

@@ -89,6 +89,10 @@ $card-background-color: $grey-darker;
 $card-header-padding: 0.5rem 1rem;
 $card-content-padding: 1rem;
 
+$control-border-width: 1px;
+$control-padding-vertical: calc(0.3em - #{$control-border-width});
+$control-padding-horizontal: calc(0.5em - #{$control-border-width});
+
 $input-background-color: #222;
 $input-color: #aaa;
 

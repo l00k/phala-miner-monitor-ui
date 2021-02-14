@@ -25,7 +25,12 @@
                         <slot name="empty">
                             <div class="content has-text-grey has-text-centered">
                                 <p>
-                                    <b-icon pack="fas" icon="heart-broken" size="is-small"/>
+                                    <b-icon
+                                        pack="fas"
+                                        icon="heart-broken"
+                                        size="is-small"
+                                        class="is-vcentered"
+                                    />
                                     Nothing here.
                                 </p>
                             </div>

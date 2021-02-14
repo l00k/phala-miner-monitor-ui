@@ -13,8 +13,8 @@ Vue.use(VueRouter);
 Vue.use(Buefy);
 
 require('@/core/Vue');
-require('@/core/ext/validate-js');
 require('@/core/Vue/Buefy');
+require('@/config/icons');
 
 (async() => {
     ObjectManager.getInstance(App).run();
