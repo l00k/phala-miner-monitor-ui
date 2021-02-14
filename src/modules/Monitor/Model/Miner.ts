@@ -59,9 +59,6 @@ export default class Miner
     @Property()
     public payoutTarget : Account = new Account();
 
-    @Property()
-    public name : string = '';
-
     @Property({ arrayOf: Reward })
     public minedRewards : Reward[] = [];
 
@@ -79,6 +76,13 @@ export default class Miner
 
     @Property()
     public updatedAt : Date;
+
+
+    @Property()
+    public name : string = '';
+
+    @Property()
+    public visible : boolean = true;
 
     public constructor(data? : Partial<Account>)
     {

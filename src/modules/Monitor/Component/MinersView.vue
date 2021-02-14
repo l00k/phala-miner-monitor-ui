@@ -15,7 +15,24 @@
         <div class="card-content">
             <div class="content">
 
-                <div class="has-text-right">
+                <div class="mb-4 has-text-right">
+                    <b-field class="is-pulled-left">
+                        <b-button
+                            :type="showHiddenEntries ? 'is-primary' : ''"
+                            size="is-small"
+                            @click="switchHiddenEntriesVisibility"
+                        >
+                            <b-icon
+                                pack="fas"
+                                :icon="showHiddenEntries ? 'eye' : 'eye-slash'"
+                                size="is-small"
+                                class="is-vcentered"
+                                :key="`showHiddenEntries${showHiddenEntries}`"
+                            />
+                            <span>Show hidden entries</span>
+                        </b-button>
+                    </b-field>
+
                     <b-dropdown
                         v-model="visibleColumns"
                         multiple
@@ -41,30 +58,48 @@
                     </b-dropdown>
                 </div>
 
-                <be-table
+                <b-table
                     ref="miners"
-                    :data="miners"
+                    :data="visibleMiners"
                     :loading="isLoading"
-                    class="miners-list"
+                    :checkable="true"
+                    :checked-rows.sync="selectedEntires"
+                    :debounce-search="1000"
+                    :paginated="false"
                     default-sort="score"
                     default-sort-direction="desc"
+                    class="miners-list"
                     :key="tableKey"
                 >
+                    <template slot="empty">
+                        <slot name="empty">
+                            <div class="content has-text-grey has-text-centered">
+                                <p>
+                                    <b-icon pack="fas" icon="heart-broken" size="is-small"/>
+                                    Nothing here.
+                                </p>
+                            </div>
+                        </slot>
+                    </template>
+
                     <template slot-scope="{ row: miner }">
                         <b-table-column
-                            v-if="visibleColumns.indexOf('name') !== -1"
+                            :visible="visibleColumns.indexOf('name') !== -1"
                             field="name"
                             label="Name"
                             :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell"
                         >
                             <span>{{ miner.name }}</span>
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('address') !== -1"
+                            :visible="visibleColumns.indexOf('address') !== -1"
+                            field="controllerAccount.address"
                             label="Address"
                             :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell-top"
                         >
                             <b-field
@@ -100,38 +135,47 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('score') !== -1"
+                            :visible="visibleColumns.indexOf('score') !== -1"
                             field="score"
                             label="Score"
                             :numeric="true"
+                            :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell"
                         >
                             <span>{{ miner.score }}</span>
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('state') !== -1"
+                            :visible="visibleColumns.indexOf('state') !== -1"
                             field="state"
                             label="State"
+                            :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell"
                         >
                             <span>{{ miner.state }}</span>
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('commission') !== -1"
+                            :visible="visibleColumns.indexOf('commission') !== -1"
                             field="commission"
                             label="Commission"
                             :numeric="true"
+                            :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell"
                         >
                             <span>{{ miner.commission }}</span>
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('stake') !== -1"
+                            :visible="visibleColumns.indexOf('stake') !== -1"
+                            field="stashAccount.stake"
                             label="Stake"
                             :numeric="true"
+                            :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell"
                         >
                             <div class="miner-account miner-account--stake">
@@ -146,11 +190,12 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('balance') !== -1"
-                            field="balance"
+                            :visible="visibleColumns.indexOf('balance') !== -1"
+                            field="controllerAccount.balance"
                             label="Balance"
-                            :sortable="true"
                             :numeric="true"
+                            :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell-top"
                         >
                             <div class="miner-account miner-account--balance">
@@ -165,18 +210,19 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('fireMined') !== -1"
+                            :visible="visibleColumns.indexOf('fireMined') !== -1"
                             field="fireMined"
                             label="Fire mined"
-                            :sortable="true"
                             :numeric="true"
+                            :sortable="true"
+                            :searchable="true"
                             cell-class="miners-list--cell"
                         >
                             {{ miner.fireMined | formatCoin }}
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('lastExtrinsics') !== -1"
+                            :visible="visibleColumns.indexOf('lastExtrinsics') !== -1"
                             label="Last extrinsics"
                             cell-class="miners-list--cell-top"
                         >
@@ -198,7 +244,7 @@
                         </b-table-column>
 
                         <b-table-column
-                            v-if="visibleColumns.indexOf('lastRewards') !== -1"
+                            :visible="visibleColumns.indexOf('lastRewards') !== -1"
                             label="Last rewards"
                             cell-class="miners-list--cell"
                         >
@@ -218,19 +264,43 @@
                         >
                             <b-button
                                 size="is-small"
-                                type="is-primary"
+                                type="is-light"
                                 @click="showMinerForm(miner)"
                             >Edit
                             </b-button>
                             <b-button
                                 size="is-small"
                                 type="is-danger"
-                                @click="deleteMiner(miner)"
+                                @click="deleteMiners([miner])"
                             >Delete
                             </b-button>
                         </b-table-column>
                     </template>
-                </be-table>
+                </b-table>
+
+                <div
+                    v-if="selectedEntires.length > 0"
+                    class="mass-actions"
+                >
+                    <b-button
+                        size="is-small"
+                        type="is-light"
+                        @click="changeVisibilityMiners(selectedEntires, true)"
+                    >Show
+                    </b-button>
+                    <b-button
+                        size="is-small"
+                        type="is-light"
+                        @click="changeVisibilityMiners(selectedEntires, false)"
+                    >Hide
+                    </b-button>
+                    <b-button
+                        size="is-small"
+                        type="is-danger"
+                        @click="deleteMiners(selectedEntires)"
+                    >Delete
+                    </b-button>
+                </div>
             </div>
         </div>
 
@@ -250,7 +320,6 @@
 import MinerFormView from '#/Monitor/Component/Miner/FormView.vue';
 import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
-import { DatabaseUpdateEvent } from '@/core/Store/def';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { EventBus } from '@100k/intiv/EventBus';
@@ -259,6 +328,7 @@ import Identicon from '@polkadot/vue-identicon';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
+import { ToastProgrammatic } from 'buefy';
 
 
 declare const window;
@@ -284,7 +354,6 @@ export default class MinersView
     @Inject()
     protected monitorApi : MonitorApi;
 
-
     protected tableKey : number = 0;
 
     protected isMinerFormModalVisible : boolean = false;
@@ -293,8 +362,27 @@ export default class MinersView
 
     protected miners : Miner[] = [];
 
+    protected get visibleMiners(): Miner[]
+    {
+        if (this.showHiddenEntries) {
+            return this.miners;
+        }
+        return this.miners
+            .filter(miner => miner.visible);
+    }
+
+    protected selectedEntires : any[] = [];
+
     @ConfigStore.State('visibleColumns')
     protected visibleColumns : string[];
+
+    @ConfigStore.State('hiddenEntriesVisibility')
+    protected hiddenEntriesVisibility : string[];
+
+    public get showHiddenEntries(): boolean
+    {
+        return this.hiddenEntriesVisibility.indexOf('miners') !== -1;
+    }
 
 
     protected async loadMiners()
@@ -342,39 +430,93 @@ export default class MinersView
         }
     }
 
-    protected deleteMiner(miner : Miner)
+    protected async changeVisibilityMiners(miners : Miner[], visible : boolean)
     {
-        this.$buefy.dialog.confirm({
+        for (const miner of miners) {
+            miner.visible = visible;
+        }
+
+        ToastProgrammatic.open({
+            message: `Visiblity changed for ${ miners.length } miners`,
+            type: 'is-success',
+            position: 'is-bottom-right',
+        });
+    }
+
+    protected switchHiddenEntriesVisibility()
+    {
+        const newValue = this.hiddenEntriesVisibility.indexOf('miners') === -1;
+
+        let hiddenEntriesVisibility = this.hiddenEntriesVisibility || [];
+        if (newValue) {
+            hiddenEntriesVisibility.push('miners');
+        }
+        else {
+            hiddenEntriesVisibility = hiddenEntriesVisibility.filter(e => e !== 'miners');
+        }
+
+        this.$store.commit('Monitor/Config/setHiddenEntriesVisibility', hiddenEntriesVisibility);
+    }
+
+    protected async deleteMiners(miners : Miner[])
+    {
+        const confirmed = await this.confirm({
             title: 'Deleting miner',
-            message: 'Are you sure you want to <b>delete</b> this miner?',
-            confirmText: 'Delete miner',
+            message: `Are you sure you want to <b>delete</b> ${ miners.length } miner?`,
+            confirmText: `Confirm`,
             type: 'is-danger',
-            onConfirm: () => {
-                Miner.delete(miner);
-            }
+        });
+        if (!confirmed) {
+            return;
+        }
+
+        for (const miner of miners) {
+            Miner.delete(miner);
+        }
+
+        ToastProgrammatic.open({
+            message: `Deleted ${ miners.length } miners`,
+            type: 'is-success',
+            position: 'is-bottom-right',
         });
     }
 
     @Watch('visibleColumns')
     protected onColumnsChange()
     {
-        this.$store.dispatch('Monitor/Config/setVisibleColumns', this.visibleColumns);
-        ++this.tableKey;
+        this.$store.commit('Monitor/Config/setVisibleColumns', this.visibleColumns);
     }
 
 }
 </script>
 
 <style lang="scss">
+@import "@/assets/scss/theme/_variables";
+
 .miners-view {
     .b-table {
+        td {
+            vertical-align: middle;
+        }
+
         .button {
             height: 1.5em;
             padding: 0 8px;
         }
+    }
 
-        td {
-            vertical-align: middle;
+    .mass-actions {
+        position: -webkit-sticky;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        padding: 10px 20px;
+
+        border-top: 2px solid $border;
+        background: $card-background-color;
+
+        .button {
+            margin-right: 10px;
         }
     }
 
@@ -388,7 +530,8 @@ export default class MinersView
         &--cell-top {
             vertical-align: top !important;
         }
-        &--cell-actions{
+
+        &--cell-actions {
             text-align: right;
         }
     }

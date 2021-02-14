@@ -15,12 +15,23 @@
         <div class="card-content">
             <div class="content">
 
-                <be-table
+                <b-table
                     ref="accounts"
                     :data="accounts"
                     :loading="isLoading"
                     class="accounts-list"
                 >
+                    <template slot="empty">
+                        <slot name="empty">
+                            <div class="content has-text-grey has-text-centered">
+                                <p>
+                                    <b-icon pack="fas" icon="heart-broken" size="is-small"/>
+                                    Nothing here.
+                                </p>
+                            </div>
+                        </slot>
+                    </template>
+
                     <template slot-scope="{ row: account }">
                         <b-table-column
                             field="name"
@@ -96,15 +107,9 @@
                         >
                             <b-button
                                 size="is-small"
-                                type="is-primary"
+                                type="is-light"
                                 @click="showAccountForm(account)"
                             >Edit
-                            </b-button>
-                            <b-button
-                                size="is-small"
-                                type="is-danger"
-                                @click="deleteAccount(account)"
-                            >Delete
                             </b-button>
                             <b-button
                                 size="is-small"
@@ -112,9 +117,15 @@
                                 @click="findMiners(account)"
                             >Find miners
                             </b-button>
+                            <b-button
+                                size="is-small"
+                                type="is-danger"
+                                @click="deleteAccount(account)"
+                            >Delete
+                            </b-button>
                         </b-table-column>
                     </template>
-                </be-table>
+                </b-table>
             </div>
         </div>
 

@@ -62,6 +62,7 @@ export default class BaseComponent
     {
         return new Promise((resolve, reject) => {
             this.$buefy.dialog.confirm({
+                confirmText: 'Confirm',
                 ...options,
                 onConfirm() {
                     resolve(true);

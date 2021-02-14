@@ -1,0 +1,29 @@
+@import "./variables";
+
+.is-vcentered {
+    vertical-align: middle
+}
+
+.card {
+    overflow: unset;
+}
+
+.b-table {
+    thead tr:first-child th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+
+        background: $card-background-color;
+    }
+
+    .checkbox-cell {
+        .b-checkbox.checkbox {
+            margin: 0;
+
+            .control-label {
+                display: none;
+            }
+        }
+    }
+}

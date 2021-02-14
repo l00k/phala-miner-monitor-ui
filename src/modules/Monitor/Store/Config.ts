@@ -1,7 +1,8 @@
 import App from '@/core/App';
 import { StoreManager } from '@/core/Store';
 import { ObjectManager } from '@100k/intiv/ObjectManager';
-import { Module, VuexModule, MutationAction } from 'vuex-module-decorators';
+import { State } from 'vuex-class';
+import { Module, VuexModule, MutationAction, Mutation } from 'vuex-module-decorators';
 
 
 @Module({
@@ -14,6 +15,8 @@ import { Module, VuexModule, MutationAction } from 'vuex-module-decorators';
 export default class ContextStore
     extends VuexModule<ContextStore>
 {
+
+    public hiddenEntriesVisibility : string[] = [];
 
     public visibleColumns : string[] = [
         'name',
@@ -28,10 +31,16 @@ export default class ContextStore
         'lastRewards'
     ];
 
-    @MutationAction({ mutate: [ 'visibleColumns' ] })
-    public async setVisibleColumns(visibleColumns)
+    @Mutation
+    public async setVisibleColumns(visibleColumns : string[])
     {
-        return { visibleColumns };
+        this.visibleColumns = visibleColumns;
+    }
+
+    @Mutation
+    public async setHiddenEntriesVisibility(hiddenEntriesVisibility : string[])
+    {
+        this.hiddenEntriesVisibility = hiddenEntriesVisibility;
     }
 
 }

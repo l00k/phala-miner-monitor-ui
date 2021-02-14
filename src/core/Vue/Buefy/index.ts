@@ -7,4 +7,3 @@ import Table from './Component/Table.vue';
 
 Vue.component('be-block', Block);
 Vue.component('be-action-button', ActionButton);
-Vue.component('be-table', Table);
