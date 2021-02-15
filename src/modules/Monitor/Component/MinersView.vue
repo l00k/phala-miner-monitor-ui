@@ -116,6 +116,7 @@
                     default-sort="score"
                     default-sort-direction="desc"
                     class="miners-list"
+                    :row-class="miner => miner.isVisible ? 'miner-row--visible' : 'miner-row--hidden'"
                 >
                     <template slot="empty">
                         <slot name="empty">
@@ -632,6 +633,10 @@ export default class MinersView
 
         &--cell-actions {
             text-align: right;
+        }
+
+        .miner-row--hidden {
+            opacity: 0.5;
         }
     }
 
