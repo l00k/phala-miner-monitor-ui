@@ -10,7 +10,7 @@
             <div class="content">
                 <div class="is-inline-block">
                     <div>Crawler sync: {{ (appState.lastFetchedBlock / appState.currentHeadBlock * 100) | formatNumber('0.0') }}%</div>
-                    <div>Last accounts update block: {{ appState.lastInfoUpdateBlock }}</div>
+                    <div>Last accounts update: {{ appState.lastFetchedBlock - appState.lastInfoUpdateBlock }} blocks ago</div>
                 </div>
 
                 <b-button
