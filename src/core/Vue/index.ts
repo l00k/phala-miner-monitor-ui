@@ -20,10 +20,15 @@ Vue.filter('consoleLog', function() {
     console.log(...arguments);
 });
 
+Vue.filter('formatNumber', function(value, format) {
+    return numeral(value).format(format);
+});
+
 /*
  * APP SPECIFIC
  */
 // todo maybe shuold be loaded from module?
+
 
 Vue.filter('formatCoin', function(value) {
     return numeral(value / 1000000000000.0).format('0.00 a') + 'PHA';

@@ -9,8 +9,8 @@
         <div class="card-content">
             <div class="content">
                 <div class="is-inline-block">
-                    <div>Crawler sync: {{ appState.lastFetchedBlock }} / {{ appState.currentHeadBlock }}</div>
-                    <div>Last account update block: {{ appState.lastInfoUpdateBlock }}</div>
+                    <div>Crawler sync: {{ (appState.lastFetchedBlock / appState.currentHeadBlock * 100) | formatNumber('0.0') }}%</div>
+                    <div>Last accounts update block: {{ appState.lastInfoUpdateBlock }}</div>
                 </div>
 
                 <b-button
