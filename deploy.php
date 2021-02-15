@@ -23,7 +23,7 @@ set('writable_dirs', []);
 
 
 host('main')
-    ->hostname('10.147.17.79')
+    ->hostname('100k-dev-server')
     ->user('l00k')
     ->set('deploy_path', '/srv/web/phala-miner-monitor-ui');
 

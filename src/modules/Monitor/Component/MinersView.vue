@@ -457,10 +457,9 @@ export default class MinersView
             const value = rawValue
                 ? filterValueMap[rawValue]
                 : null;
-            console.log(filter, value)
+
             if (value !== null) {
                 miners = miners.filter(miner => {
-                    console.log(miner[field], value)
                     return miner[field] === value;
                 })
             }
