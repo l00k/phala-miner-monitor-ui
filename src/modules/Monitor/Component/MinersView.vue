@@ -205,7 +205,17 @@
                             :searchable="true"
                             cell-class="miners-list--cell"
                         >
-                            <span>{{ miner.state }}</span>
+                            <div class="mb-1">
+                                <b-tag type="is-info">{{ miner.state }}</b-tag>
+                            </div>
+                            <div class="mb-1">
+                                <b-tag v-if="miner.isOnline" type="is-success">Online</b-tag>
+                                <b-tag v-if="!miner.isOnline" type="is-danger">Offline</b-tag>
+                            </div>
+                            <div>
+                                <b-tag v-if="miner.isRewarding" type="is-success">Rewarding</b-tag>
+                                <b-tag v-if="!miner.isRewarding" type="is-danger">Not rewarding</b-tag>
+                            </div>
                         </b-table-column>
 
                         <b-table-column
@@ -217,7 +227,7 @@
                             :searchable="true"
                             cell-class="miners-list--cell"
                         >
-                            <span>{{ miner.commission }}</span>
+                            <span>{{ miner.commission }}%</span>
                         </b-table-column>
 
                         <b-table-column
