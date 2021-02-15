@@ -375,15 +375,10 @@
             </div>
         </div>
 
-        <b-modal
-            :active.sync="isMinerFormModalVisible"
-            :width="600"
-        >
-            <MinerFormView
-                ref="minerFormView"
-                @miner:save="hideMinerForm"
-            />
-        </b-modal>
+        <MinerFormView
+            ref="minerFormView"
+            @miner:save="onMinerSave"
+        />
     </div>
 </template>
 
@@ -522,20 +517,8 @@ export default class MinersView
         if (miner) {
             managedMiner.setData(cloneDeep(miner));
         }
-        this.isMinerFormModalVisible = true;
 
-        this.$nextTick(() => {
-            this.$minerFormView.setMiner(managedMiner);
-        });
-    }
-
-    protected hideMinerForm(miner : Miner)
-    {
-        this.isMinerFormModalVisible = false;
-        if (miner) {
-            const newMiners = this.miners.filter(_miner => _miner.id === miner.id);
-            this.monitorApi.fetchMiners(newMiners);
-        }
+        this.$minerFormView.show(managedMiner);
     }
 
     protected switchHiddenEntriesVisibility()
@@ -597,6 +580,14 @@ export default class MinersView
         });
 
         this.selectedEntires = [];
+    }
+
+    protected onMinerSave(miner : Miner)
+    {
+        if (miner) {
+            const newMiners = this.miners.filter(_miner => _miner.id === miner.id);
+            this.monitorApi.fetchMiners(newMiners);
+        }
     }
 
     @Watch('visibleColumns')

@@ -51,13 +51,13 @@ export default class AbstractModel<T>
     public static delete<T>(object : T) : void
     {
         this.getDatabase().commit('Database/delete', { model: this, object });
-        this.getEventBus().emit('database:update', { model: this, object });
+        this.getEventBus().emit('database:delete', { model: this, object });
     }
 
     public static truncate() : void
     {
         this.getDatabase().commit('Database/truncate', { model: this });
-        this.getEventBus().emit('database:update', { model: this });
+        this.getEventBus().emit('database:delete', { model: this });
     }
 
 }
