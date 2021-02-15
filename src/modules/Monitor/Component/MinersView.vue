@@ -106,7 +106,7 @@
                 </div>
 
                 <b-table
-                    ref="miners"
+                    ref="table"
                     :data="visibleMiners"
                     :loading="isLoading"
                     :checkable="true"
@@ -152,7 +152,7 @@
                             label="Address"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell-top"
+                            cell-class="miners-list--cell"
                         >
                             <b-field
                                 :label="separateStashAccount(miner) ? 'Controller' : ''"
@@ -258,7 +258,7 @@
                             :numeric="true"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell-top"
+                            cell-class="miners-list--cell"
                         >
                             <div class="miner-account miner-account--balance">
                                 {{ miner.controllerAccount.balance | formatCoin }}
@@ -286,7 +286,7 @@
                         <b-table-column
                             :visible="visibleColumns.indexOf('lastExtrinsics') !== -1"
                             label="Last extrinsics"
-                            cell-class="miners-list--cell-top"
+                            cell-class="miners-list--cell"
                         >
                             <table class="records-table">
                                 <tr v-for="extrinsic of miner.controllerAccount.extrinsics">
@@ -322,8 +322,17 @@
                         <b-table-column
                             label="Actions"
                             width="50px"
+                            :searchable="true"
                             cell-class="miners-list--cell-actions"
                         >
+                            <template #searchable>
+                                <b-button
+                                    size="is-small"
+                                    type="is-warning is-light"
+                                    @click="clearFilters()"
+                                >Clear
+                                </b-button>
+                            </template>
                             <b-button
                                 size="is-small"
                                 type="is-light"
@@ -391,6 +400,7 @@ import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { ToastProgrammatic } from 'buefy';
+import { BTable } from 'buefy/src/components/table';
 
 
 declare const window;
@@ -426,8 +436,11 @@ export default class MinersView
 
     protected Filters = Filters;
 
-    @Ref()
-    protected minerFormView : MinerFormView;
+    @Ref('table')
+    protected $table : BTable;
+
+    @Ref('minerFormView')
+    protected $minerFormView : MinerFormView;
 
     @Inject()
     protected eventBus : EventBus;
@@ -512,7 +525,7 @@ export default class MinersView
         this.isMinerFormModalVisible = true;
 
         this.$nextTick(() => {
-            this.minerFormView.setMiner(managedMiner);
+            this.$minerFormView.setMiner(managedMiner);
         });
     }
 
@@ -538,6 +551,11 @@ export default class MinersView
         }
 
         this.$store.commit('Monitor/Config/setHiddenEntriesVisibility', hiddenEntriesVisibility);
+    }
+
+    protected clearFilters()
+    {
+        this.$table.filters = {};
     }
 
     protected async changeVisibilityMiners(miners : Miner[], visible : boolean)
@@ -677,6 +695,7 @@ export default class MinersView
             padding: 0 0 0 10px;
             font-size: 0.7rem;
             border: none;
+            white-space: nowrap;
         }
 
         td:first-child {
