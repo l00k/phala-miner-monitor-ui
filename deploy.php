@@ -25,7 +25,7 @@ set('writable_dirs', []);
 host('main')
     ->hostname('10.147.17.79')
     ->user('l00k')
-    ->set('deploy_path', '/srv/phala-miner-monitor-ui');
+    ->set('deploy_path', '/srv/web/phala-miner-monitor-ui');
 
 
 desc('Deploy your project FAST');
