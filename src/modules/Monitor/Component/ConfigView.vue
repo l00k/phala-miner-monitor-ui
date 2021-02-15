@@ -9,7 +9,8 @@
         <div class="card-content">
             <div class="content">
                 <div class="is-inline-block">
-                    Crawler sync: {{ appState.lastFetchedBlock }} / {{ appState.currentHeadBlock }}
+                    <div>Crawler sync: {{ appState.lastFetchedBlock }} / {{ appState.currentHeadBlock }}</div>
+                    <div>Last account update block: {{ appState.lastInfoUpdateBlock }}</div>
                 </div>
 
                 <b-button
