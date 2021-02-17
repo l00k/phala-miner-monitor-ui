@@ -56,6 +56,10 @@ export default class Account
     @Property()
     public updatedAt : Date;
 
+
+    @Property()
+    public isUnknown : boolean = true;
+
     public constructor(data? : Partial<Account>)
     {
         super();

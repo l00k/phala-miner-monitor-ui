@@ -10,7 +10,9 @@ Vue.config.productionTip = false;
 
 Vue.use(Vuex);
 Vue.use(VueRouter);
-Vue.use(Buefy);
+Vue.use(Buefy, {
+    defaultIconPack: 'fas',
+});
 
 require('@/core/Vue');
 require('@/core/Vue/Buefy');

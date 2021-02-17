@@ -1,4 +1,5 @@
 import Account from '#/Monitor/Model/Account';
+import DeviceState from '#/Monitor/Model/DeviceState';
 import Reward from '#/Monitor/Model/Reward';
 import { Model, AbstractModel } from '@/core/Store';
 import { Property } from '@100k/intiv/Initializable';
@@ -77,6 +78,9 @@ export default class Miner
     public commisson : number;
 
     @Property()
+    public deviceState : DeviceState = new DeviceState();
+
+    @Property()
     public updatedAt : Date;
 
 
@@ -85,6 +89,9 @@ export default class Miner
 
     @Property()
     public isVisible : boolean = true;
+
+    @Property()
+    public isUnknown : boolean = true;
 
 
     public get isOnline() : boolean
@@ -100,7 +107,7 @@ export default class Miner
     }
 
 
-    public constructor(data? : Partial<Account>)
+    public constructor(data? : Partial<Miner>)
     {
         super();
         this.setData(data);

@@ -60,7 +60,22 @@
                                     class="js-clipboard account-icon"
                                     :data-clipboard-text="account.address"
                                 />
-                                <span>{{ account.address | formatAddress }}</span>
+                                <div class="address-block">
+                                    <b-tooltip
+                                        v-if="account.isUnknown"
+                                        position="is-top"
+                                        label="Not found"
+                                        class="is-vcentered"
+                                    >
+                                        <b-icon
+                                            icon="exclamation-triangle"
+                                            type="is-danger"
+                                            size="is-small"
+                                            class="is-vcentered mr-2"
+                                        />
+                                    </b-tooltip>
+                                    <span>{{ account.address | formatAddress }}</span>
+                                </div>
                             </div>
                         </b-table-column>
 
@@ -323,17 +338,17 @@ export default class PayoutTargetsView
     .account-address {
         .account-icon {
             cursor: pointer;
+            svg {
+                float: left;
+            }
         }
 
-        span {
+        .address-block {
             display: inline-block;
+            margin-left: 10px;
             height: 32px;
             line-height: 32px;
-            margin-left: 20px;
-        }
-
-        svg {
-            float: left;
+            white-space: nowrap;
         }
     }
 

@@ -35,6 +35,8 @@ ${AccountFragments.DefaultData}
             `
         });
 
+        accounts.forEach(account => account.isUnknown = true);
+
         if (!rawAccounts || !rawAccounts.length) {
             return false;
         }
@@ -43,6 +45,7 @@ ${AccountFragments.DefaultData}
             const account = accounts.find(_miner => _miner.id === rawAccount.id);
             if (account) {
                 account.setData(rawAccount);
+                account.isUnknown = false;
             }
         }
 
@@ -60,7 +63,10 @@ ${AccountFragments.DefaultData}
             `
         });
 
+        account.isUnknown = !!rawAccount;
+
         if (!rawAccount) {
+            account.isUnknown = true;
             return false;
         }
 
@@ -91,6 +97,8 @@ ${MinerFragments.DefaultData}
             `
         });
 
+        miners.forEach(miner => miner.isUnknown = true);
+
         if (!rawMiners || !rawMiners.length) {
             return false;
         }
@@ -99,6 +107,7 @@ ${MinerFragments.DefaultData}
             const miner = miners.find(_miner => _miner.id === rawMiner.id);
             if (miner) {
                 miner.setData(rawMiner);
+                miner.isUnknown = false;
             }
         }
 
@@ -116,6 +125,8 @@ query {
 ${MinerFragments.DefaultData}
             `
         });
+
+        miner.isUnknown = !!rawMiner;
 
         if (!rawMiner) {
             return false;

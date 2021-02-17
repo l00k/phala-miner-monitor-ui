@@ -16,12 +16,11 @@
 import PayoutTargetsView from '#/Monitor/Component/PayoutTargetsView.vue';
 import ConfigView from '#/Monitor/Component/ConfigView.vue';
 import MinersView from '#/Monitor/Component/MinersView.vue';
+import StorageMigration from '#/Monitor/Service/StorageMigration';
 import { Route, Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { namespace } from 'vuex-class';
-
-
-declare const window;
+import { Inject } from '@100k/intiv/ObjectManager';
 
 const ConfigStore = namespace('Monitor/Config');
 
@@ -37,26 +36,21 @@ export default class IndexPage
     extends BaseComponent
 {
 
-    protected  : string;
+    @Inject()
+    protected storageMigration : StorageMigration;
 
-    public get buildVersion() : string
+    public async mounted()
     {
-        return window.appData.buildVersion;
-    }
+        if (this.storageMigration.isOutdated) {
+            await this.storageMigration.migrate();
 
-    public async created()
-    {
-        const storageBuildVersion = window.localStorage.getItem('storageBuildVersion');
-        if (storageBuildVersion !== this.buildVersion) {
             this.$buefy.snackbar.open({
-                message: 'Your local storage version seems to be updated. It may happen monitor will not work properly. In such case try to clear local storage (check config section)',
+                message: 'Your local storage data was updated. App migrated it to latest version, but it may happen monitor will not work properly. In such case try to clear local storage (check config section)',
                 type: 'is-warning',
                 position: 'is-top',
                 actionText: 'Hide',
                 indefinite: true,
             });
-
-            window.localStorage.setItem('storageBuildVersion', this.buildVersion);
         }
     }
 

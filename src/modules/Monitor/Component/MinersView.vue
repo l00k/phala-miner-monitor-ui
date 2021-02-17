@@ -87,7 +87,8 @@
                         <template #trigger>
                             <b-button
                                 type="is-primary is-small"
-                                icon-right="menu-down">
+                                icon-right="menu-down"
+                            >
                                 Show columns ({{ visibleColumns.length }})
                             </b-button>
                         </template>
@@ -113,8 +114,8 @@
                     :checked-rows.sync="selectedEntires"
                     :debounce-search="1000"
                     :paginated="false"
-                    default-sort="score"
-                    default-sort-direction="desc"
+                    :default-sort="defaultSort.field"
+                    :default-sort-direction="defaultSort.order"
                     class="miners-list"
                     :row-class="miner => miner.isVisible ? 'miner-row--visible' : 'miner-row--hidden'"
                 >
@@ -141,7 +142,7 @@
                             label="Name"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <span>{{ miner.name }}</span>
                         </b-table-column>
@@ -152,7 +153,7 @@
                             label="Address"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <b-field
                                 :label="separateStashAccount(miner) ? 'Controller' : ''"
@@ -165,7 +166,22 @@
                                     class="js-clipboard account-icon"
                                     :data-clipboard-text="miner.controllerAccount.address"
                                 />
-                                <span>{{ miner.controllerAccount.address | formatAddress }}</span>
+                                <div class="address-block">
+                                    <b-tooltip
+                                        v-if="miner.controllerAccount.isUnknown"
+                                        position="is-top"
+                                        label="Not found"
+                                        class="is-vcentered"
+                                    >
+                                        <b-icon
+                                            icon="exclamation-triangle"
+                                            type="is-danger"
+                                            size="is-small"
+                                            class="is-vcentered mr-2"
+                                        />
+                                    </b-tooltip>
+                                    <span>{{ miner.controllerAccount.address | formatAddress }}</span>
+                                </div>
                             </b-field>
 
                             <div v-if="separateStashAccount(miner)">
@@ -181,7 +197,22 @@
                                         class="js-clipboard account-icon"
                                         :data-clipboard-text="miner.stashAccount.address"
                                     />
-                                    <span>{{ miner.stashAccount.address | formatAddress }}</span>
+                                    <div class="address-block">
+                                        <b-tooltip
+                                            v-if="miner.stashAccount.isUnknown"
+                                            position="is-top"
+                                            label="Not found"
+                                            class="is-vcentered"
+                                        >
+                                            <b-icon
+                                                icon="exclamation-triangle"
+                                                type="is-danger"
+                                                size="is-small"
+                                                class="is-vcentered mr-2"
+                                            />
+                                        </b-tooltip>
+                                        <span>{{ miner.stashAccount.address | formatAddress }}</span>
+                                    </div>
                                 </b-field>
                             </div>
                         </b-table-column>
@@ -193,7 +224,7 @@
                             :numeric="true"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <span>{{ miner.score }}</span>
                         </b-table-column>
@@ -204,18 +235,62 @@
                             label="State"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell miners-list__cell--state"
                         >
-                            <div class="mb-1">
-                                <b-tag type="is-info">{{ miner.state }}</b-tag>
-                            </div>
-                            <div class="mb-1">
-                                <b-tag v-if="miner.isOnline" type="is-success">Online</b-tag>
-                                <b-tag v-if="!miner.isOnline" type="is-danger">Offline</b-tag>
+                            <div>
+                                <b-tag type="is-info" size="is-micro">{{ miner.state }}</b-tag>
                             </div>
                             <div>
-                                <b-tag v-if="miner.isRewarding" type="is-success">Rewarding</b-tag>
-                                <b-tag v-if="!miner.isRewarding" type="is-danger">Not rewarding</b-tag>
+                                <b-tag v-if="miner.isOnline" type="is-success" size="is-micro">Online</b-tag>
+                                <b-tag v-if="!miner.isOnline" type="is-danger" size="is-micro">Offline</b-tag>
+                                <b-tag v-if="miner.isRewarding" type="is-success" size="is-micro">Rewarding</b-tag>
+                                <b-tag v-if="!miner.isRewarding" type="is-danger" size="is-micro">Not rewarding</b-tag>
+                            </div>
+                            <div
+                                v-if="miner instanceof Miner && miner.deviceState"
+                                class="miner-device-state"
+                            >
+                                <b-tooltip
+                                    :label="miner.deviceState.cpuTag.hint"
+                                    position="is-top"
+                                >
+                                    <b-tag
+                                        :type="miner.deviceState.cpuTag.type"
+                                        size="is-micro"
+                                    >CPU
+                                    </b-tag>
+                                </b-tooltip>
+                                <b-tooltip
+                                    v-if="miner.deviceState.node.state !== ContainerState.NotUsed"
+                                    :label="miner.deviceState.nodeTag.hint"
+                                    position="is-top"
+                                >
+                                    <b-tag
+                                        :type="miner.deviceState.nodeTag.type"
+                                        size="is-micro"
+                                    >Node
+                                    </b-tag>
+                                </b-tooltip>
+                                <b-tooltip
+                                    :label="miner.deviceState.runtimeTag.hint"
+                                    position="is-top"
+                                >
+                                    <b-tag
+                                        :type="miner.deviceState.runtimeTag.type"
+                                        size="is-micro"
+                                    >Runtime
+                                    </b-tag>
+                                </b-tooltip>
+                                <b-tooltip
+                                    :label="miner.deviceState.hostTag.hint"
+                                    position="is-top"
+                                >
+                                    <b-tag
+                                        :type="miner.deviceState.hostTag.type"
+                                        size="is-micro"
+                                    >Host
+                                    </b-tag>
+                                </b-tooltip>
                             </div>
                         </b-table-column>
 
@@ -226,7 +301,7 @@
                             :numeric="true"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <span>{{ miner.commission }}%</span>
                         </b-table-column>
@@ -238,7 +313,7 @@
                             :numeric="true"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <div class="miner-account miner-account--stake">
                                 {{ miner.controllerAccount.stake | formatCoin }}
@@ -258,7 +333,7 @@
                             :numeric="true"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <div class="miner-account miner-account--balance">
                                 {{ miner.controllerAccount.balance | formatCoin }}
@@ -278,7 +353,7 @@
                             :numeric="true"
                             :sortable="true"
                             :searchable="true"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             {{ miner.fireMined | formatCoin }}
                         </b-table-column>
@@ -286,7 +361,7 @@
                         <b-table-column
                             :visible="visibleColumns.indexOf('lastExtrinsics') !== -1"
                             label="Last extrinsics"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <table class="records-table">
                                 <tr v-for="extrinsic of miner.controllerAccount.extrinsics">
@@ -308,7 +383,7 @@
                         <b-table-column
                             :visible="visibleColumns.indexOf('lastRewards') !== -1"
                             label="Last rewards"
-                            cell-class="miners-list--cell"
+                            cell-class="miners-list__cell"
                         >
                             <table class="records-table">
                                 <tr v-for="reward of miner.minedRewards">
@@ -323,7 +398,7 @@
                             label="Actions"
                             width="50px"
                             :searchable="true"
-                            cell-class="miners-list--cell-actions"
+                            cell-class="miners-list__cell--actions"
                         >
                             <template #searchable>
                                 <b-button
@@ -391,33 +466,36 @@ import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { EventBus } from '@100k/intiv/EventBus';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
+import { ToastProgrammatic } from 'buefy';
+import { BTable } from 'buefy/src/components/table';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref, Watch } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-import { ToastProgrammatic } from 'buefy';
-import { BTable } from 'buefy/src/components/table';
+import { ContainerState } from '../Model/DeviceState';
 
 
 declare const window;
 
 const ConfigStore = namespace('Monitor/Config');
 
-enum Filters {
+
+enum Filters
+{
     VisiblityState = 'isVisible',
     OnlineState = 'isOnline',
     RewardingState = 'isRewarding',
 }
 
+
 type FiltersType = {
-    [ filter: string ]: string
+    [filter : string] : string
 };
 
 const filterValueMap = {
     'any': null,
     'no': false,
     'yes': true,
-}
-
+};
 
 @Component({
     components: {
@@ -429,19 +507,22 @@ export default class MinersView
     extends BaseComponent
 {
 
+    protected Miner = Miner;
     protected Filters = Filters;
-
-    @Ref('table')
-    protected $table : BTable;
-
-    @Ref('minerFormView')
-    protected $minerFormView : MinerFormView;
+    protected ContainerState = ContainerState;
 
     @Inject()
     protected eventBus : EventBus;
 
     @Inject()
     protected monitorApi : MonitorApi;
+
+
+    @Ref('table')
+    protected $table : BTable;
+
+    @Ref('minerFormView')
+    protected $minerFormView : MinerFormView;
 
     protected isMinerFormModalVisible : boolean = false;
 
@@ -461,13 +542,24 @@ export default class MinersView
     @ConfigStore.State('hiddenEntriesVisibility')
     protected hiddenEntriesVisibility : string[];
 
+    protected get defaultSort() : Object
+    {
+        if (this.visibleColumns.indexOf('name') !== -1) {
+            return { field: 'name', order: 'asc' };
+        }
+        else if (this.visibleColumns.indexOf('score') !== -1) {
+            return { field: 'score', order: 'desc' };
+        }
 
-    public get showHiddenEntries(): boolean
+        return { field: null, order: 'asc' };
+    }
+
+    public get showHiddenEntries() : boolean
     {
         return this.hiddenEntriesVisibility.indexOf('miners') !== -1;
     }
 
-    protected get visibleMiners(): Miner[]
+    public get visibleMiners() : Miner[]
     {
         let miners = this.miners;
 
@@ -480,13 +572,12 @@ export default class MinersView
             if (value !== null) {
                 miners = miners.filter(miner => {
                     return miner[field] === value;
-                })
+                });
             }
         }
 
         return miners;
     }
-
 
     protected async loadMiners()
     {
@@ -506,12 +597,12 @@ export default class MinersView
         this.loadMiners();
     }
 
-    protected separateStashAccount(miner : Miner) : boolean
+    public separateStashAccount(miner : Miner) : boolean
     {
         return miner.controllerAccount.address !== miner.stashAccount.address;
     }
 
-    protected showMinerForm(miner : Miner)
+    public showMinerForm(miner : Miner)
     {
         const managedMiner = new Miner();
         if (miner) {
@@ -521,7 +612,7 @@ export default class MinersView
         this.$minerFormView.show(managedMiner);
     }
 
-    protected switchHiddenEntriesVisibility()
+    public switchHiddenEntriesVisibility()
     {
         const newValue = this.hiddenEntriesVisibility.indexOf('miners') === -1;
 
@@ -536,12 +627,12 @@ export default class MinersView
         this.$store.commit('Monitor/Config/setHiddenEntriesVisibility', hiddenEntriesVisibility);
     }
 
-    protected clearFilters()
+    public clearFilters()
     {
         this.$table.filters = {};
     }
 
-    protected async changeVisibilityMiners(miners : Miner[], visible : boolean)
+    public async changeVisibilityMiners(miners : Miner[], visible : boolean)
     {
         for (const miner of miners) {
             miner.isVisible = visible;
@@ -557,7 +648,7 @@ export default class MinersView
         this.selectedEntires = [];
     }
 
-    protected async deleteMiners(miners : Miner[])
+    public async deleteMiners(miners : Miner[])
     {
         const confirmed = await this.confirm({
             title: 'Deleting miner',
@@ -582,7 +673,7 @@ export default class MinersView
         this.selectedEntires = [];
     }
 
-    protected onMinerSave(miner : Miner)
+    public onMinerSave(miner : Miner)
     {
         if (miner) {
             const newMiners = this.miners.filter(_miner => _miner.id === miner.id);
@@ -591,7 +682,7 @@ export default class MinersView
     }
 
     @Watch('visibleColumns')
-    protected onColumnsChange()
+    public onColumnsChange()
     {
         this.$store.commit('Monitor/Config/setVisibleColumns', this.visibleColumns);
     }
@@ -636,11 +727,12 @@ export default class MinersView
             }
         }
 
-        &--cell-top {
-            vertical-align: top !important;
+        &__cell--state {
+            .tag {
+                margin-right: 4px;
+            }
         }
-
-        &--cell-actions {
+        &__cell--actions {
             text-align: right;
         }
 
@@ -663,19 +755,24 @@ export default class MinersView
         &--address {
             .account-icon {
                 cursor: pointer;
+                svg {
+                    float: left;
+                }
             }
 
-            span {
+            .address-block {
                 display: inline-block;
+                margin-left: 10px;
                 height: 32px;
                 line-height: 32px;
-                margin-left: 20px;
+                white-space: nowrap;
             }
 
-            svg {
-                float: left;
-            }
         }
+    }
+
+    .miner-device-state {
+        white-space: nowrap;
     }
 
     .records-table {
@@ -695,15 +792,21 @@ export default class MinersView
         }
     }
 
+    .tag.is-micro {
+        padding: 0 4px;
+        height: 1.5em;
+        line-height: 1.2;
+    }
+
     hr {
         margin: 5px 20%;
         width: 60%;
         height: 1px;
         background-color: #555;
     }
-}
 
-.extrinsic--failed {
-    color: red;
+    .extrinsic--failed {
+        color: red;
+    }
 }
 </style>
