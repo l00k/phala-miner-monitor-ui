@@ -1,13 +1,13 @@
 import Account from '#/Monitor/Model/Account';
 import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
-import { Singleton, Inject } from '@100k/intiv/ObjectManager';
+import { Inject } from '@100k/intiv/ObjectManager';
 import { ToastProgrammatic as Toast } from 'buefy';
 
 
 declare const window;
 
-@Singleton()
+
 export default class StorageMigration
 {
 
@@ -27,11 +27,6 @@ export default class StorageMigration
 
     public async migrate() : Promise<void>
     {
-        if (confirm) {
-            window.localStorage.clear();
-            window.location.reload();
-        }
-
         let result = true;
 
         const accounts = Account.findAll<Account>();
@@ -70,10 +65,8 @@ export default class StorageMigration
 
     public async clear() : Promise<void>
     {
-        if (confirm) {
-            window.localStorage.clear();
-            window.location.reload();
-        }
+        window.localStorage.clear();
+        window.location.reload();
     }
 
 }

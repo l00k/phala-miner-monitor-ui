@@ -1,5 +1,5 @@
 import { Model, AbstractModel } from '@/core/Store';
-import { Property } from '@100k/intiv/Initializable';
+import { Property, Initializable } from '@100k/intiv/Initializable';
 
 
 export enum ContainerState
@@ -20,12 +20,16 @@ const containerStateToTagTypeMap = {
 
 
 export class PartInfo
+    extends Initializable<PartInfo>
 {
 
+    @Property()
     public state? : ContainerState = ContainerState.NotRunning;
 
+    @Property()
     public syncProgress? : number = 0;
 
+    @Property()
     public temperature? : number = 0;
 
 }
@@ -36,13 +40,12 @@ type TagProps = {
     hint : string,
 }
 
-@Model('Monitor/DeviceState')
 export default class DeviceState
-    extends AbstractModel<DeviceState>
+    extends Initializable<DeviceState>
 {
 
     @Property()
-    public cpu : PartInfo = new PartInfo();
+    public cpu : PartInfo;
 
     @Property()
     public node : PartInfo = new PartInfo();
@@ -71,8 +74,7 @@ export default class DeviceState
         let hint : string = <any> this.node.state;
 
         if (this.node.state === ContainerState.InSync) {
-            const progress = (this.node.syncProgress * 100).toFixed(2);
-            hint += `\nProgress: ${ progress }%`;
+            hint += ` / Progress: ${ this.node.syncProgress.toFixed(1) }%`;
         }
 
         return {
@@ -83,19 +85,17 @@ export default class DeviceState
 
     public get runtimeTag() : TagProps
     {
-        let hint : string = <any> this.node.state;
         return {
-            type: containerStateToTagTypeMap[this.node.state],
-            hint: hint,
+            type: containerStateToTagTypeMap[this.runtime.state],
+            hint: this.runtime.state,
         };
     }
 
     public get hostTag() : TagProps
     {
-        let hint : string = <any> this.node.state;
         return {
-            type: containerStateToTagTypeMap[this.node.state],
-            hint: hint,
+            type: containerStateToTagTypeMap[this.host.state],
+            hint: this.host.state,
         };
     }
 

@@ -1,4 +1,4 @@
-import { ObjectManager, Singleton } from '@100k/intiv/ObjectManager';
+import { ObjectManager } from '@100k/intiv/ObjectManager';
 import { isArrowFunction } from '@100k/intiv/Utility';
 
 
@@ -9,7 +9,6 @@ type Listners = {
 };
 
 
-@Singleton()
 class ServiceLoader
 {
 

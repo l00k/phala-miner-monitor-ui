@@ -20,9 +20,9 @@ fragment MinerDefaultData on Miner {
         extrinsics {
             date,
             action,
-            isSuccessful
+            isSuccessful,
         },
-    }
+    },
     stashAccount {
         address,
         balance,
@@ -31,9 +31,9 @@ fragment MinerDefaultData on Miner {
         extrinsics {
             date,
             action,
-            isSuccessful
+            isSuccessful,
         },
-    }
+    },
     fireMined,
     score,
     state,
@@ -41,7 +41,13 @@ fragment MinerDefaultData on Miner {
     minedRewards {
         date,
         fire,
-        reason
+        reason,
+    },
+    deviceState {
+        cpu { temperature },
+        node { state, syncProgress },
+        runtime { state }
+        host { state }
     }
 }
 `
@@ -78,7 +84,7 @@ export default class Miner
     public commisson : number;
 
     @Property()
-    public deviceState : DeviceState = new DeviceState();
+    public deviceState : DeviceState;
 
     @Property()
     public updatedAt : Date;

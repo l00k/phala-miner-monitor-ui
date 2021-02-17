@@ -2,7 +2,7 @@
     <div class="card mb-4 m-context__connection">
         <header class="card-header">
             <div class="card-header-title is-justify-content-space-between">
-                <div class="app-name">Phala account monitor</div>
+                <div class="app-name">Phala miner monitor</div>
                 <div class="build-info">{{ buildVersion }}</div>
             </div>
         </header>

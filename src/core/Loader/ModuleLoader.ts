@@ -1,4 +1,3 @@
-import { Singleton } from '@100k/intiv/ObjectManager';
 import { InitiationException } from '@100k/intiv/Exception';
 
 
@@ -9,7 +8,6 @@ type Listners = {
 };
 
 
-@Singleton()
 class ModuleLoader
 {
 

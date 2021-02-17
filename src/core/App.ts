@@ -4,13 +4,12 @@ import StoreManager from '@/core/Store/StoreManager';
 import AppComponent from '@/core/Vue/AppComponent.vue';
 import { Configuration } from '@100k/intiv/Configuration';
 import { EventBus } from '@100k/intiv/EventBus';
-import { Inject, Singleton } from '@100k/intiv/ObjectManager';
+import { Inject } from '@100k/intiv/ObjectManager';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Vuex, { Store as VuexStore } from 'vuex';
 
 
-@Singleton()
 export default class App
 {
 

@@ -138,15 +138,10 @@
             </div>
         </div>
 
-        <b-modal
-            :active.sync="isAccountFormModalVisible"
-            :width="600"
-        >
-            <AccountFormView
-                ref="accountFormView"
-                @account:save="hideAccountForm"
-            />
-        </b-modal>
+        <AccountFormView
+            ref="accountFormView"
+            @account:save="hideAccountForm"
+        />
     </div>
 </template>
 
@@ -187,8 +182,6 @@ export default class PayoutTargetsView
     protected monitorApi : MonitorApi;
 
 
-    protected isAccountFormModalVisible : boolean = false;
-
     protected isLoading : boolean = false;
 
     protected accounts : Account[] = [];
@@ -214,16 +207,12 @@ export default class PayoutTargetsView
         if (account) {
             managedAccount.setData(cloneDeep(account));
         }
-        this.isAccountFormModalVisible = true;
 
-        this.$nextTick(() => {
-            this.accountFormView.setAccount(managedAccount);
-        });
+        this.accountFormView.show(managedAccount);
     }
 
     protected hideAccountForm(account : Account)
     {
-        this.isAccountFormModalVisible = false;
         if (account) {
             const newAccounts = this.accounts.filter(_account => _account.id === account.id);
             this.monitorApi.fetchAccounts(newAccounts);

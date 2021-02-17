@@ -240,6 +240,7 @@
                                 <b-tooltip
                                     :label="miner.deviceState.cpuTag.hint"
                                     position="is-top"
+                                    :type="miner.deviceState.cpuTag.type"
                                 >
                                     <b-tag
                                         :type="miner.deviceState.cpuTag.type"
@@ -251,6 +252,7 @@
                                     v-if="miner.deviceState.node.state !== ContainerState.NotUsed"
                                     :label="miner.deviceState.nodeTag.hint"
                                     position="is-top"
+                                    :type="miner.deviceState.nodeTag.type"
                                 >
                                     <b-tag
                                         :type="miner.deviceState.nodeTag.type"
@@ -261,6 +263,7 @@
                                 <b-tooltip
                                     :label="miner.deviceState.runtimeTag.hint"
                                     position="is-top"
+                                    :type="miner.deviceState.runtimeTag.type"
                                 >
                                     <b-tag
                                         :type="miner.deviceState.runtimeTag.type"
@@ -271,6 +274,7 @@
                                 <b-tooltip
                                     :label="miner.deviceState.hostTag.hint"
                                     position="is-top"
+                                    :type="miner.deviceState.hostTag.type"
                                 >
                                     <b-tag
                                         :type="miner.deviceState.hostTag.type"
@@ -502,7 +506,6 @@ export default class MinersView
     @Ref('minerFormView')
     protected $minerFormView : MinerFormView;
 
-    protected isMinerFormModalVisible : boolean = false;
 
     protected isLoading : boolean = false;
 

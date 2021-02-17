@@ -1,12 +1,11 @@
 import Account, { Fragments as AccountFragments } from '#/Monitor/Model/Account';
 import Miner, { Fragments as MinerFragments } from '#/Monitor/Model/Miner';
 import AppState from '#/Monitor/Model/AppState';
-import { Singleton, Inject } from '@100k/intiv/ObjectManager';
+import { Inject } from '@100k/intiv/ObjectManager';
 import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import gql from 'graphql-tag';
 
 
-@Singleton()
 export default class MonitorApi
 {
 

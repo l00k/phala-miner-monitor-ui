@@ -1,6 +1,6 @@
 <template>
     <b-modal
-        :active.sync="isMinerFormModalVisible"
+        :active.sync="isModalVisible"
         :width="600"
     >
         <div class="miner-form">
@@ -50,7 +50,7 @@ export default class FormView
     @Inject()
     protected monitorApi : MonitorApi;
 
-    protected isMinerFormModalVisible : boolean = false;
+    protected isModalVisible : boolean = false;
 
     protected miner : Miner = new Miner();
 
@@ -58,7 +58,7 @@ export default class FormView
     {
         this.miner = miner;
 
-        this.isMinerFormModalVisible = true;
+        this.isModalVisible = true;
     }
 
     protected async submit()
@@ -77,6 +77,8 @@ export default class FormView
 
             this.$emit('miner:save', this.miner);
             this.$emit(isNew ? 'miner:created' : 'miner:updated', this.miner);
+
+            this.isModalVisible = false;
         }
         else {
             Toast.open({
@@ -85,8 +87,6 @@ export default class FormView
                 position: 'is-bottom-right',
             });
         }
-
-        this.isMinerFormModalVisible = false;
     }
 
 }
