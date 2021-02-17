@@ -1,4 +1,4 @@
-import PayoutTargetPasswordData from '#/Monitor/Dto/PayoutTargetPasswordData';
+import PayoutTargetSecretKeyData from '#/Monitor/Dto/PayoutTargetSecretKeyData';
 import Account, { Fragments as AccountFragments } from '#/Monitor/Model/Account';
 import Miner, { Fragments as MinerFragments } from '#/Monitor/Model/Miner';
 import AppState from '#/Monitor/Model/AppState';
@@ -164,15 +164,15 @@ ${MinerFragments.DefaultData}
         return new AppState(JSON.parse(data));
     }
 
-    public async mutatePayoutTargetPassword(passwordData : PayoutTargetPasswordData) : Promise<boolean>
+    public async mutatePayoutTargetSecretKey(secretKeyData : PayoutTargetSecretKeyData) : Promise<boolean>
     {
-        const { errors } = await this.apollo.query({
-            query: gql`
+        const { errors } = await this.apollo.mutate({
+            mutation: gql`
 mutation { 
-    setPayoutTargetPassword(
-        payoutTargetAddress: "${passwordData.payoutTargetAddress}",
-        password: "${passwordData.password}",
-        signature: "${passwordData.signature}"
+    setPayoutTargetSecretKey(
+        payoutTargetAddress: "${secretKeyData.payoutTargetAddress}",
+        secretKey: "${secretKeyData.secretKey}",
+        signature: "${secretKeyData.signature}"
     ) { 
         updatedAt 
     } 
@@ -180,7 +180,7 @@ mutation {
             `
         });
 
-        return !errors.length;
+        return !errors || !errors.length;
     }
 
 }

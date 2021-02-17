@@ -1,9 +1,9 @@
-export default class PayoutTargetPasswordData
+export default class PayoutTargetSecretKeyData
 {
 
     public payoutTargetAddress : string;
 
-    public password : string;
+    public secretKey : string;
 
     public signature : string;
 

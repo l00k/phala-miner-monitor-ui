@@ -13,8 +13,8 @@
                             If you would like to monitor your devices status you need to verify stash account ownership.<br/>
                             <b>Why?</b><br/>
                             Without confirming ownership anyone could update your miner status.
-                            After signing message in extension password will be stored in our database.
-                            Each time device monitor script will send request with proper password - controller device state will be updated.
+                            After signing message in extension secret key will be stored in our database.
+                            Each time device monitor script will send request with proper secret key - controller device state will be updated.
                         </b-message>
 
                         <div class="is-justify-content-center">
@@ -31,7 +31,7 @@
                         v-if="stage == Stage.AccountSelect"
                     >
                         <b-message type="is-info">
-                            Select payout target account and specify password for it.<br/>
+                            Select payout target account and specify secret key for it.<br/>
                             You will be asked to sign message which will proof account ownership.
                         </b-message>
 
@@ -93,18 +93,18 @@
                                 </validate-provider>
 
                                 <validate-provider
-                                    name="Password"
+                                    name="Secret Key"
                                     :rules="{ required: true, min: 8 }"
                                     v-slot="{ errors }"
                                 >
                                     <b-field
-                                        label="Password"
+                                        label="Secret Key"
                                         label-position="on-border"
                                         :type="errors.length > 0 ? 'is-danger' : ''"
                                         :message="errors"
                                         class="mt-4"
                                     >
-                                        <b-input v-model="passwordData.password"/>
+                                        <b-input v-model="secretKeyData.secretKey"/>
                                     </b-field>
                                 </validate-provider>
 
@@ -128,7 +128,7 @@
 </template>
 
 <script lang="ts">
-import PayoutTargetPasswordData from '#/Monitor/Dto/PayoutTargetPasswordData';
+import PayoutTargetSecretKeyData from '#/Monitor/Dto/PayoutTargetSecretKeyData';
 import Account from '#/Monitor/Model/Account';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
@@ -181,7 +181,7 @@ export default class ConnectFormView
 
     protected selectedAccount : Account = null;
 
-    protected passwordData : PayoutTargetPasswordData = new PayoutTargetPasswordData();
+    protected secretKeyData : PayoutTargetSecretKeyData = new PayoutTargetSecretKeyData();
 
     public show()
     {
@@ -237,7 +237,7 @@ export default class ConnectFormView
     {
         this.isLocked = true;
 
-        this.passwordData.payoutTargetAddress = this.selectedAccount.address;
+        this.secretKeyData.payoutTargetAddress = this.selectedAccount.address;
 
         try {
             const injector = await web3FromAddress(this.selectedAccount.address);
@@ -249,20 +249,27 @@ export default class ConnectFormView
 
             const { signature } = await signRaw({
                 address: this.selectedAccount.address,
-                data: stringToHex('Account ownership confirmation'),
+                data: stringToHex(`accountOwnershipConfirmation(${this.secretKeyData.secretKey})`),
                 type: 'bytes',
             });
 
-            this.passwordData.signature = signature;
+            this.secretKeyData.signature = signature;
 
-            const result = await this.monitorApi.mutatePayoutTargetPassword(this.passwordData);
+            const result = await this.monitorApi.mutatePayoutTargetSecretKey(this.secretKeyData);
+
+            Toast.open({
+                message: 'Secret key has been updated',
+                type: 'is-success',
+                position: 'is-bottom-right',
+            });
+
+            this.isModalVisible = false;
         }
         catch (e) {
             Toast.open({
                 message: e.message,
                 type: 'is-danger',
                 position: 'is-bottom-right',
-                queue: false,
             });
         }
         finally {
