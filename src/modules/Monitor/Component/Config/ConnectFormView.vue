@@ -121,6 +121,24 @@
                             </form>
                         </validate-observer>
                     </div>
+                    <div
+                        v-if="stage == Stage.Saved"
+                    >
+                        <b-message type="is-success">
+                            Your password has been saved!<br/>
+                            Now download <a href="https://raw.githubusercontent.com/l00k/phala-miner-monitor-ui/master/device-state-updater.php">this script</a>.<br/>
+                            Update it with following values:
+                        </b-message>
+
+                        <b-message>
+                            <pre>$CONTROLLER_ADDRESS = "{{ secretKeyData.payoutTargetAddress }}";
+$SECRET_KEY = "{{ secretKeyData.secretKey }}";</pre>
+                        </b-message>
+
+                        <b-message type="is-success">
+                            Next setup your cron to run this script as often as you want ;)
+                        </b-message>
+                    </div>
                 </template>
             </be-block>
         </b-modal>
@@ -148,6 +166,7 @@ enum Stage
 {
     NotConnected,
     AccountSelect,
+    Saved
 }
 
 
@@ -263,7 +282,7 @@ export default class ConnectFormView
                 position: 'is-bottom-right',
             });
 
-            this.isModalVisible = false;
+            this.stage = Stage.Saved;
         }
         catch (e) {
             Toast.open({

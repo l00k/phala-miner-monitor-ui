@@ -249,7 +249,7 @@
                                     </b-tag>
                                 </b-tooltip>
                                 <b-tooltip
-                                    v-if="miner.deviceState.node.state !== ContainerState.NotUsed"
+                                    v-if="miner.deviceState.node"
                                     :label="miner.deviceState.nodeTag.hint"
                                     position="is-top"
                                     :type="miner.deviceState.nodeTag.type"
