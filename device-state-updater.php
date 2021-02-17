@@ -4,8 +4,8 @@
 // ********************
 // Setup your data here
 
-$CONTROLLER_ADDRESS = "N0xbF33FaulveRvT5QadXjv1MegKgpea6kCpHzWYMUHpwY25wbYJM2q3";
-$SECRET_KEY = "321321321";
+$CONTROLLER_ADDRESS = "457YpXaNiNhQV5Knw3Nfdomv6kCpHzWYMUHpwY25wbYJM2q3";
+$SECRET_KEY = "123123123";
 
 // ********************
 
@@ -125,6 +125,6 @@ $payload = [
 ];
 $payloadJson = gqlFormatPayload($payload);
 
-$gqlMutation = "mutation { updateMinerDeviceInfo ($payloadJson) { updatedAt } }";
+$gqlMutation = addslashes("mutation { updateMinerDeviceInfo ($payloadJson) { updatedAt } }");
 
-echo $gqlMutation;
+`curl -s -X POST -H "Content-Type: application/json" --data '{"variables":{},"query":"$gqlMutation"}' http://localhost:8084/graphql`;

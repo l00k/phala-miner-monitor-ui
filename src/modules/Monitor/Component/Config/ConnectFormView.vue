@@ -131,7 +131,7 @@
                         </b-message>
 
                         <b-message>
-                            <pre>$CONTROLLER_ADDRESS = "{{ secretKeyData.payoutTargetAddress }}";
+                            <pre>$CONTROLLER_ADDRESS = "MINER ADDRESS";
 $SECRET_KEY = "{{ secretKeyData.secretKey }}";</pre>
                         </b-message>
 
