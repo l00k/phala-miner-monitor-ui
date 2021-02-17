@@ -13,7 +13,7 @@
                             If you would like to monitor your devices status you need to verify stash account ownership.<br/>
                             <b>Why?</b><br/>
                             Without confirming ownership anyone could update your miner status.
-                            After signing message in extension secret key will be stored in our database.
+                            After signing message in extension secret key (password defined by you - not wallet secret key) will be stored in our database.
                             Each time device monitor script will send request with proper secret key - controller device state will be updated.
                         </b-message>
 
