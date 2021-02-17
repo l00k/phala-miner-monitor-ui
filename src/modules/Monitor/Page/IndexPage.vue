@@ -43,14 +43,6 @@ export default class IndexPage
     {
         if (this.storageMigration.isOutdated) {
             await this.storageMigration.migrate();
-
-            this.$buefy.snackbar.open({
-                message: 'Your local storage data was updated. App migrated it to latest version, but it may happen monitor will not work properly. In such case try to clear local storage (check config section)',
-                type: 'is-warning',
-                position: 'is-top',
-                actionText: 'Hide',
-                indefinite: true,
-            });
         }
     }
 

@@ -17,9 +17,9 @@
 
                         <div class="is-clearfix">
                             <b-button
+                                native-type="submit"
                                 type="is-primary"
                                 class="is-pulled-right"
-                                @click="submit"
                             >Save
                             </b-button>
                         </div>
@@ -91,10 +91,3 @@ export default class FormView
 
 }
 </script>
-
-<style scoped lang="scss">
-.m-address-rename {
-    font-size: 1rem;
-    font-family: $family-monospace;
-}
-</style>

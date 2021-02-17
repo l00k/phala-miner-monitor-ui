@@ -2,6 +2,7 @@ import { formatDate, formatDatetime, formatTime, ucfirst } from '@/core/Utility'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import numeral from 'numeral';
 import Vue from 'vue';
+import './VeeValidate';
 
 /*
  * EXTERNAL COMPONENTS
@@ -28,7 +29,6 @@ Vue.filter('formatNumber', function(value, format) {
  * APP SPECIFIC
  */
 // todo maybe shuold be loaded from module?
-
 
 Vue.filter('formatCoin', function(value) {
     return numeral(value / 1000000000000.0).format('0.00 a') + 'PHA';

@@ -1,3 +1,4 @@
+import PayoutTargetPasswordData from '#/Monitor/Dto/PayoutTargetPasswordData';
 import Account, { Fragments as AccountFragments } from '#/Monitor/Model/Account';
 import Miner, { Fragments as MinerFragments } from '#/Monitor/Model/Miner';
 import AppState from '#/Monitor/Model/AppState';
@@ -62,10 +63,9 @@ ${AccountFragments.DefaultData}
             `
         });
 
-        account.isUnknown = !!rawAccount;
+        account.isUnknown = !rawAccount;
 
         if (!rawAccount) {
-            account.isUnknown = true;
             return false;
         }
 
@@ -125,7 +125,7 @@ ${MinerFragments.DefaultData}
             `
         });
 
-        miner.isUnknown = !!rawMiner;
+        miner.isUnknown = !rawMiner;
 
         if (!rawMiner) {
             return false;
@@ -162,6 +162,25 @@ ${MinerFragments.DefaultData}
         });
 
         return new AppState(JSON.parse(data));
+    }
+
+    public async mutatePayoutTargetPassword(passwordData : PayoutTargetPasswordData) : Promise<boolean>
+    {
+        const { errors } = await this.apollo.query({
+            query: gql`
+mutation { 
+    setPayoutTargetPassword(
+        payoutTargetAddress: "${passwordData.payoutTargetAddress}",
+        password: "${passwordData.password}",
+        signature: "${passwordData.signature}"
+    ) { 
+        updatedAt 
+    } 
+}
+            `
+        });
+
+        return !errors.length;
     }
 
 }

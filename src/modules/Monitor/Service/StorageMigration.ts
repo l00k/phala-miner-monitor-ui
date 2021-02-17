@@ -2,7 +2,10 @@ import Account from '#/Monitor/Model/Account';
 import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Inject } from '@100k/intiv/ObjectManager';
-import { ToastProgrammatic as Toast } from 'buefy';
+import {
+    ToastProgrammatic as Toast,
+    SnackbarProgrammatic as Snackbar,
+} from 'buefy';
 
 
 declare const window;
@@ -39,8 +42,8 @@ export default class StorageMigration
 
         const miners = Miner.findAll<Miner>();
         for (const miner of miners) {
-            const accountUpdated = await this.monitorApi.fetchNewMiner(miner);
-            if (!accountUpdated) {
+            const minerUpdated = await this.monitorApi.fetchNewMiner(miner);
+            if (!minerUpdated) {
                 result = false;
             }
         }
@@ -61,6 +64,14 @@ export default class StorageMigration
                 position: 'is-bottom-right',
             });
         }
+
+        Snackbar.open({
+            message: 'Your local storage data was updated. App migrated it to latest version, but it may happen monitor will not work properly. In such case try to clear local storage (check config section)',
+            type: 'is-warning',
+            position: 'is-top',
+            actionText: 'Hide',
+            indefinite: true,
+        });
     }
 
     public async clear() : Promise<void>

@@ -48,3 +48,9 @@ export default class BeCard
 
 }
 </script>
+
+<style scoped lang="scss">
+.card {
+    overflow: visible;
+}
+</style>

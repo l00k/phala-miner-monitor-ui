@@ -15,6 +15,6 @@ export default function Route(path : string, name : string, options : Partial<Ro
 
         ObjectManager.getInstance(App)
             .getVueRouter()
-            .addRoutes([ routeRecord ]);
+            .addRoute(routeRecord);
     };
 }
