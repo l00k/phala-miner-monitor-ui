@@ -136,7 +136,7 @@ $SECRET_KEY = "{{ secretKeyData.secretKey }}";</pre>
                         </b-message>
 
                         <b-message type="is-success">
-                            Next setup your cron to run this script as often as you want ;)
+                            Next setup your cron to run this script with reasonable frequency ;)
                         </b-message>
                     </div>
                 </template>
