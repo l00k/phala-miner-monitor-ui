@@ -98,17 +98,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            label="Last extrinsics"
-                        >
-                            <table class="records-table">
-                                <tr v-for="extrinsic of account.extrinsics">
-                                    <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
-                                </tr>
-                            </table>
-                        </b-table-column>
-
-                        <b-table-column
                             label="Last rewards"
                         >
                             <table class="records-table">

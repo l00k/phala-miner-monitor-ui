@@ -168,7 +168,7 @@
                                 />
                                 <div class="address-block">
                                     <b-tooltip
-                                        v-if="miner.controllerAccount.isUnknown"
+                                        v-if="miner.isUnknown"
                                         position="is-top"
                                         label="Not found"
                                         class="is-vcentered"
@@ -198,19 +198,6 @@
                                         :data-clipboard-text="miner.stashAccount.address"
                                     />
                                     <div class="address-block">
-                                        <b-tooltip
-                                            v-if="miner.stashAccount.isUnknown"
-                                            position="is-top"
-                                            label="Not found"
-                                            class="is-vcentered"
-                                        >
-                                            <b-icon
-                                                icon="exclamation-triangle"
-                                                type="is-danger"
-                                                size="is-small"
-                                                class="is-vcentered mr-2"
-                                            />
-                                        </b-tooltip>
                                         <span>{{ miner.stashAccount.address | formatAddress }}</span>
                                     </div>
                                 </b-field>
@@ -369,15 +356,6 @@
                                     <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
                                 </tr>
                             </table>
-                            <div v-if="separateStashAccount(miner)">
-                                <hr/>
-                                <table class="records-table">
-                                    <tr v-for="extrinsic of miner.stashAccount.extrinsics">
-                                        <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                        <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
-                                    </tr>
-                                </table>
-                            </div>
                         </b-table-column>
 
                         <b-table-column
