@@ -225,7 +225,10 @@
                             cell-class="miners-list__cell miners-list__cell--state"
                         >
                             <div>
-                                <b-tag type="is-info" size="is-micro">{{ miner.state }}</b-tag>
+                                <b-tag
+                                    :type="miner.state === 'Mining' ? 'is-info' : 'is-warning'"
+                                    size="is-micro"
+                                >{{ miner.state }}</b-tag>
                             </div>
                             <div>
                                 <b-tag v-if="miner.isOnline" type="is-success" size="is-micro">Online</b-tag>

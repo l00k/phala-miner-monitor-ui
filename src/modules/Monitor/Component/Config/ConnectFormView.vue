@@ -98,7 +98,7 @@
                                     v-slot="{ errors }"
                                 >
                                     <b-field
-                                        label="Secret Key"
+                                        label="Define device secret key"
                                         label-position="on-border"
                                         :type="errors.length > 0 ? 'is-danger' : ''"
                                         :message="errors"
