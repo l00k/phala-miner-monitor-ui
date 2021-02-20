@@ -1,5 +1,6 @@
 import { Model, AbstractModel } from '@/core/Store';
 import { Property, Initializable } from '@100k/intiv/Initializable';
+import moment from 'moment';
 
 
 export enum ContainerState
@@ -56,16 +57,37 @@ export default class DeviceState
     @Property()
     public host : PartInfo = new PartInfo();
 
+    @Property()
+    public updatedAt : Date;
+
+    public get isOutdated() : boolean
+    {
+        return moment().diff(this.updatedAt, 'minutes') > 15;
+    }
+
+    public get outdatedTag() : TagProps
+    {
+        const hint = 'Is outdated! Last update: ' + moment(this.updatedAt).format('YYYY-MM-DD HH:mm:ss');
+        return {
+            type: 'is-warning',
+            hint,
+        };
+    }
+
     public get cpuTag() : TagProps
     {
         const temperature = this.cpu.temperature;
+        let hint : string = `Temp: ${ temperature.toFixed(1) }°C`;
+
         return {
-            type: temperature < 60
-                ? 'is-success'
-                : temperature < 80
-                    ? 'is-warning'
-                    : 'is-danger',
-            hint: `Temp: ${ temperature.toFixed(1) }°C`,
+            type: this.isOutdated
+                ? 'is-light'
+                : temperature < 60
+                    ? 'is-success'
+                    : temperature < 80
+                        ? 'is-warning'
+                        : 'is-danger',
+            hint,
         };
     }
 
@@ -78,24 +100,32 @@ export default class DeviceState
         }
 
         return {
-            type: containerStateToTagTypeMap[this.node.state],
-            hint: hint,
+            type: this.isOutdated
+                ? 'is-light'
+                : containerStateToTagTypeMap[this.node.state],
+            hint,
         };
     }
 
     public get runtimeTag() : TagProps
     {
+        let hint : string = <any> this.runtime.state;
         return {
-            type: containerStateToTagTypeMap[this.runtime.state],
-            hint: this.runtime.state,
+            type: this.isOutdated
+                ? 'is-light'
+                : containerStateToTagTypeMap[this.runtime.state],
+            hint,
         };
     }
 
     public get hostTag() : TagProps
     {
+        let hint : string = <any> this.host.state;
         return {
-            type: containerStateToTagTypeMap[this.host.state],
-            hint: this.host.state,
+            type: this.isOutdated
+                ? 'is-light'
+                : containerStateToTagTypeMap[this.host.state],
+            hint,
         };
     }
 

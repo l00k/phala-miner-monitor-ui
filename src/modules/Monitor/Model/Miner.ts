@@ -46,8 +46,9 @@ fragment MinerDefaultData on Miner {
     deviceState {
         cpu { temperature },
         node { state, syncProgress },
-        runtime { state }
-        host { state }
+        runtime { state },
+        host { state },
+        updatedAt,
     }
 }
 `

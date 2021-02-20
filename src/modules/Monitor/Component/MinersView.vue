@@ -241,6 +241,18 @@
                                 class="miner-device-state"
                             >
                                 <b-tooltip
+                                    v-if="miner.deviceState.isOutdated"
+                                    :label="miner.deviceState.outdatedTag.hint"
+                                    position="is-top"
+                                    :type="miner.deviceState.outdatedTag.type"
+                                >
+                                    <b-tag
+                                        :type="miner.deviceState.outdatedTag.type"
+                                        size="is-micro"
+                                    >Outdated
+                                    </b-tag>
+                                </b-tooltip>
+                                <b-tooltip
                                     :label="miner.deviceState.cpuTag.hint"
                                     position="is-top"
                                     :type="miner.deviceState.cpuTag.type"
