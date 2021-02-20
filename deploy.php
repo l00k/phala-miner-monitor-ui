@@ -25,7 +25,6 @@ set('writable_dirs', []);
 host('main')
     ->hostname('100k-dev-server')
     ->user('l00k')
-    ->identityFile('~/.ssh/phala-mining-monitor')
     ->set('deploy_path', '/srv/web/phala-miner-monitor-ui');
 
 
