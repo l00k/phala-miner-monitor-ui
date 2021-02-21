@@ -104,13 +104,13 @@ export default class Miner
     public get isOnline() : boolean
     {
         return !isEmpty(this.controllerAccount.extrinsics)
-            && moment().diff(this.controllerAccount.extrinsics[0].date, 'hours') < 2;
+            && moment().diff(this.controllerAccount.extrinsics[0].date, 'hours') < 4;
     }
 
     public get isRewarding() : boolean
     {
         return !isEmpty(this.minedRewards)
-            && moment().diff(this.minedRewards[0].date, 'hours') < 2;
+            && moment().diff(this.minedRewards[0].date, 'hours') < 4;
     }
 
 
