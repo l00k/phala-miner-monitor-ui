@@ -65,11 +65,11 @@ export default class DeviceState
         return moment().diff(this.updatedAt, 'minutes') > 15;
     }
 
-    public get outdatedTag() : TagProps
+    public get updateTag() : TagProps
     {
-        const hint = 'Is outdated! Last update: ' + moment(this.updatedAt).format('YYYY-MM-DD HH:mm:ss');
+        const hint = 'Last update: ' + moment(this.updatedAt).format('YYYY-MM-DD HH:mm:ss');
         return {
-            type: 'is-warning',
+            type: this.isOutdated ? 'is-warning' : 'is-success',
             hint,
         };
     }

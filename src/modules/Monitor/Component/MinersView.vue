@@ -241,15 +241,14 @@
                                 class="miner-device-state"
                             >
                                 <b-tooltip
-                                    v-if="miner.deviceState.isOutdated"
-                                    :label="miner.deviceState.outdatedTag.hint"
+                                    :label="miner.deviceState.updateTag.hint"
                                     position="is-top"
-                                    :type="miner.deviceState.outdatedTag.type"
+                                    :type="miner.deviceState.updateTag.type"
                                 >
                                     <b-tag
-                                        :type="miner.deviceState.outdatedTag.type"
+                                        :type="miner.deviceState.updateTag.type"
                                         size="is-micro"
-                                    >Outdated
+                                    >S
                                     </b-tag>
                                 </b-tooltip>
                                 <b-tooltip
