@@ -22,62 +22,16 @@
                         class="is-pulled-left mr-2"
                     >
                         <b-select
-                            v-model="filters.VisiblityState"
+                            v-model="visiblityFilter"
                             placeholder="Visibility"
                             size="is-small"
                             icon-pack="fas"
                             icon="eye"
                         >
                             <option value="any">Show all</option>
-                            <option value="no">Only hidden</option>
-                            <option value="yes">Only visible</option>
+                            <option value="hiddenOnly">Only hidden</option>
+                            <option value="visibleOnly">Only visible</option>
                         </b-select>
-                    </b-field>
-
-                    <b-field
-                        label-position="on-border"
-                        label="Online"
-                        class="is-pulled-left mr-2"
-                    >
-                        <b-tooltip
-                            label="Miner is online when it submited any extrinsic in last 24h"
-                            position="is-top"
-                        >
-                            <b-select
-                                v-model="filters.OnlineState"
-                                placeholder="Online"
-                                size="is-small"
-                                icon-pack="fas"
-                                icon="wifi"
-                            >
-                                <option value="any">Show all</option>
-                                <option value="no">Only offline</option>
-                                <option value="yes">Only online</option>
-                            </b-select>
-                        </b-tooltip>
-                    </b-field>
-
-                    <b-field
-                        label-position="on-border"
-                        label="Rewarding"
-                        class="is-pulled-left mr-2"
-                    >
-                        <b-tooltip
-                            label="Miner has status 'rewarding' when it was rewarded in last 24h"
-                            position="is-top"
-                        >
-                            <b-select
-                                v-model="filters.RewardingState"
-                                placeholder="Rewarding"
-                                size="is-small"
-                                icon-pack="fas"
-                                icon="coins"
-                            >
-                                <option value="any">Show all</option>
-                                <option value="no">Only non rewarding</option>
-                                <option value="yes">Only rewarding</option>
-                            </b-select>
-                        </b-tooltip>
                     </b-field>
 
                     <b-dropdown
@@ -224,6 +178,19 @@
                             :searchable="true"
                             cell-class="miners-list__cell miners-list__cell--state"
                         >
+                            <template #searchable="{ column }">
+                                <b-taginput
+                                    v-model="filters"
+                                    placeholder="Type..."
+                                    :data="allowedListFilters"
+                                    field="label"
+                                    :autocomplete="true"
+                                    :open-on-focus="true"
+                                    type="is-primary is-light"
+                                    class="has-text-weight-normal"
+                                />
+                            </template>
+
                             <div>
                                 <b-tag
                                     :type="miner.state === 'Mining' ? 'is-info' : 'is-warning'"
@@ -475,22 +442,10 @@ declare const window;
 const ConfigStore = namespace('Monitor/Config');
 
 
-enum Filters
-{
-    VisiblityState = 'isVisible',
-    OnlineState = 'isOnline',
-    RewardingState = 'isRewarding',
-}
 
-
-type FiltersType = {
-    [filter : string] : string
-};
-
-const filterValueMap = {
-    'any': null,
-    'no': false,
-    'yes': true,
+type FilterType = {
+    label : string,
+    callee : (miner : Miner) => boolean
 };
 
 @Component({
@@ -504,7 +459,6 @@ export default class MinersView
 {
 
     protected Miner = Miner;
-    protected Filters = Filters;
     protected ContainerState = ContainerState;
 
     @Inject()
@@ -523,9 +477,25 @@ export default class MinersView
 
     protected isLoading : boolean = false;
 
-    protected filters : FiltersType = {
-        VisiblityState: 'yes'
-    };
+    protected allowedListFilters : FilterType[] = [
+        { label: 'Online', callee: (miner : Miner) => miner.isOnline },
+        { label: 'Offline', callee: (miner : Miner) => !miner.isOnline },
+        { label: 'Rewarding', callee: (miner : Miner) => miner.isRewarding },
+        { label: 'Not rewarding', callee: (miner : Miner) => !miner.isRewarding },
+        { label: 'Free', callee: (miner : Miner) => miner.state === 'Free' },
+        { label: 'Mining Pending', callee: (miner : Miner) => miner.state === 'MiningPending' },
+        { label: 'Mining', callee: (miner : Miner) => miner.state === 'Mining' },
+        { label: 'Node OK', callee: (miner : Miner) => miner.deviceState?.node?.state === ContainerState.Running },
+        { label: 'Node not OK', callee: (miner : Miner) => miner.deviceState?.node?.state !== ContainerState.Running },
+        { label: 'Runtime OK', callee: (miner : Miner) => miner.deviceState?.runtime?.state === ContainerState.Running },
+        { label: 'Runtime not OK', callee: (miner : Miner) => miner.deviceState?.runtime?.state !== ContainerState.Running },
+        { label: 'Host OK', callee: (miner : Miner) => miner.deviceState?.runtime?.state === ContainerState.Running },
+        { label: 'Host not OK', callee: (miner : Miner) => miner.deviceState?.runtime?.state !== ContainerState.Running },
+    ];
+
+    protected visiblityFilter : string = 'visibleOnly';
+
+    protected filters : FilterType[] = [];
 
     protected miners : Miner[] = [];
 
@@ -533,9 +503,6 @@ export default class MinersView
 
     @ConfigStore.State('visibleColumns')
     protected visibleColumns : string[];
-
-    @ConfigStore.State('hiddenEntriesVisibility')
-    protected hiddenEntriesVisibility : string[];
 
     protected get defaultSort() : Object
     {
@@ -549,26 +516,17 @@ export default class MinersView
         return { field: null, order: 'asc' };
     }
 
-    public get showHiddenEntries() : boolean
-    {
-        return this.hiddenEntriesVisibility.indexOf('miners') !== -1;
-    }
-
     public get visibleMiners() : Miner[]
     {
         let miners = this.miners;
 
-        for (const [ filter, field ] of Object.entries(Filters)) {
-            const rawValue = this.filters[filter];
-            const value = rawValue
-                ? filterValueMap[rawValue]
-                : null;
+        if (this.visiblityFilter !== 'any') {
+            const value = this.visiblityFilter === 'visibleOnly';
+            miners = miners.filter(miner => miner.isVisible === value);
+        }
 
-            if (value !== null) {
-                miners = miners.filter(miner => {
-                    return miner[field] === value;
-                });
-            }
+        for (const filter of this.filters) {
+            miners = miners.filter(miner => filter.callee(miner));
         }
 
         return miners;
@@ -607,24 +565,10 @@ export default class MinersView
         this.$minerFormView.show(managedMiner);
     }
 
-    public switchHiddenEntriesVisibility()
-    {
-        const newValue = this.hiddenEntriesVisibility.indexOf('miners') === -1;
-
-        let hiddenEntriesVisibility = this.hiddenEntriesVisibility || [];
-        if (newValue) {
-            hiddenEntriesVisibility.push('miners');
-        }
-        else {
-            hiddenEntriesVisibility = hiddenEntriesVisibility.filter(e => e !== 'miners');
-        }
-
-        this.$store.commit('Monitor/Config/setHiddenEntriesVisibility', hiddenEntriesVisibility);
-    }
-
     public clearFilters()
     {
         this.$table.filters = {};
+        this.filters = [];
     }
 
     public async changeVisibilityMiners(miners : Miner[], visible : boolean)

@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "serve": "NODE_ENV=development vue-cli-service serve",
+        "serve:remote": "NODE_ENV=development USE_PUBLIC_API=1 vue-cli-service serve",
         "build": "NODE_ENV=production vue-cli-service build"
     },
     "main": "main.js",

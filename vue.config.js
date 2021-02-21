@@ -70,7 +70,8 @@ module.exports = {
 
         const buildVersion = generateUniqueBuildInfo();
 
-        const apiUrl = !isDev
+        const usePublicApi = process.env.USE_PUBLIC_API || !isDev;
+        const apiUrl = usePublicApi
             ? 'https://phala-miner-monitor2.100k.dev:8084/graphql'
             : 'http://localhost:8084/graphql';
         const appData = JSON.stringify({
