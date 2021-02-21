@@ -478,13 +478,13 @@ export default class MinersView
     protected isLoading : boolean = false;
 
     protected allowedListFilters : FilterType[] = [
+        { label: 'State: Free', callee: (miner : Miner) => miner.state === 'Free' },
+        { label: 'State: Mining Pending', callee: (miner : Miner) => miner.state === 'MiningPending' },
+        { label: 'State: Mining', callee: (miner : Miner) => miner.state === 'Mining' },
         { label: 'Online', callee: (miner : Miner) => miner.isOnline },
         { label: 'Offline', callee: (miner : Miner) => !miner.isOnline },
         { label: 'Rewarding', callee: (miner : Miner) => miner.isRewarding },
         { label: 'Not rewarding', callee: (miner : Miner) => !miner.isRewarding },
-        { label: 'Free', callee: (miner : Miner) => miner.state === 'Free' },
-        { label: 'Mining Pending', callee: (miner : Miner) => miner.state === 'MiningPending' },
-        { label: 'Mining', callee: (miner : Miner) => miner.state === 'Mining' },
         { label: 'Node OK', callee: (miner : Miner) => miner.deviceState?.node?.state === ContainerState.Running },
         { label: 'Node not OK', callee: (miner : Miner) => miner.deviceState?.node?.state !== ContainerState.Running },
         { label: 'Runtime OK', callee: (miner : Miner) => miner.deviceState?.runtime?.state === ContainerState.Running },
