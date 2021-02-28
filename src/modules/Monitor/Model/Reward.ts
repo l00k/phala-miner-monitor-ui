@@ -5,8 +5,8 @@ import gql from 'graphql-tag';
 
 export enum PayoutReason
 {
-    Online = 'online',
-    Compute = 'compute',
+    Online = 'Online',
+    Compute = 'Compute',
 }
 
 
