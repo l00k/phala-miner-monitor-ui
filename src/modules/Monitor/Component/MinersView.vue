@@ -379,6 +379,12 @@
                             </b-button>
                             <b-button
                                 size="is-small"
+                                type="is-warning is-light"
+                                @click="showMinerStats(miner)"
+                            >Stats
+                            </b-button>
+                            <b-button
+                                size="is-small"
                                 type="is-danger"
                                 @click="deleteMiners([miner])"
                             >Delete
@@ -417,11 +423,18 @@
             ref="minerFormView"
             @miner:save="onMinerSave"
         />
+
+        <MinerStatsView
+            ref="minerStatsView"
+        />
     </div>
 </template>
 
 <script lang="ts">
+import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
 import MinerFormView from '#/Monitor/Component/Miner/FormView.vue';
+import MinerStatsView from '#/Monitor/Component/Stats/MinerStatsView.vue';
+import Account from '#/Monitor/Model/Account';
 import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
@@ -450,6 +463,7 @@ type FilterType = {
 
 @Component({
     components: {
+        MinerStatsView,
         MinerFormView,
         Identicon,
     }
@@ -461,18 +475,20 @@ export default class MinersView
     protected Miner = Miner;
     protected ContainerState = ContainerState;
 
-    @Inject()
-    protected eventBus : EventBus;
-
-    @Inject()
-    protected monitorApi : MonitorApi;
-
-
     @Ref('table')
     protected $table : BTable;
 
     @Ref('minerFormView')
     protected $minerFormView : MinerFormView;
+
+    @Ref('minerStatsView')
+    protected $minerStatsView : MinerStatsView;
+
+    @Inject()
+    protected eventBus : EventBus;
+
+    @Inject()
+    protected monitorApi : MonitorApi;
 
 
     protected isLoading : boolean = false;
@@ -530,6 +546,11 @@ export default class MinersView
         }
 
         return miners;
+    }
+
+    protected showMinerStats(miner : Miner)
+    {
+        this.$minerStatsView.show(miner);
     }
 
     protected async loadMiners()

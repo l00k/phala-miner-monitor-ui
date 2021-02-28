@@ -2,6 +2,7 @@ import PayoutTargetSecretKeyData from '#/Monitor/Dto/PayoutTargetSecretKeyData';
 import Account, { Fragments as AccountFragments } from '#/Monitor/Model/Account';
 import Miner, { Fragments as MinerFragments } from '#/Monitor/Model/Miner';
 import AppState from '#/Monitor/Model/AppState';
+import Reward, { Fragments as RewardFragments } from '#/Monitor/Model/Reward';
 import { Inject } from '@100k/intiv/ObjectManager';
 import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import gql from 'graphql-tag';
@@ -133,6 +134,21 @@ ${MinerFragments.DefaultData}
 
         miner.setData(rawMiner);
         return true;
+    }
+
+
+    public async fetchMinerRewards(miner : Miner) : Promise<Reward[]>
+    {
+        const { data: { getMinerRewards: rewards } } = await this.apollo.query({
+            query: gql`
+query { 
+    getMinerRewards(id: ${ miner.id }) { ...RewardDefaultData }
+}
+${RewardFragments.DefaultData}
+            `
+        });
+
+        return rewards.map(rewardRaw => new Reward(rewardRaw));
     }
 
 

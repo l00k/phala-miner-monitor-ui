@@ -1,5 +1,6 @@
 import { Model, AbstractModel } from '@/core/Store';
 import { Initializable, Property, Initialize } from '@100k/intiv/Initializable';
+import gql from 'graphql-tag';
 
 
 export enum PayoutReason
@@ -7,6 +8,17 @@ export enum PayoutReason
     Online = 'online',
     Compute = 'compute',
 }
+
+
+export const Fragments = {
+    DefaultData: gql`
+fragment RewardDefaultData on Reward {
+    date,
+    fire,
+    reason,
+}
+`
+};
 
 
 @Model('Monitor/Reward')

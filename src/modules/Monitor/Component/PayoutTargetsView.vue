@@ -128,6 +128,12 @@
                             </b-button>
                             <b-button
                                 size="is-small"
+                                type="is-warning is-light"
+                                @click="showAccountStats(account)"
+                            >Stats
+                            </b-button>
+                            <b-button
+                                size="is-small"
                                 type="is-danger"
                                 @click="deleteAccount(account)"
                             >Delete
@@ -142,11 +148,16 @@
             ref="accountFormView"
             @account:save="hideAccountForm"
         />
+
+        <PayoutTargetStatsView
+            ref="payoutTargetStatsView"
+        />
     </div>
 </template>
 
 <script lang="ts">
 import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
+import PayoutTargetStatsView from '#/Monitor/Component/Stats/PayoutTargetStatsView.vue';
 import Account from '#/Monitor/Model/Account';
 import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
@@ -167,6 +178,7 @@ const AccountStore = namespace('Monitor/Account');
 
 @Component({
     components: {
+        PayoutTargetStatsView,
         AccountFormView,
         Identicon,
     }
@@ -177,6 +189,9 @@ export default class PayoutTargetsView
 
     @Ref()
     protected accountFormView : AccountFormView;
+
+    @Ref()
+    protected payoutTargetStatsView : AccountFormView;
 
     @Inject()
     protected monitorApi : MonitorApi;
@@ -209,6 +224,11 @@ export default class PayoutTargetsView
         }
 
         this.accountFormView.show(managedAccount);
+    }
+
+    protected showAccountStats(account : Account)
+    {
+        this.payoutTargetStatsView.show(account);
     }
 
     protected hideAccountForm(account : Account)

@@ -34,6 +34,9 @@ fragment MinerDefaultData on Miner {
             isSuccessful,
         },
     },
+    payoutTarget {
+        address,
+    },
     fireMined,
     score,
     state,

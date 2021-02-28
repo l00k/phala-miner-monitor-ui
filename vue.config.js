@@ -1,40 +1,38 @@
-const webpack = require('webpack')
-const moment = require('moment')
+const webpack = require('webpack');
+const moment = require('moment');
 
 class IntiPathResolverPlugin
 {
-    static MODULES_PATH = __dirname + '/src/modules/'
+    static MODULES_PATH = __dirname + '/src/modules/';
 
     constructor (source, target) {
-        this.source = source || 'resolve'
-        this.target = target || 'resolve'
+        this.source = source || 'resolve';
+        this.target = target || 'resolve';
     }
 
     apply (resolver) {
-        var target = resolver.ensureHook(this.target)
+        var target = resolver.ensureHook(this.target);
         resolver
             .getHook(this.source)
             .tapAsync('IntiPathResolverPlugin', (request, resolveContext, callback) => {
                 if (request.request[0] === '#') {
-                    request.request = request.request.replace('#/', IntiPathResolverPlugin.MODULES_PATH)
-                    return resolver.doResolve(target, request, null, resolveContext, callback)
+                    request.request = request.request.replace('#/', IntiPathResolverPlugin.MODULES_PATH);
+                    return resolver.doResolve(target, request, null, resolveContext, callback);
                 }
-                callback()
-            })
+                callback();
+            });
     }
 
 }
 
 function generateUniqueBuildInfo () {
-    const date = new Date()
-    const random = 10000 + Math.round(Math.random() * 89999)
-    return 'v' + moment().format('YYYY.MM.DD.HHmmss') + '-' + random
+    const date = new Date();
+    const random = 10000 + Math.round(Math.random() * 89999);
+    return 'v' + moment().format('YYYY.MM.DD.HHmmss') + '-' + random;
 }
-
 
 const env = process.env.NODE_ENV || 'production';
 const isDev = env !== 'production';
-
 
 module.exports = {
     runtimeCompiler: true,
@@ -59,14 +57,14 @@ module.exports = {
     ],
     configureWebpack (config) {
         if (isDev) {
-            config.devtool = 'source-map'
+            config.devtool = 'source-map';
         }
 
-        config.optimization.minimize = false
+        config.optimization.minimize = false;
         config.devServer = {
             port: 4000
-        }
-        config.resolve.plugins = [new IntiPathResolverPlugin()]
+        };
+        config.resolve.plugins = [new IntiPathResolverPlugin()];
 
         const buildVersion = generateUniqueBuildInfo();
 
@@ -77,13 +75,13 @@ module.exports = {
         const appData = JSON.stringify({
             apiUrl,
             buildVersion,
-        })
+        });
 
         config.plugins.push(
             new webpack.DefinePlugin({
                 __APP_DATA__: JSON.stringify(appData)
             }),
-        )
+        );
 
         if (isDev) {
             // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -94,6 +92,6 @@ module.exports = {
             test: /\.mjs$/,
             include: /node_modules/,
             type: 'javascript/auto',
-        })
+        });
     },
-}
+};
