@@ -88,7 +88,7 @@ export default class MinerStatsView
                     ? 'YYYY-MM-gg'
                     : 'YYYY-MM';
 
-        let rewards = {};
+        let rewards : any = {};
         this.rewards.forEach(reward => {
             const key = moment(reward.date).format(groupFormat);
             if (!rewards[key]) {
