@@ -752,12 +752,6 @@ export default class MinersView
         }
     }
 
-    .tag.is-micro {
-        padding: 0 4px;
-        height: 1.5em;
-        line-height: 1.2;
-    }
-
     hr {
         margin: 5px 20%;
         width: 60%;

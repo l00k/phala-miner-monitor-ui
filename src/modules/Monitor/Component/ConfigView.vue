@@ -10,10 +10,33 @@
             <div class="card-content">
                 <div class="content">
                     <div class="columns">
-                        <div class="column is-4 has-text-left">
-                            <div>Crawler sync: {{ (appState.lastFetchedBlock / appState.currentHeadBlock * 100) | formatNumber('0.0') }}% ({{ appState.lastFetchedBlock }})</div>
-                            <div>Last accounts update: {{ appState.lastFetchedBlock - appState.lastInfoUpdateBlock }} blocks ago</div>
+                        <div
+                            v-if="lastFinalizedBlock"
+                            class="column is-4 has-text-left"
+                        >
+                            <div>
+                                <span class="mr-2">Crawler sync:</span>
+                                <b-tag
+                                    v-if="blockIndexDelta < BLOCK_INDEX_THRESHOLD"
+                                    type="is-success"
+                                    size="is-micro"
+                                >In sync</b-tag>
+                                <b-tag
+                                    v-else
+                                    class="is-warning"
+                                    size="is-micro"
+                                >Outdated</b-tag>
+                                ({{ blockIndexDelta }} to process)
+                            </div>
+                            <div>Last accounts update: {{ accountUpdateDelta }} blocks ago</div>
                         </div>
+                        <div
+                            v-else
+                            class="column is-4 has-text-left"
+                        >
+                            Connecting to node...
+                        </div>
+
                         <div class="column is-4 has-text-centered">
                             <div>
                                 <b-button
@@ -50,6 +73,7 @@ import ConnectFormView from '#/Monitor/Component/Config/ConnectFormView.vue';
 import AppState from '#/Monitor/Model/AppState';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import StorageMigration from '#/Monitor/Service/StorageMigration';
+import PhalaApi from '#/Phala/Service/Api/PhalaApi';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager';
@@ -66,6 +90,9 @@ export default class ConfigView
 {
 
     @Inject()
+    protected phalaApi : PhalaApi;
+
+    @Inject()
     protected monitorApi : MonitorApi;
 
     @Inject()
@@ -76,9 +103,29 @@ export default class ConfigView
 
     protected appState : AppState = new AppState();
 
+    protected lastFinalizedBlock : number = null;
+
+
+    public get blockIndexDelta() : number
+    {
+        return this.lastFinalizedBlock - this.appState.lastFetchedBlock;
+    }
+
+    public get accountUpdateDelta() : number
+    {
+        return this.lastFinalizedBlock - this.appState.lastInfoUpdateBlock;
+    }
+
+
     public async created()
     {
         this.appState = await this.monitorApi.getAppState();
+
+        const nativeApi = await this.phalaApi.api();
+        const finalizedHead = await nativeApi.rpc.chain.getFinalizedHead();
+        const finalizedBlockHeader = await nativeApi.rpc.chain.getHeader(finalizedHead);
+
+        this.lastFinalizedBlock = finalizedBlockHeader.number.toNumber();
     }
 
     public get buildVersion() : string
