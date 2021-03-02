@@ -11,9 +11,7 @@ export default class PhalaApi
     extends PolkadotApi
 {
 
-    protected static readonly API_WS_URL : string = isDev
-        ? 'ws://100k-dev-server:9944/ws'
-        : 'ws://phala-node:9944/ws';
+    protected static readonly API_WS_URL : string = 'wss://poc3a.phala.network/ws';
 
     protected createApi() : Promise<any>
     {

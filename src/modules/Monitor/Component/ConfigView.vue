@@ -89,6 +89,8 @@ export default class ConfigView
     extends BaseComponent
 {
 
+    protected BLOCK_INDEX_THRESHOLD = 30;
+
     @Inject()
     protected phalaApi : PhalaApi;
 
