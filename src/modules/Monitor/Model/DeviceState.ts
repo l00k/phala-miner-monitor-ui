@@ -96,7 +96,8 @@ export default class DeviceState
         let hint : string = <any> this.node.state;
 
         if (this.node.state === ContainerState.InSync) {
-            hint += ` / Progress: ${ this.node.syncProgress.toFixed(1) }%`;
+            const progress = this.node.syncProgress * 100;
+            hint += ` / Progress: ${ progress.toFixed(2) }%`;
         }
 
         return {
