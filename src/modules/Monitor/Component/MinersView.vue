@@ -247,7 +247,9 @@
                             </div>
                             <div v-if="miner.confidenceLevel">
                                 <span class="has-text-weight-bold">Confidence Level:</span>
-                                {{ miner.confidenceLevel }}
+                                <span
+                                    :class="{'text--danger': miner.confidenceLevel >= 4 }"
+                                >{{ miner.confidenceLevel }}</span>
                             </div>
                             <div v-if="miner.runtimeVersion">
                                 <span class="has-text-weight-bold">Runtime Version:</span>
@@ -311,7 +313,7 @@
                             <table class="records-table">
                                 <tr v-for="extrinsic of miner.controllerAccount.extrinsics">
                                     <td :title="extrinsic.date | formatDatetime">{{ extrinsic.date | formatTime }}</td>
-                                    <td :class="{'extrinsic--failed': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
+                                    <td :class="{'text--danger': !extrinsic.isSuccessful}">{{ extrinsic.action }}</td>
                                 </tr>
                             </table>
                         </b-table-column>
@@ -717,7 +719,7 @@ export default class MinersView
         background-color: #555;
     }
 
-    .extrinsic--failed {
+    .text--danger {
         color: red;
     }
 }
