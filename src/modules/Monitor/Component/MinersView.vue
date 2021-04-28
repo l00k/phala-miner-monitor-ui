@@ -239,7 +239,7 @@
 
                         <b-table-column
                             label="Info"
-                            cell-class="miners-list__cell"
+                            cell-class="miners-list__cell miners-list__cell--info"
                         >
                             <div><span class="has-text-weight-bold">Commission:</span> {{ miner.commission }}%</div>
                             <div><span class="has-text-weight-bold">Confidence Level:</span> {{ miner.confidenceLevel }}</div>
@@ -394,10 +394,8 @@
 </template>
 
 <script lang="ts">
-import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
 import MinerFormView from '#/Monitor/Component/Miner/FormView.vue';
 import MinerStatsView from '#/Monitor/Component/Stats/MinerStatsView.vue';
-import Account from '#/Monitor/Model/Account';
 import Miner from '#/Monitor/Model/Miner';
 import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
@@ -408,7 +406,7 @@ import Identicon from '@polkadot/vue-identicon';
 import { ToastProgrammatic } from 'buefy';
 import { BTable } from 'buefy/src/components/table';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { Ref, Watch } from 'vue-property-decorator';
+import { Ref } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { ContainerState } from '../Model/DeviceState';
 
@@ -638,6 +636,10 @@ export default class MinersView
             .tag {
                 margin-right: 4px;
             }
+        }
+        &__cell--info {
+            font-size: 0.8rem;
+            white-space: nowrap;
         }
         &__cell--actions {
             text-align: right;
