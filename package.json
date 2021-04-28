@@ -16,6 +16,7 @@
         "@fortawesome/free-regular-svg-icons": "^5.15.2",
         "@fortawesome/free-solid-svg-icons": "^5.15.2",
         "@fortawesome/vue-fontawesome": "^2.0.2",
+        "@phala/typedefs": "^0.1.0",
         "@polkadot/extension-dapp": "^0.37.1",
         "@polkadot/vue-identicon": "^0.66.3",
         "axios": "^0.21.1",
