@@ -33,31 +33,6 @@
                             <option value="visibleOnly">Only visible</option>
                         </b-select>
                     </b-field>
-
-                    <b-dropdown
-                        v-model="visibleColumns"
-                        multiple
-                    >
-                        <template #trigger>
-                            <b-button
-                                type="is-primary is-small"
-                                icon-right="menu-down"
-                            >
-                                Show columns ({{ visibleColumns.length }})
-                            </b-button>
-                        </template>
-
-                        <b-dropdown-item value="name">Name</b-dropdown-item>
-                        <b-dropdown-item value="address">Address</b-dropdown-item>
-                        <b-dropdown-item value="state">State</b-dropdown-item>
-                        <b-dropdown-item value="score">Score</b-dropdown-item>
-                        <b-dropdown-item value="info">Info</b-dropdown-item>
-                        <b-dropdown-item value="stake">Stake</b-dropdown-item>
-                        <b-dropdown-item value="balance">Balance</b-dropdown-item>
-                        <b-dropdown-item value="fireMined">Fire Mined</b-dropdown-item>
-                        <b-dropdown-item value="lastExtrinsics">Last Extrinsics</b-dropdown-item>
-                        <b-dropdown-item value="lastRewards">Last Rewards</b-dropdown-item>
-                    </b-dropdown>
                 </div>
 
                 <b-table
@@ -91,7 +66,6 @@
 
                     <template slot-scope="{ row: miner }">
                         <b-table-column
-                            :visible="visibleColumns.indexOf('name') !== -1"
                             field="name"
                             label="Name"
                             :sortable="true"
@@ -102,7 +76,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('address') !== -1"
                             field="controllerAccount.address"
                             label="Address"
                             :sortable="true"
@@ -159,7 +132,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('state') !== -1"
                             field="state"
                             label="State"
                             :sortable="true"
@@ -255,7 +227,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('score') !== -1"
                             field="score"
                             label="Score"
                             :numeric="true"
@@ -267,7 +238,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('info') !== -1"
                             label="Info"
                             cell-class="miners-list__cell"
                         >
@@ -277,7 +247,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('stake') !== -1"
                             field="stashAccount.stake"
                             label="Stake"
                             :numeric="true"
@@ -297,7 +266,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('balance') !== -1"
                             field="controllerAccount.balance"
                             label="Balance"
                             :numeric="true"
@@ -317,7 +285,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('fireMined') !== -1"
                             field="fireMined"
                             label="Fire mined"
                             :numeric="true"
@@ -329,7 +296,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('lastExtrinsics') !== -1"
                             label="Last extrinsics"
                             cell-class="miners-list__cell"
                         >
@@ -342,7 +308,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('lastRewards') !== -1"
                             label="Last rewards"
                             cell-class="miners-list__cell"
                         >
@@ -515,19 +480,9 @@ export default class MinersView
 
     protected selectedEntires : any[] = [];
 
-    @ConfigStore.State('visibleColumns')
-    protected visibleColumns : string[];
-
     protected get defaultSort() : Object
     {
-        if (this.visibleColumns.indexOf('name') !== -1) {
-            return { field: 'name', order: 'asc' };
-        }
-        else if (this.visibleColumns.indexOf('score') !== -1) {
-            return { field: 'score', order: 'desc' };
-        }
-
-        return { field: null, order: 'asc' };
+        return { field: 'name', order: 'asc' };
     }
 
     public get visibleMiners() : Miner[]
@@ -637,12 +592,6 @@ export default class MinersView
             const newMiners = this.miners.filter(_miner => _miner.id === miner.id);
             this.monitorApi.fetchMiners(newMiners);
         }
-    }
-
-    @Watch('visibleColumns')
-    public onColumnsChange()
-    {
-        this.$store.commit('Monitor/Config/setVisibleColumns', this.visibleColumns);
     }
 
 }

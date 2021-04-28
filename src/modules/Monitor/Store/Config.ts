@@ -16,23 +16,4 @@ export default class ContextStore
     extends VuexModule<ContextStore>
 {
 
-    public visibleColumns : string[] = [
-        'name',
-        'address',
-        'score',
-        'state',
-        'commission',
-        'stake',
-        'balance',
-        'fireMined',
-        'lastExtrinsics',
-        'lastRewards'
-    ];
-
-    @Mutation
-    public async setVisibleColumns(visibleColumns : string[])
-    {
-        this.visibleColumns = visibleColumns;
-    }
-
 }
