@@ -249,9 +249,9 @@
                                 <span class="has-text-weight-bold">Confidence Level:</span>
                                 {{ miner.confidenceLevel }}
                             </div>
-                            <div v-if="miner.commission">
+                            <div v-if="miner.runtimeVersion">
                                 <span class="has-text-weight-bold">Runtime Version:</span>
-                                {{ miner.runtimeVersion }}%
+                                {{ miner.runtimeVersion }}
                             </div>
                         </b-table-column>
 
