@@ -241,9 +241,18 @@
                             label="Info"
                             cell-class="miners-list__cell miners-list__cell--info"
                         >
-                            <div><span class="has-text-weight-bold">Commission:</span> {{ miner.commission }}%</div>
-                            <div><span class="has-text-weight-bold">Confidence Level:</span> {{ miner.confidenceLevel }}</div>
-                            <div><span class="has-text-weight-bold">Runtime Version:</span> {{ miner.runtimeVersion }}</div>
+                            <div v-if="miner.commission">
+                                <span class="has-text-weight-bold">Commission:</span>
+                                {{ miner.commission }}%
+                            </div>
+                            <div v-if="miner.confidenceLevel">
+                                <span class="has-text-weight-bold">Confidence Level:</span>
+                                {{ miner.confidenceLevel }}
+                            </div>
+                            <div v-if="miner.commission">
+                                <span class="has-text-weight-bold">Runtime Version:</span>
+                                {{ miner.runtimeVersion }}%
+                            </div>
                         </b-table-column>
 
                         <b-table-column
