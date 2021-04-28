@@ -49,9 +49,9 @@
 
                         <b-dropdown-item value="name">Name</b-dropdown-item>
                         <b-dropdown-item value="address">Address</b-dropdown-item>
-                        <b-dropdown-item value="score">Score</b-dropdown-item>
                         <b-dropdown-item value="state">State</b-dropdown-item>
-                        <b-dropdown-item value="commission">Commission</b-dropdown-item>
+                        <b-dropdown-item value="score">Score</b-dropdown-item>
+                        <b-dropdown-item value="info">Info</b-dropdown-item>
                         <b-dropdown-item value="stake">Stake</b-dropdown-item>
                         <b-dropdown-item value="balance">Balance</b-dropdown-item>
                         <b-dropdown-item value="fireMined">Fire Mined</b-dropdown-item>
@@ -159,18 +159,6 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('score') !== -1"
-                            field="score"
-                            label="Score"
-                            :numeric="true"
-                            :sortable="true"
-                            :searchable="true"
-                            cell-class="miners-list__cell"
-                        >
-                            <span>{{ miner.score }}</span>
-                        </b-table-column>
-
-                        <b-table-column
                             :visible="visibleColumns.indexOf('state') !== -1"
                             field="state"
                             label="State"
@@ -267,15 +255,25 @@
                         </b-table-column>
 
                         <b-table-column
-                            :visible="visibleColumns.indexOf('commission') !== -1"
-                            field="commission"
-                            label="Commission"
+                            :visible="visibleColumns.indexOf('score') !== -1"
+                            field="score"
+                            label="Score"
                             :numeric="true"
                             :sortable="true"
                             :searchable="true"
                             cell-class="miners-list__cell"
                         >
-                            <span>{{ miner.commission }}%</span>
+                            <span>{{ miner.score }}</span>
+                        </b-table-column>
+
+                        <b-table-column
+                            :visible="visibleColumns.indexOf('info') !== -1"
+                            label="Info"
+                            cell-class="miners-list__cell"
+                        >
+                            <div><span class="has-text-weight-bold">Commission:</span> {{ miner.commission }}%</div>
+                            <div><span class="has-text-weight-bold">Confidence Level:</span> {{ miner.confidenceLevel }}</div>
+                            <div><span class="has-text-weight-bold">Runtime Version:</span> {{ miner.runtimeVersion }}</div>
                         </b-table-column>
 
                         <b-table-column

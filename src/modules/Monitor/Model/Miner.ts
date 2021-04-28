@@ -41,6 +41,8 @@ fragment MinerDefaultData on Miner {
     score,
     state,
     commission,
+    confidenceLevel,
+    runtimeVersion,
     minedRewards {
         date,
         fire,
@@ -82,13 +84,19 @@ export default class Miner
     public state : string;
 
     @Property()
-    public score : number;
+    public score? : number;
 
     @Property()
-    public commisson : number;
+    public commisson? : number;
 
     @Property()
-    public deviceState : DeviceState;
+    public confidenceLevel? : number;
+
+    @Property()
+    public runtimeVersion? : number;
+
+    @Property()
+    public deviceState? : DeviceState;
 
     @Property()
     public updatedAt : Date;
