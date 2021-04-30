@@ -66,22 +66,17 @@
 
                     <template slot-scope="{ row: miner }">
                         <b-table-column
-                            field="name"
-                            label="Name"
-                            :sortable="true"
-                            :searchable="true"
-                            cell-class="miners-list__cell"
-                        >
-                            <span>{{ miner.name }}</span>
-                        </b-table-column>
-
-                        <b-table-column
                             field="controllerAccount.address"
-                            label="Address"
+                            label="Miner"
                             :sortable="true"
                             :searchable="true"
                             cell-class="miners-list__cell"
                         >
+                            <div
+                                v-if="miner.name"
+                                class="has-text-weight-bold"
+                            >{{ miner.name }}</div>
+
                             <b-field
                                 :label="separateStashAccount(miner) ? 'Controller' : ''"
                                 label-position="on-border"
