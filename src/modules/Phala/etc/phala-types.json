@@ -66,5 +66,6 @@
             "OnlineReward": null,
             "ComputeReward": null
         }
-    }
+    },
+    "PalletId": "Raw"
 }
