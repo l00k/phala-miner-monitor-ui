@@ -258,7 +258,6 @@
                             label="Stake"
                             :numeric="true"
                             :sortable="true"
-                            :searchable="true"
                             cell-class="miners-list__cell"
                         >
                             <div class="miner-account miner-account--stake">
@@ -277,7 +276,6 @@
                             label="Balance"
                             :numeric="true"
                             :sortable="true"
-                            :searchable="true"
                             cell-class="miners-list__cell"
                         >
                             <div class="miner-account miner-account--balance">
@@ -296,7 +294,6 @@
                             label="Fire mined"
                             :numeric="true"
                             :sortable="true"
-                            :searchable="true"
                             cell-class="miners-list__cell"
                         >
                             {{ miner.fireMined | formatCoin }}
