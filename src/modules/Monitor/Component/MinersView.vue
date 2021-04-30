@@ -247,6 +247,7 @@
                             </div>
                             <div v-if="miner.confidenceLevel">
                                 <span class="has-text-weight-bold">Confidence Level:</span>
+                                &nbsp;
                                 <span
                                     :class="{'text--danger': miner.confidenceLevel >= 4 }"
                                 >{{ miner.confidenceLevel }}</span>
