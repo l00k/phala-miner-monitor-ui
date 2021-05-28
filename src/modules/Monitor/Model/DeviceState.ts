@@ -77,7 +77,7 @@ export default class DeviceState
     public get cpuTag() : TagProps
     {
         const temperature = this.cpu.temperature;
-        let hint : string = `Temp: ${ temperature.toFixed(1) }°C`;
+        let hint : string = `Temp: ${ temperature ? temperature.toFixed(1) : 'unknown' }°C`;
 
         return {
             type: this.isOutdated
