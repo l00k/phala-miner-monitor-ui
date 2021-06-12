@@ -66,7 +66,7 @@
 
                     <template slot-scope="{ row: miner }">
                         <b-table-column
-                            field="controllerAccount.address"
+                            field="miner.name"
                             label="Miner"
                             :sortable="true"
                             :searchable="true"
