@@ -79,14 +79,15 @@ export default class DeviceState
         const temperature = this.cpu.temperature;
         let hint : string = `Temp: ${ temperature ? temperature.toFixed(1) : 'unknown' }°C`;
 
+        let type = (this.isOutdated ? 'is-outdated ' : '');
+        type += temperature < 60
+            ? 'is-success'
+            : temperature < 80
+                ? 'is-warning'
+                : 'is-danger';
+
         return {
-            type: this.isOutdated
-                ? 'is-light'
-                : temperature < 60
-                    ? 'is-success'
-                    : temperature < 80
-                        ? 'is-warning'
-                        : 'is-danger',
+            type,
             hint,
         };
     }
@@ -101,9 +102,7 @@ export default class DeviceState
         }
 
         return {
-            type: this.isOutdated
-                ? 'is-light'
-                : containerStateToTagTypeMap[this.node.state],
+            type: containerStateToTagTypeMap[this.node.state] + (this.isOutdated ? ' is-outdated' : ''),
             hint,
         };
     }
@@ -112,9 +111,7 @@ export default class DeviceState
     {
         let hint : string = <any> this.runtime.state;
         return {
-            type: this.isOutdated
-                ? 'is-light'
-                : containerStateToTagTypeMap[this.runtime.state],
+            type: containerStateToTagTypeMap[this.runtime.state] + (this.isOutdated ? ' is-outdated' : ''),
             hint,
         };
     }
@@ -123,9 +120,7 @@ export default class DeviceState
     {
         let hint : string = <any> this.host.state;
         return {
-            type: this.isOutdated
-                ? 'is-light'
-                : containerStateToTagTypeMap[this.host.state],
+            type: containerStateToTagTypeMap[this.host.state] + (this.isOutdated ? ' is-outdated' : ''),
             hint,
         };
     }

@@ -715,5 +715,9 @@ export default class MinersView
     .text--danger {
         color: red;
     }
+
+    .tag.is-outdated {
+        filter: grayscale(0.75);
+    }
 }
 </style>
