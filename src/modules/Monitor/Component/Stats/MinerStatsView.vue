@@ -141,15 +141,14 @@ export default class MinerStatsView
         // create inital values
         this.chartData = [ {}, {} ];
 
-        const now = moment().add(dateStep, 'ms').toDate();
-
+        let currentDate = moment().add(dateStep, 'ms').toDate();
         while (oldestEntry < now) {
-            const key = moment(oldestEntry).format(groupFormat);
+            const key = moment(now).format(groupFormat);
 
             this.chartData[0][key] = { raw: 0 };
             this.chartData[1][key] = { raw: 0 };
 
-            oldestEntry = moment(oldestEntry).add(dateStep, 'ms').toDate();
+            now = moment(now).diff(dateStep, 'ms').toDate();
         }
 
         this.rewards.forEach(reward => {
