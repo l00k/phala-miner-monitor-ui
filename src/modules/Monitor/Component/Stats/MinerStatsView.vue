@@ -1,7 +1,7 @@
 <template>
     <b-modal
         :active.sync="isModalVisible"
-        :width="600"
+        :width="1200"
     >
         <div class="stats">
             <be-block title="Miner stats">
@@ -58,13 +58,34 @@ type ChartData = {
     [key : string]: {
         raw: number,
         format?: string,
+        date?: Date,
     }
 }
+
 
 @Component()
 export default class MinerStatsView
     extends BaseComponent
 {
+
+    protected static readonly GROUP_BY_PROPS = {
+        hour: {
+            format: 'YYYY-MM-DD HH',
+            step: 3600000,
+        },
+        day: {
+            format: 'YYYY-MM-DD',
+            step: 86400000,
+        },
+        week: {
+            format: 'YYYY-WW',
+            step: 604800000,
+        },
+        month: {
+            format: 'YYYY-MM',
+            step: 2592000000,
+        },
+    };
 
     @Inject()
     protected monitorApi : MonitorApi;
@@ -106,25 +127,34 @@ export default class MinerStatsView
 
     protected renderChart()
     {
-        const groupFormat = this.groupBy === 'hour'
-            ? 'YYYY-MM-DD HH'
-            : this.groupBy === 'day'
-                ? 'YYYY-MM-DD'
-                : this.groupBy === 'week'
-                    ? 'YYYY-WW'
-                    : 'YYYY-MM';
+        const groupFormat = MinerStatsView.GROUP_BY_PROPS[this.groupBy].format;
+        const dateStep = MinerStatsView.GROUP_BY_PROPS[this.groupBy].step;
 
+        // find oldest entry
+        let oldestEntry : Date = new Date();
+        this.rewards.forEach(entry => {
+            if (entry.date < oldestEntry) {
+                oldestEntry = entry.date;
+            }
+        });
+
+        // create inital values
         this.chartData = [ {}, {} ];
+
+        const now = moment().add(dateStep, 'ms').toDate();
+
+        while (oldestEntry < now) {
+            const key = moment(oldestEntry).format(groupFormat);
+
+            this.chartData[0][key] = { raw: 0 };
+            this.chartData[1][key] = { raw: 0 };
+
+            oldestEntry = moment(oldestEntry).add(dateStep, 'ms').toDate();
+        }
 
         this.rewards.forEach(reward => {
             const datasetKey = reward.reason === PayoutReason.Online ? 0 : 1;
             const key = moment(reward.date).format(groupFormat);
-
-            if (!this.chartData[0][key]) {
-                this.chartData[0][key] = { raw: 0 };
-                this.chartData[1][key] = { raw: 0 };
-            }
-
             this.chartData[datasetKey][key].raw += reward.fire;
         });
 
@@ -136,7 +166,7 @@ export default class MinerStatsView
         }
 
         if (!this.chart) {
-            const ctx = document.getElementById('ms-chart');
+            const ctx : HTMLCanvasElement = <any> document.getElementById('ms-chart');
             this.chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -159,6 +189,11 @@ export default class MinerStatsView
                     ],
                 },
                 options: {
+                    responsive: true,
+                    scales: {
+                        xAxes: [ { stacked: true } ],
+                        yAxes: [ { stacked: true } ],
+                    },
                     tooltips: {
                         callbacks: {
                             label: (item) => {
@@ -188,7 +223,7 @@ export default class MinerStatsView
         -webkit-overflow-scrolling: auto;
     }
     &__chart-inner {
-        height: 300px;
+        height: 600px;
         min-width: 100%;
 
         canvas {

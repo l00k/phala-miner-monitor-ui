@@ -1,7 +1,7 @@
 <template>
     <b-modal
         :active.sync="isModalVisible"
-        :width="600"
+        :width="1200"
     >
         <div class="stats">
             <be-block title="Payout target stats">
@@ -88,7 +88,7 @@ export default class PayoutTargetStatsView
         }
 
         if (!this.chart) {
-            const ctx = document.getElementById('pts-chart');
+            const ctx : HTMLCanvasElement = <any> document.getElementById('pts-chart');
             this.chart = new Chart(ctx, {
                 type: 'pie',
                 data: {
