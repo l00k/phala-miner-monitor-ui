@@ -148,7 +148,7 @@ export default class MinerStatsView
             this.chartData[0][key] = { raw: 0 };
             this.chartData[1][key] = { raw: 0 };
 
-            currentDate = moment(now).diff(dateStep, 'ms').toDate();
+            currentDate = moment(currentDate).diff(dateStep, 'ms').toDate();
         }
 
         this.rewards.forEach(reward => {
