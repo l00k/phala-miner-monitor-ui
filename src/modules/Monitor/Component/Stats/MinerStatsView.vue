@@ -138,10 +138,12 @@ export default class MinerStatsView
             }
         });
 
+        oldestEntry = moment(oldestEntry).subtract(dateStep).toDate();
+
         // create inital values
         this.chartData = [ {}, {} ];
 
-        let currentDate = moment().add(dateStep, 'ms').toDate();
+        let currentDate = moment().toDate();
         while (oldestEntry < currentDate) {
             const key = moment(currentDate).format(groupFormat);
 
