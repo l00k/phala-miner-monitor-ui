@@ -74,19 +74,19 @@ export default class MinerStatsView
     protected DateTimeInterval : typeof DateTimeInterval = DateTimeInterval;
 
     protected static readonly GROUP_BY_PROPS = {
-        [DateTimeInterval.H1]: {
+        H: {
             format: 'YYYY-MM-DD HH',
             step: 3600000,
         },
-        [DateTimeInterval.D1]: {
+        D: {
             format: 'YYYY-MM-DD',
             step: 86400000,
         },
-        [DateTimeInterval.W1]: {
+        W: {
             format: 'YYYY-WW',
             step: 604800000,
         },
-        [DateTimeInterval.M1]: {
+        M: {
             format: 'YYYY-MM',
             step: 2592000000,
         },
@@ -123,7 +123,10 @@ export default class MinerStatsView
         this.chart = null;
 
         this.miner = miner;
-        this.rewards = await this.rewardChunkService.find({ minerId: <any> miner.id });
+        this.rewards = await this.rewardChunkService.find({
+            minerId: miner.id,
+            groupBy: this.groupBy,
+        });
 
         this.isModalVisible = true;
 
@@ -132,8 +135,10 @@ export default class MinerStatsView
 
     protected renderChart()
     {
-        const groupFormat = MinerStatsView.GROUP_BY_PROPS[this.groupBy].format;
-        const dateStep = MinerStatsView.GROUP_BY_PROPS[this.groupBy].step;
+        const groupBy = this.groupBy.substring(0, 1);
+
+        const groupFormat = MinerStatsView.GROUP_BY_PROPS[groupBy].format;
+        const dateStep = MinerStatsView.GROUP_BY_PROPS[groupBy].step;
 
         // find oldest entry
         let oldestEntry : Date = new Date();
@@ -158,11 +163,12 @@ export default class MinerStatsView
             currentDate = moment(currentDate).subtract(dateStep, 'ms').toDate();
         }
 
-        this.rewards.forEach(reward => {
-            const datasetKey = reward.reason === PayoutReason.Online ? 0 : 1;
-            const key = moment(reward.date).format(groupFormat);
-            this.chartData[datasetKey][key].raw += parseInt(reward.rewardValue.toString(10));
-        });
+        this.rewards
+            .forEach(reward => {
+                const datasetKey = reward.reason === PayoutReason.Online ? 0 : 1;
+                const key = moment(reward.date).format(groupFormat);
+                this.chartData[datasetKey][key].raw += parseInt(reward.rewardValue.toString(10));
+            });
 
         for (const dataset of this.chartData) {
             for (const idx in dataset) {

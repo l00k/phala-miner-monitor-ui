@@ -27,12 +27,18 @@ export default class RewardChunk
     public date : Date;
 
     @Property()
-    public rewardNumber : number;
+    public rewardNumber : number = 0;
 
     @Property()
     public rewardValue : bigint = BigInt(0);
 
     @Property()
     public reason : string;
+
+    public constructor(data? : Partial<RewardChunk>)
+    {
+        super();
+        this.setData(data);
+    }
 
 }

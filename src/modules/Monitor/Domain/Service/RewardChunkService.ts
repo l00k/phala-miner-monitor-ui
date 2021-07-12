@@ -19,16 +19,16 @@ export default class RewardChunkService
 
     public async find(
         params : RewardChunkParams,
-        pagination : Pagination = new Pagination(),
+        pagination : Pagination = new Pagination({ itemsPerPage: 500 }),
     ) : Promise<RewardChunk[]>
     {
-        const { data: rewardChunksRaw } = await this.monitorApi.query(gql`
+        const { rewardChunksRaw } = await this.monitorApi.query(gql`
             query (
                 $minerId : Int!,
                 $groupBy : DateTimeInterval!,
                 $pagination : RewardChunkPagination
             ) { 
-                data: getMinerRewards(
+                rewardChunksRaw: getMinerRewards(
                     minerId: $minerId,
                     groupBy: $groupBy,
                     pagination: $pagination
