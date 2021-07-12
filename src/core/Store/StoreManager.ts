@@ -1,10 +1,11 @@
-import AbstractModel from '@/core/Store/AbstractModel';
 import { Store } from 'vuex';
 import { ConstructorType } from './def';
 
 
+export type ClassConstructor<T = {}> = new (...args : any[]) => T;
+
 type Models = {
-    [storeModelKey : string] : typeof AbstractModel
+    [storeModelKey : string] : ClassConstructor
 }
 
 export default class StoreManager
@@ -27,12 +28,9 @@ export default class StoreManager
             const value = object[property];
 
             if (value instanceof Object) {
-                if (value instanceof AbstractModel) {
-                    const Type = <any> value.constructor;
-                    const modelName = Type.modelName;
-                    if (modelName) {
-                        value['@modelName'] = modelName;
-                    }
+                const Type = <any> value.constructor;
+                if (Type.STORAGE_MODEL) {
+                    value['@storageName'] = Type.STORAGE_MODEL;
                 }
 
                 this._serializeTraverse(value);
@@ -89,7 +87,7 @@ export default class StoreManager
         return !!storedState[module];
     }
 
-    public static registerModel(modelName : string, Model : typeof AbstractModel)
+    public static registerModel(modelName : string, Model : ClassConstructor)
     {
         this.models[modelName] = Model;
     }

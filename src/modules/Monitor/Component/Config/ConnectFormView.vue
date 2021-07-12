@@ -146,9 +146,13 @@ $SECRET_KEY = "{{ secretKeyData.secretKey }}";</pre>
 </template>
 
 <script lang="ts">
+import Miner from '#/Monitor/Domain/Model/Miner';
+import AccountService from '#/Monitor/Domain/Service/AccountService';
+import MinerService from '#/Monitor/Domain/Service/MinerService';
 import PayoutTargetSecretKeyData from '#/Monitor/Dto/PayoutTargetSecretKeyData';
-import Account from '#/Monitor/Model/Account';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import Account from '#/Monitor/Domain/Model/Account';
+import MonitorApi from '#/Monitor/Service/MonitorApi';
+import Repository from '@/core/Store/Repository';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager/index';
@@ -184,7 +188,7 @@ export default class ConnectFormView
     protected Stage = Stage;
 
     @Inject()
-    protected monitorApi : MonitorApi;
+    protected accountService : AccountService;
 
     protected isModalVisible : boolean = false;
 
@@ -222,7 +226,9 @@ export default class ConnectFormView
             });
 
             this.extAccounts = await web3Accounts({ ss58Format: ConnectFormView.SS58_FORMAT });
-            const payoutTargetAccounts = Account.findAll<Account>();
+
+            const accountRepository = Repository.get(Account);
+            const payoutTargetAccounts = accountRepository.findAll<Account>();
 
             this.possibleAccounts = payoutTargetAccounts
                 .filter(account => this.extAccounts.find(_account => _account.address === account.address));
@@ -274,7 +280,7 @@ export default class ConnectFormView
 
             this.secretKeyData.signature = signature;
 
-            const result = await this.monitorApi.mutatePayoutTargetSecretKey(this.secretKeyData);
+            const result = await this.accountService.mutatePayoutTargetSecretKey(this.secretKeyData);
 
             Toast.open({
                 message: 'Secret key has been updated',

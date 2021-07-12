@@ -1,8 +1,8 @@
-import Account from '#/Monitor/Model/Account';
-import DeviceState from '#/Monitor/Model/DeviceState';
-import Reward from '#/Monitor/Model/Reward';
-import { Model, AbstractModel } from '@/core/Store';
-import { Property } from '@100k/intiv/Initializable';
+import Account from '#/Monitor/Domain/Model/Account';
+import DeviceState from '#/Monitor/Domain/Model/DeviceState';
+import Reward from '#/Monitor/Domain/Model/Reward';
+import { AbstractModel, Property } from '@/core/Domain/Model';
+import { StorageModel } from '@/core/Store';
 import gql from 'graphql-tag';
 import moment from 'moment';
 import { isEmpty } from 'lodash';
@@ -60,10 +60,13 @@ fragment MinerDefaultData on Miner {
 };
 
 
-@Model('Monitor/Miner')
+@StorageModel('Monitor/Miner')
 export default class Miner
     extends AbstractModel<Miner>
 {
+
+    @Property()
+    public id : number;
 
     @Property()
     public stashAccount : Account = new Account();

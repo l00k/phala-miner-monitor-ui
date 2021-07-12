@@ -1,10 +1,11 @@
 import App from '@/core/App';
+import { AbstractModel } from '@/core/Domain/Model';
 import { StoreManager } from '@/core/Store';
+import { StorageModelClass } from '@/core/Store/def';
 import { ObjectManager } from '@100k/intiv/ObjectManager';
 import { v4 as uuidv4 } from 'uuid';
 import Vue from 'vue';
 import { Module, Mutation, VuexModule, Action } from 'vuex-module-decorators';
-import AbstractModel from './AbstractModel';
 
 
 type Tables = {
@@ -12,7 +13,7 @@ type Tables = {
 }
 
 type Payload = {
-    model : typeof AbstractModel,
+    model : StorageModelClass,
     object? : AbstractModel<any>,
 }
 
@@ -31,16 +32,16 @@ export default class Database
 
     public get findAll()
     {
-        return (model : typeof AbstractModel) => {
-            return this.tables[model.modelName] || [];
+        return (model : StorageModelClass) => {
+            return this.tables[model.STORAGE_MODEL] || [];
         }
     }
 
     public get findOne()
     {
-        return (model : typeof AbstractModel, id : string) => {
-            return this.tables[model.modelName]
-                ? this.tables[model.modelName].find(object => object.id === id)
+        return (model : StorageModelClass, uuid : string) => {
+            return this.tables[model.STORAGE_MODEL]
+                ? this.tables[model.STORAGE_MODEL].find(object => object['@uuid'] === uuid)
                 : null;
         }
     }
@@ -48,17 +49,17 @@ export default class Database
     @Mutation
     public async persist({ model, object } : Payload)
     {
-        if (!this.tables[model.modelName]) {
-            this.tables[model.modelName] = [];
+        if (!this.tables[model.STORAGE_MODEL]) {
+            this.tables[model.STORAGE_MODEL] = [];
         }
 
-        const table = this.tables[model.modelName];
+        const table = this.tables[model.STORAGE_MODEL];
 
-        if (!object['@id']) {
-            object['@id'] = uuidv4();
+        if (!object['@uuid']) {
+            object['@uuid'] = uuidv4();
         }
 
-        const existing = table.find(_object => _object['@id'] === object['@id']);
+        const existing = table.find(_object => _object['@uuid'] === object['@uuid']);
         if (existing) {
             Object.assign(existing, object);
         }
@@ -70,21 +71,21 @@ export default class Database
     @Mutation
     public async delete({ model, object } : Payload)
     {
-        const table = this.tables[model.modelName];
+        const table = this.tables[model.STORAGE_MODEL];
         if (!table) {
             return;
         }
 
-        const found = table.findIndex(_object => _object.id === object.id);
+        const found = table.findIndex(_object => _object['@uuid'] === object['@uuid']);
         if (found !== -1) {
-            this.tables[model.modelName].splice(found, 1);
+            this.tables[model.STORAGE_MODEL].splice(found, 1);
         }
     }
 
     @Mutation
     public async truncate({ model } : Payload)
     {
-        this.tables[model.modelName] = [];
+        this.tables[model.STORAGE_MODEL] = [];
     }
 
 }

@@ -31,8 +31,9 @@
 </template>
 
 <script lang="ts">
-import Miner from '#/Monitor/Model/Miner';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import Miner from '#/Monitor/Domain/Model/Miner';
+import MinerService from '#/Monitor/Domain/Service/MinerService';
+import Repository from '@/core/Store/Repository';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager/index';
@@ -48,7 +49,7 @@ export default class FormView
 {
 
     @Inject()
-    protected monitorApi : MonitorApi;
+    protected minerService : MinerService;
 
     protected isModalVisible : boolean = false;
 
@@ -65,9 +66,10 @@ export default class FormView
     {
         const isNew = !this.miner['@id'];
 
-        const result = await this.monitorApi.fetchNewMiner(this.miner);
+        const result = await this.minerService.fetchNew(this.miner);
         if (result) {
-            Miner.persist(this.miner);
+            const minerRepository = Repository.get(Miner);
+            minerRepository.persist(this.miner);
 
             Toast.open({
                 message: isNew ? 'Created!' : 'Saved!',

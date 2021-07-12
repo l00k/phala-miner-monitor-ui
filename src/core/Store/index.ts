@@ -1,10 +1,8 @@
-import Model from './Annotations/Model';
-import AbstractModel from './AbstractModel';
+import StorageModel from './Annotations/StorageModel';
 import StoreManager from './StoreManager';
 
 
 export {
     StoreManager,
-    AbstractModel,
-    Model
+    StorageModel
 };

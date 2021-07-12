@@ -1,8 +1,8 @@
-import { Model, AbstractModel } from '@/core/Store';
-import { Property } from '@100k/intiv/Initializable';
+import { AbstractModel, Property } from '@/core/Domain/Model';
+import { StorageModel } from '@/core/Store';
 
 
-@Model('Monitor/Extrinsic')
+@StorageModel('Monitor/Extrinsic')
 export default class Extrinsic
     extends AbstractModel<Extrinsic>
 {

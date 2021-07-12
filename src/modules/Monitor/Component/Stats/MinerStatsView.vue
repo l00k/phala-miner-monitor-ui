@@ -16,10 +16,10 @@
                             size="is-small"
                             @input="renderChart"
                         >
-                            <option value="hour">Hour</option>
-                            <option value="day">Day</option>
-                            <option value="week">Week</option>
-                            <option value="month">Month</option>
+                            <option :value="DateTimeInterval.H1">Hour</option>
+                            <option :value="DateTimeInterval.D1">Day</option>
+                            <option :value="DateTimeInterval.W1">Week</option>
+                            <option :value="DateTimeInterval.M1">Month</option>
                         </b-select>
                     </b-field>
 
@@ -43,9 +43,12 @@
 </template>
 
 <script lang="ts">
-import Miner from '#/Monitor/Model/Miner';
-import Reward, { PayoutReason } from '#/Monitor/Model/Reward';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import DateTimeInterval from '#/Monitor/Domain/Model/DateTimeInterval';
+import Miner from '#/Monitor/Domain/Model/Miner';
+import Reward, { PayoutReason } from '#/Monitor/Domain/Model/Reward';
+import RewardChunk from '#/Monitor/Domain/Model/RewardChunk';
+import RewardChunkService from '#/Monitor/Domain/Service/RewardChunkService';
+import MonitorApi from '#/Monitor/Service/MonitorApi';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager';
@@ -68,35 +71,37 @@ export default class MinerStatsView
     extends BaseComponent
 {
 
+    protected DateTimeInterval : typeof DateTimeInterval = DateTimeInterval;
+
     protected static readonly GROUP_BY_PROPS = {
-        hour: {
+        [DateTimeInterval.H1]: {
             format: 'YYYY-MM-DD HH',
             step: 3600000,
         },
-        day: {
+        [DateTimeInterval.D1]: {
             format: 'YYYY-MM-DD',
             step: 86400000,
         },
-        week: {
+        [DateTimeInterval.W1]: {
             format: 'YYYY-WW',
             step: 604800000,
         },
-        month: {
+        [DateTimeInterval.M1]: {
             format: 'YYYY-MM',
             step: 2592000000,
         },
     };
 
     @Inject()
-    protected monitorApi : MonitorApi;
+    protected rewardChunkService : RewardChunkService;
 
     protected isModalVisible : boolean = false;
 
     protected miner : Miner;
 
-    protected rewards : Reward[] = [];
+    protected rewards : RewardChunk[] = [];
 
-    protected groupBy = 'day';
+    protected groupBy : DateTimeInterval = DateTimeInterval.D1;
 
     protected chartData : ChartData[];
     protected chartLabels : string[] = [];
@@ -118,7 +123,7 @@ export default class MinerStatsView
         this.chart = null;
 
         this.miner = miner;
-        this.rewards = await this.monitorApi.fetchMinerRewards(miner);
+        this.rewards = await this.rewardChunkService.find({ minerId: <any> miner.id });
 
         this.isModalVisible = true;
 
@@ -156,7 +161,7 @@ export default class MinerStatsView
         this.rewards.forEach(reward => {
             const datasetKey = reward.reason === PayoutReason.Online ? 0 : 1;
             const key = moment(reward.date).format(groupFormat);
-            this.chartData[datasetKey][key].raw += reward.fire;
+            this.chartData[datasetKey][key].raw += parseInt(reward.rewardValue.toString(10));
         });
 
         for (const dataset of this.chartData) {

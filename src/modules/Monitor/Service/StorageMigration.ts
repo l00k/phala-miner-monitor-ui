@@ -1,6 +1,9 @@
-import Account from '#/Monitor/Model/Account';
-import Miner from '#/Monitor/Model/Miner';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import Account from '#/Monitor/Domain/Model/Account';
+import Miner from '#/Monitor/Domain/Model/Miner';
+import AccountService from '#/Monitor/Domain/Service/AccountService';
+import MinerService from '#/Monitor/Domain/Service/MinerService';
+import MonitorApi from '#/Monitor/Service/MonitorApi';
+import Repository from '@/core/Store/Repository';
 import { Inject } from '@100k/intiv/ObjectManager';
 import {
     ToastProgrammatic as Toast,
@@ -15,7 +18,11 @@ export default class StorageMigration
 {
 
     @Inject()
-    protected monitorApi : MonitorApi;
+    protected accountService : AccountService;
+
+    @Inject()
+    protected minerService : MinerService;
+
 
     public get buildVersion() : string
     {
@@ -32,17 +39,20 @@ export default class StorageMigration
     {
         let result = true;
 
-        const accounts = Account.findAll<Account>();
+        const accountRepository = Repository.get(Account);
+        const minerRepository = Repository.get(Miner);
+
+        const accounts = accountRepository.findAll<Account>();
         for (const account of accounts) {
-            const accountUpdated = await this.monitorApi.fetchNewAccount(account);
+            const accountUpdated = await this.accountService.fetchNew(account);
             if (!accountUpdated) {
                 result = false;
             }
         }
 
-        const miners = Miner.findAll<Miner>();
+        const miners = minerRepository.findAll<Miner>();
         for (const miner of miners) {
-            const minerUpdated = await this.monitorApi.fetchNewMiner(miner);
+            const minerUpdated = await this.minerService.fetchNew(miner);
             if (!minerUpdated) {
                 result = false;
             }

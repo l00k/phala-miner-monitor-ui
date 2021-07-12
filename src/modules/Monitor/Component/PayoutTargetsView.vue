@@ -158,12 +158,13 @@
 <script lang="ts">
 import AccountFormView from '#/Monitor/Component/Account/FormView.vue';
 import PayoutTargetStatsView from '#/Monitor/Component/Stats/PayoutTargetStatsView.vue';
-import Account from '#/Monitor/Model/Account';
-import Miner from '#/Monitor/Model/Miner';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import Account from '#/Monitor/Domain/Model/Account';
+import Miner from '#/Monitor/Domain/Model/Miner';
+import AccountService from '#/Monitor/Domain/Service/AccountService';
+import MinerService from '#/Monitor/Domain/Service/MinerService';
+import Repository from '@/core/Store/Repository';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
-import { EventBus } from '@100k/intiv/EventBus';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Identicon from '@polkadot/vue-identicon';
 import { ToastProgrammatic as Toast } from 'buefy';
@@ -194,17 +195,19 @@ export default class PayoutTargetsView
     protected payoutTargetStatsView : AccountFormView;
 
     @Inject()
-    protected monitorApi : MonitorApi;
+    protected accountService : AccountService;
 
+    @Inject()
+    protected minerService : MinerService;
 
     protected isLoading : boolean = false;
 
     protected accounts : Account[] = [];
 
-
     protected loadAccounts()
     {
-        this.accounts = Account.findAll<Account>();
+        const accountRepository = Repository.get(Account);
+        this.accounts = accountRepository.findAll<Account>();
     }
 
     public async created()
@@ -212,7 +215,7 @@ export default class PayoutTargetsView
         this.loadAccounts();
 
         this.isLoading = true;
-        await this.monitorApi.fetchAccounts(this.accounts);
+        await this.accountService.fetch(this.accounts);
         this.isLoading = false;
     }
 
@@ -235,7 +238,7 @@ export default class PayoutTargetsView
     {
         if (account) {
             const newAccounts = this.accounts.filter(_account => _account.id === account.id);
-            this.monitorApi.fetchAccounts(newAccounts);
+            this.accountService.fetch(newAccounts);
         }
 
         this.loadAccounts();
@@ -249,7 +252,8 @@ export default class PayoutTargetsView
             confirmText: 'Delete account',
             type: 'is-danger',
             onConfirm: () => {
-                Account.delete(account);
+                const accountRepository = Repository.get(Account);
+                accountRepository.delete(account);
             }
         });
     }
@@ -266,10 +270,12 @@ export default class PayoutTargetsView
             return;
         }
 
-        const oldMinerAddresses = Miner.findAll<Miner>()
+        const minerRepository = Repository.get(Miner);
+
+        const oldMinerAddresses = minerRepository.findAll<Miner>()
             .map(miner => miner.controllerAccount.address);
 
-        const foundMiners : Miner[] = await this.monitorApi.findMinersByPayoutTarget(account);
+        const foundMiners : Miner[] = await this.minerService.findByPayoutTarget(account);
         const newMiners : Miner[] = foundMiners
             .filter(_foundMiner => oldMinerAddresses.indexOf(_foundMiner.controllerAccount.address) === -1);
 
@@ -283,7 +289,7 @@ export default class PayoutTargetsView
 
             if (confirmed) {
                 for (const miner of newMiners) {
-                    Miner.persist(miner);
+                    minerRepository.persist(miner);
                 }
 
                 Toast.open({
@@ -328,6 +334,7 @@ export default class PayoutTargetsView
         &--cell-top {
             vertical-align: top !important;
         }
+
         &--cell-actions {
             text-align: right;
         }
@@ -336,6 +343,7 @@ export default class PayoutTargetsView
     .account-address {
         .account-icon {
             cursor: pointer;
+
             svg {
                 float: left;
             }

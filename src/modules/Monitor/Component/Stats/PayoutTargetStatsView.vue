@@ -19,8 +19,9 @@
 </template>
 
 <script lang="ts">
-import Account from '#/Monitor/Model/Account';
-import Miner from '#/Monitor/Model/Miner';
+import Account from '#/Monitor/Domain/Model/Account';
+import Miner from '#/Monitor/Domain/Model/Miner';
+import Repository from '@/core/Store/Repository';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import Chart from 'chart.js';
@@ -61,8 +62,10 @@ export default class PayoutTargetStatsView
         ++this.key;
         this.chart = null;
 
+        const minerRepository = Repository.get(Miner);
+
         this.payoutTarget = payoutTarget;
-        this.miners = Miner.findAll<Miner>()
+        this.miners = minerRepository.findAll<Miner>()
             .filter(miner => miner.isVisible)
             .filter(miner => miner.payoutTarget.address === payoutTarget.address);
 

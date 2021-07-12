@@ -32,9 +32,11 @@
 </template>
 
 <script lang="ts">
-import Account from '#/Monitor/Model/Account';
-import Miner from '#/Monitor/Model/Miner';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import Account from '#/Monitor/Domain/Model/Account';
+import Miner from '#/Monitor/Domain/Model/Miner';
+import AccountService from '#/Monitor/Domain/Service/AccountService';
+import MonitorApi from '#/Monitor/Service/MonitorApi';
+import Repository from '@/core/Store/Repository';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager/index';
@@ -50,7 +52,7 @@ export default class FormView
 {
 
     @Inject()
-    protected monitorApi : MonitorApi;
+    protected accountService : AccountService;
 
     protected isModalVisible : boolean = false;
 
@@ -68,9 +70,10 @@ export default class FormView
     {
         const isNew = !this.account['@id'];
 
-        const result = await this.monitorApi.fetchNewAccount(this.account);
+        const result = await this.accountService.fetchNew(this.account);
         if (result) {
-            Account.persist(this.account);
+            const accountRepository = Repository.get(Account);
+            accountRepository.persist(this.account);
 
             Toast.open({
                 message: isNew ? 'Created!' : 'Saved!',

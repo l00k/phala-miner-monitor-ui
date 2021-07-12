@@ -1,7 +1,7 @@
-import Extrinsic from '#/Monitor/Model/Extrinsic';
-import Reward from '#/Monitor/Model/Reward';
-import { Model, AbstractModel } from '@/core/Store';
-import { Property } from '@100k/intiv/Initializable';
+import Extrinsic from '#/Monitor/Domain/Model/Extrinsic';
+import Reward from '#/Monitor/Domain/Model/Reward';
+import { AbstractModel, Property } from '@/core/Domain/Model';
+import { StorageModel } from '@/core/Store';
 import gql from 'graphql-tag';
 
 
@@ -27,10 +27,13 @@ fragment AccountDefaultData on Account {
 `
 };
 
-@Model('Monitor/Account')
+@StorageModel('Monitor/Account')
 export default class Account
     extends AbstractModel<Account>
 {
+
+    @Property()
+    public id : number;
 
     @Property()
     public address : string;

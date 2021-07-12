@@ -1,11 +1,10 @@
-import Extrinsic from '#/Monitor/Model/Extrinsic';
-import Reward from '#/Monitor/Model/Reward';
-import { Model, AbstractModel } from '@/core/Store';
-import { Property } from '@100k/intiv/Initializable';
+import Extrinsic from '#/Monitor/Domain/Model/Extrinsic';
+import { AbstractModel, Property } from '@/core/Domain/Model';
+import { StorageModel } from '@/core/Store';
 import gql from 'graphql-tag';
 
 
-@Model('Monitor/AppState')
+@StorageModel('Monitor/AppState')
 export default class AppState
     extends AbstractModel<AppState>
 {

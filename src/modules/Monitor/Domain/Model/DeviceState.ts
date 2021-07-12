@@ -1,4 +1,3 @@
-import { Model, AbstractModel } from '@/core/Store';
 import { Property, Initializable } from '@100k/intiv/Initializable';
 import moment from 'moment';
 
@@ -11,14 +10,12 @@ export enum ContainerState
     Running = 'Running',
 }
 
-
 const containerStateToTagTypeMap = {
     [ContainerState.NotRunning]: 'is-danger',
     [ContainerState.InSync]: 'is-warning',
     [ContainerState.NotInitiated]: 'is-warning',
     [ContainerState.Running]: 'is-success',
 };
-
 
 export class PartInfo
     extends Initializable<PartInfo>
@@ -34,7 +31,6 @@ export class PartInfo
     public temperature? : number = 0;
 
 }
-
 
 type TagProps = {
     type : string,

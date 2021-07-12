@@ -20,12 +20,14 @@
                                     v-if="blockIndexDelta < BLOCK_INDEX_THRESHOLD"
                                     type="is-success"
                                     size="is-micro"
-                                >In sync</b-tag>
+                                >In sync
+                                </b-tag>
                                 <b-tag
                                     v-else
                                     class="is-warning"
                                     size="is-micro"
-                                >Outdated</b-tag>
+                                >Outdated
+                                </b-tag>
                                 ({{ blockIndexDelta }} to process)
                             </div>
                             <div>Last accounts update: {{ accountUpdateDelta }} blocks ago</div>
@@ -70,8 +72,8 @@
 
 <script lang="ts">
 import ConnectFormView from '#/Monitor/Component/Config/ConnectFormView.vue';
-import AppState from '#/Monitor/Model/AppState';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import AppState from '#/Monitor/Domain/Model/AppState';
+import AppStateService from '#/Monitor/Domain/Service/AppStateService';
 import StorageMigration from '#/Monitor/Service/StorageMigration';
 import PhalaApi from '#/Phala/Service/Api/PhalaApi';
 import { Component } from '@/core/Vue/Annotations';
@@ -95,7 +97,7 @@ export default class ConfigView
     protected phalaApi : PhalaApi;
 
     @Inject()
-    protected monitorApi : MonitorApi;
+    protected appStateService : AppStateService;
 
     @Inject()
     protected storageMigration : StorageMigration;
@@ -107,7 +109,6 @@ export default class ConfigView
 
     protected lastFinalizedBlock : number = null;
 
-
     public get blockIndexDelta() : number
     {
         return this.lastFinalizedBlock - this.appState.lastFetchedBlock;
@@ -118,10 +119,9 @@ export default class ConfigView
         return this.lastFinalizedBlock - this.appState.lastInfoUpdateBlock;
     }
 
-
     public async created()
     {
-        this.appState = await this.monitorApi.getAppState();
+        this.appState = await this.appStateService.get();
 
         const nativeApi = await this.phalaApi.api();
         const finalizedHead = await nativeApi.rpc.chain.getFinalizedHead();

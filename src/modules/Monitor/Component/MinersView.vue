@@ -75,7 +75,8 @@
                             <div
                                 v-if="miner.name"
                                 class="has-text-weight-bold"
-                            >{{ miner.name }}</div>
+                            >{{ miner.name }}
+                            </div>
 
                             <b-field
                                 :label="separateStashAccount(miner) ? 'Controller' : ''"
@@ -150,7 +151,8 @@
                                 <b-tag
                                     :type="miner.state === 'Mining' ? 'is-info' : 'is-warning'"
                                     size="is-micro"
-                                >{{ miner.state }}</b-tag>
+                                >{{ miner.state }}
+                                </b-tag>
                             </div>
                             <div>
                                 <b-tag v-if="miner.isOnline" type="is-success" size="is-micro">Online</b-tag>
@@ -400,8 +402,11 @@
 <script lang="ts">
 import MinerFormView from '#/Monitor/Component/Miner/FormView.vue';
 import MinerStatsView from '#/Monitor/Component/Stats/MinerStatsView.vue';
-import Miner from '#/Monitor/Model/Miner';
-import MonitorApi from '#/Monitor/Service/Api/MonitorApi';
+import { ContainerState } from '#/Monitor/Domain/Model/DeviceState';
+import Miner from '#/Monitor/Domain/Model/Miner';
+import MinerService from '#/Monitor/Domain/Service/MinerService';
+import MonitorApi from '#/Monitor/Service/MonitorApi';
+import Repository from '@/core/Store/Repository';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { EventBus } from '@100k/intiv/EventBus';
@@ -412,14 +417,11 @@ import { BTable } from 'buefy/src/components/table';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
-import { ContainerState } from '../Model/DeviceState';
 
 
 declare const window;
 
 const ConfigStore = namespace('Monitor/Config');
-
-
 
 type FilterType = {
     label : string,
@@ -438,6 +440,7 @@ export default class MinersView
 {
 
     protected Miner = Miner;
+
     protected ContainerState = ContainerState;
 
     @Ref('table')
@@ -453,8 +456,7 @@ export default class MinersView
     protected eventBus : EventBus;
 
     @Inject()
-    protected monitorApi : MonitorApi;
-
+    protected minerService : MinerService;
 
     protected isLoading : boolean = false;
 
@@ -510,10 +512,11 @@ export default class MinersView
 
     protected async loadMiners()
     {
-        this.miners = Miner.findAll<Miner>();
+        const minerRepository = Repository.get(Miner);
+        this.miners = minerRepository.findAll<Miner>();
 
         this.isLoading = true;
-        await this.monitorApi.fetchMiners(this.miners);
+        await this.minerService.fetch(this.miners);
         this.isLoading = false;
     }
 
@@ -549,9 +552,11 @@ export default class MinersView
 
     public async changeVisibilityMiners(miners : Miner[], visible : boolean)
     {
+        const minerRepository = Repository.get(Miner);
+
         for (const miner of miners) {
             miner.isVisible = visible;
-            Miner.persist(miner);
+            minerRepository.persist(miner);
         }
 
         ToastProgrammatic.open({
@@ -575,8 +580,10 @@ export default class MinersView
             return;
         }
 
+        const minerRepository = Repository.get(Miner);
+
         for (const miner of miners) {
-            Miner.delete(miner);
+            minerRepository.delete(miner);
         }
 
         ToastProgrammatic.open({
@@ -592,7 +599,7 @@ export default class MinersView
     {
         if (miner) {
             const newMiners = this.miners.filter(_miner => _miner.id === miner.id);
-            this.monitorApi.fetchMiners(newMiners);
+            this.minerService.fetch(newMiners);
         }
     }
 
@@ -641,10 +648,12 @@ export default class MinersView
                 margin-right: 4px;
             }
         }
+
         &__cell--info {
             font-size: 0.8rem;
             white-space: nowrap;
         }
+
         &__cell--actions {
             text-align: right;
         }
@@ -668,6 +677,7 @@ export default class MinersView
         &--address {
             .account-icon {
                 cursor: pointer;
+
                 svg {
                     float: left;
                 }

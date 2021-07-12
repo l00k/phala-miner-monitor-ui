@@ -1,5 +1,5 @@
-import { Model, AbstractModel } from '@/core/Store';
-import { Initializable, Property, Initialize } from '@100k/intiv/Initializable';
+import { AbstractModel, Property } from '@/core/Domain/Model';
+import { StorageModel } from '@/core/Store';
 import gql from 'graphql-tag';
 
 
@@ -8,7 +8,6 @@ export enum PayoutReason
     Online = 'Online',
     Compute = 'Compute',
 }
-
 
 export const Fragments = {
     DefaultData: gql`
@@ -20,8 +19,7 @@ fragment RewardDefaultData on Reward {
 `
 };
 
-
-@Model('Monitor/Reward')
+@StorageModel('Monitor/Reward')
 export default class Reward
     extends AbstractModel<Reward>
 {
