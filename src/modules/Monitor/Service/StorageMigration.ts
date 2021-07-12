@@ -56,6 +56,7 @@ export default class StorageMigration
                         ) {
                             requiresReload = true;
                             table[idx][StoreManager.STORAGE_MODEL_PROPERTY] = table[idx]['@modelName'];
+                            delete table[idx]['@modelName'];
                         }
                     }
                 });
