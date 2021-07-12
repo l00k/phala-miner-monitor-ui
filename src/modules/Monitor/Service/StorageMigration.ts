@@ -3,6 +3,7 @@ import Miner from '#/Monitor/Domain/Model/Miner';
 import AccountService from '#/Monitor/Domain/Service/AccountService';
 import MinerService from '#/Monitor/Domain/Service/MinerService';
 import MonitorApi from '#/Monitor/Service/MonitorApi';
+import { StoreManager } from '@/core/Store';
 import Repository from '@/core/Store/Repository';
 import { Inject } from '@100k/intiv/ObjectManager';
 import {
@@ -39,6 +40,36 @@ export default class StorageMigration
     {
         let result = true;
 
+        // update storage name
+        let requiresReload = false;
+
+        let storageRaw = window.localStorage.getItem(StoreManager.STORAGE_KEY);
+        if (storageRaw) {
+            const storage = JSON.parse(storageRaw);
+
+            Object.values(storage.Database.tables)
+                .forEach((table : any) => {
+                    for (const idx in table) {
+                        if (
+                            !table[idx][StoreManager.STORAGE_MODEL_PROPERTY]
+                            && table[idx]['@modelName']
+                        ) {
+                            requiresReload = true;
+                            table[idx][StoreManager.STORAGE_MODEL_PROPERTY] = table[idx]['@modelName'];
+                        }
+                    }
+                });
+
+            storageRaw = JSON.stringify(storage);
+            window.localStorage.setItem(StoreManager.STORAGE_KEY, storageRaw)
+        }
+
+        if (requiresReload) {
+            window.location.reload();
+            return;
+        }
+
+        // migrate accounts
         const accountRepository = Repository.get(Account);
         const minerRepository = Repository.get(Miner);
 

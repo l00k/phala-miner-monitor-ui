@@ -11,7 +11,9 @@ type Models = {
 export default class StoreManager
 {
 
-    protected static readonly STORAGE_KEY = 'appStorage';
+    public static readonly STORAGE_MODEL_PROPERTY = '@storageName';
+
+    public static readonly STORAGE_KEY = 'appStorage';
 
     protected static models : Models = {};
 
@@ -30,7 +32,7 @@ export default class StoreManager
             if (value instanceof Object) {
                 const Type = <any> value.constructor;
                 if (Type.STORAGE_MODEL) {
-                    value['@storageName'] = Type.STORAGE_MODEL;
+                    value[StoreManager.STORAGE_MODEL_PROPERTY] = Type.STORAGE_MODEL;
                 }
 
                 this._serializeTraverse(value);
@@ -50,9 +52,9 @@ export default class StoreManager
         for (const property in object) {
             const value = object[property];
             if (value instanceof Object) {
-                const modelName = value['@storageName'];
+                const modelName = value[StoreManager.STORAGE_MODEL_PROPERTY];
                 if (modelName) {
-                    delete value['@storageName'];
+                    delete value[StoreManager.STORAGE_MODEL_PROPERTY];
                     const Model = this.models[modelName];
                     object[property] = new Model();
                     object[property].setData(value);
