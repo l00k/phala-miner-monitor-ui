@@ -4,7 +4,7 @@
         :width="1200"
     >
         <div class="stats">
-            <be-block title="Miner stats">
+            <ui-block title="Miner stats">
                 <template>
                     <b-field
                         label-position="on-border"
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                 </template>
-            </be-block>
+            </ui-block>
         </div>
     </b-modal>
 </template>
@@ -54,7 +54,7 @@ import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager';
 import Chart from 'chart.js';
 import moment from 'moment';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 
 type ChartData = {
@@ -167,7 +167,7 @@ export default class MinerStatsView
         for (const dataset of this.chartData) {
             for (const idx in dataset) {
                 dataset[idx].raw = dataset[idx].raw / 1000000000000.0;
-                dataset[idx].format = numeral(dataset[idx].raw).format('0.00 a') + 'PHA';
+                dataset[idx].format = numbro(dataset[idx].raw).format('0.00 a') + 'PHA';
             }
         }
 

@@ -8,37 +8,45 @@ type Listners = {
 };
 
 
-class ModuleLoader
+export default class ModuleLoader
 {
 
     public async _loadModules(types : string[], require)
     {
+        const modules = [];
+
         for (const path of require.keys()) {
             const pathParts = path.replace(/^[./]+/g, '').split('/');
             const moduleName = pathParts.shift();
-            const objectType = pathParts.shift();
             const objectName = pathParts.join('/');
 
             if (!path) {
                 continue;
             }
 
-            const includable = types.indexOf(objectType) !== -1;
+            let includable = false;
+            for (let type of types) {
+                if (objectName.indexOf(type) === 0) {
+                    includable = true;
+                    break;
+                }
+            }
+
             if (includable) {
-                require(path);
+                const module = require(path);
+                modules.push(module);
             }
         }
+
+        return modules;
     }
 
     public async load(types : string[])
     {
-        this._loadModules(
+        return this._loadModules(
             types,
             require.context('@/modules', true, /\.(ts|vue)/)
         );
     }
 
 }
-
-
-export default ModuleLoader;

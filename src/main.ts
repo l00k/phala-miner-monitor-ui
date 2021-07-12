@@ -13,10 +13,6 @@ Vue.use(Buefy, {
     defaultIconPack: 'fas',
 });
 
-require('@/core/Vue');
-require('@/core/Vue/Buefy');
-require('@/config/icons');
-
 (async() => {
     ObjectManager.getInstance(App).run();
 })();

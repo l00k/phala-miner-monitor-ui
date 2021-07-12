@@ -4,7 +4,7 @@
         :width="600"
     >
         <div class="account-form">
-            <be-block title="Payout Target form">
+            <ui-block title="Payout Target form">
                 <template>
                     <form @submit.prevent="submit">
                         <b-field label="Address" label-position="on-border">
@@ -26,7 +26,7 @@
                     </form>
 
                 </template>
-            </be-block>
+            </ui-block>
         </div>
     </b-modal>
 </template>

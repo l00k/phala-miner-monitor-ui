@@ -205,7 +205,6 @@ export default class AbstractModel<T>
                     }
                 }
                 else {
-                    console.log(this[property])
                     value = this[property].serialize(serializationGroups);
                 }
             }

@@ -4,7 +4,7 @@
             :active.sync="isModalVisible"
             :width="600"
         >
-            <be-block title="Monitor your devices">
+            <ui-block title="Monitor your devices">
                 <template>
                     <div
                         v-if="stage == Stage.NotConnected"
@@ -140,18 +140,15 @@ $SECRET_KEY = "{{ secretKeyData.secretKey }}";</pre>
                         </b-message>
                     </div>
                 </template>
-            </be-block>
+            </ui-block>
         </b-modal>
     </div>
 </template>
 
 <script lang="ts">
-import Miner from '#/Monitor/Domain/Model/Miner';
-import AccountService from '#/Monitor/Domain/Service/AccountService';
-import MinerService from '#/Monitor/Domain/Service/MinerService';
-import PayoutTargetSecretKeyData from '#/Monitor/Dto/PayoutTargetSecretKeyData';
+import PayoutTargetSecretKeyData from '#/Monitor/Domain/Dto/PayoutTargetSecretKeyData';
 import Account from '#/Monitor/Domain/Model/Account';
-import MonitorApi from '#/Monitor/Service/MonitorApi';
+import AccountService from '#/Monitor/Domain/Service/AccountService';
 import Repository from '@/core/Store/Repository';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
@@ -165,14 +162,12 @@ import { ToastProgrammatic as Toast } from 'buefy';
 
 declare const window;
 
-
 enum Stage
 {
     NotConnected,
     AccountSelect,
     Saved
 }
-
 
 @Component({
     components: {
@@ -274,7 +269,7 @@ export default class ConnectFormView
 
             const { signature } = await signRaw({
                 address: this.selectedAccount.address,
-                data: stringToHex(`accountOwnershipConfirmation(${this.secretKeyData.secretKey})`),
+                data: stringToHex(`accountOwnershipConfirmation(${ this.secretKeyData.secretKey })`),
                 type: 'bytes',
             });
 

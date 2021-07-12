@@ -32,7 +32,7 @@ export default class MinerService
 
         const { rawMiners } = await this.monitorApi.query(gql`
             query (
-                $ids : [Int!]
+                $ids : [Int!]!
             ) { 
                 rawMiners: getMiners(
                     ids: $ids
@@ -66,7 +66,7 @@ export default class MinerService
     {
         const { rawMiner } = await this.monitorApi.query(gql`
             query (
-                $address : String
+                $address : String!
             ) { 
                 rawMiner: getMinerByController(
                     address: $address
@@ -93,7 +93,7 @@ export default class MinerService
     {
         const { rawMiners } = await this.monitorApi.query(gql`
             query (
-                $address : String
+                $address : String!
             ) { 
                 rawMiners: getMinersByPayoutTarget(
                     address: $address

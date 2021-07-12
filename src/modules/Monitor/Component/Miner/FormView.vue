@@ -4,7 +4,7 @@
         :width="600"
     >
         <div class="miner-form">
-            <be-block title="Miner form">
+            <ui-block title="Miner form">
                 <template>
                     <form @submit.prevent="submit">
                         <b-field label="Controller address" label-position="on-border">
@@ -25,7 +25,7 @@
                         </div>
                     </form>
                 </template>
-            </be-block>
+            </ui-block>
         </div>
     </b-modal>
 </template>

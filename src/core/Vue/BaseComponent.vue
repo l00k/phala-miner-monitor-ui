@@ -1,8 +1,7 @@
 <script lang="ts">
-import { ObjectManager } from '@100k/intiv/ObjectManager';
+import { ToastProgrammatic } from 'buefy';
 import { BDialogConfig } from 'buefy/types/components';
 import { Component, Vue } from 'vue-property-decorator';
-import { ToastProgrammatic } from 'buefy';
 
 
 type HandleRequestCallback = () => Promise<any>;
@@ -29,7 +28,8 @@ export default class BaseComponent
     public async handleRequest(
         callback : () => void,
         options : HandleRequestOptions
-    ) {
+    )
+    {
         options = {
             msgSuccess: 'Success',
             msgFail: 'Failed',
@@ -42,7 +42,7 @@ export default class BaseComponent
             if (options.msgSuccess) {
                 ToastProgrammatic.open({
                     type: 'is-success',
-                    message: `<strong>${options.title}</strong><br/>${options.msgSuccess}`,
+                    message: `<strong>${ options.title }</strong><br/>${ options.msgSuccess }`,
                 });
             }
         }
@@ -50,7 +50,7 @@ export default class BaseComponent
             if (options.msgFail) {
                 ToastProgrammatic.open({
                     type: 'is-danger',
-                    message: `<strong>${options.title}</strong><br/>${options.msgFail}`,
+                    message: `<strong>${ options.title }</strong><br/>${ options.msgFail }`,
                 });
             }
 
@@ -58,20 +58,22 @@ export default class BaseComponent
         }
     }
 
-    public async confirm(options: BDialogConfig): Promise<boolean>
+    public async confirm(options : BDialogConfig) : Promise<boolean>
     {
         return new Promise((resolve, reject) => {
             this.$buefy.dialog.confirm({
                 confirmText: 'Confirm',
                 ...options,
-                onConfirm() {
+                onConfirm()
+                {
                     resolve(true);
                 },
-                onCancel() {
+                onCancel()
+                {
                     resolve(false);
                 },
             });
-        })
+        });
     }
 
 }

@@ -1,4 +1,4 @@
-import PayoutTargetSecretKeyData from '#/Monitor/Dto/PayoutTargetSecretKeyData';
+import PayoutTargetSecretKeyData from '#/Monitor/Domain/Dto/PayoutTargetSecretKeyData';
 import Account, { Fragments as AccountFragments } from '#/Monitor/Domain/Model/Account';
 import Miner, { Fragments as MinerFragments } from '#/Monitor/Domain/Model/Miner';
 import AppState from '#/Monitor/Domain/Model/AppState';

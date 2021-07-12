@@ -25,7 +25,7 @@ export default class RewardChunkService
         const { data: rewardChunksRaw } = await this.monitorApi.query(gql`
             query (
                 $minerId : Int!,
-                $groupBy : DateTimeInterval,
+                $groupBy : DateTimeInterval!,
                 $pagination : RewardChunkPagination
             ) { 
                 data: getMinerRewards(

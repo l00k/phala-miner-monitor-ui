@@ -1,6 +1,6 @@
 import Account, { Fragments as AccountFragments } from '#/Monitor/Domain/Model/Account';
 import DateTimeInterval from '#/Monitor/Domain/Model/DateTimeInterval';
-import PayoutTargetSecretKeyData from '#/Monitor/Dto/PayoutTargetSecretKeyData';
+import PayoutTargetSecretKeyData from '#/Monitor/Domain/Dto/PayoutTargetSecretKeyData';
 import MonitorApi from '#/Monitor/Service/MonitorApi';
 import { Inject } from '@100k/intiv/ObjectManager';
 import gql from 'graphql-tag';
@@ -30,7 +30,7 @@ export default class AccountService
 
         const { rawAccounts } = await this.monitorApi.query(gql`
             query (
-                $ids: [Int!]
+                $ids: [Int!]!
             ) { 
                 rawAccounts: getAccounts(
                     ids: $ids
@@ -64,7 +64,7 @@ export default class AccountService
     {
         const { rawAccount } = await this.monitorApi.query(gql`
             query (
-                $address : String
+                $address : String!
             ) { 
                 rawAccount: getAccount(
                     address: $address

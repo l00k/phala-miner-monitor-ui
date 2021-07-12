@@ -50,9 +50,9 @@ export default class StoreManager
         for (const property in object) {
             const value = object[property];
             if (value instanceof Object) {
-                const modelName = value['@modelName'];
+                const modelName = value['@storageName'];
                 if (modelName) {
-                    delete value['@modelName'];
+                    delete value['@storageName'];
                     const Model = this.models[modelName];
                     object[property] = new Model();
                     object[property].setData(value);

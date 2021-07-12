@@ -4,7 +4,7 @@
         :width="1200"
     >
         <div class="stats">
-            <be-block title="Payout target stats">
+            <ui-block title="Payout target stats">
                 <template>
                     <div class="stats__chart-outer">
                         <canvas
@@ -13,7 +13,7 @@
                         ></canvas>
                     </div>
                 </template>
-            </be-block>
+            </ui-block>
         </div>
     </b-modal>
 </template>
@@ -27,7 +27,7 @@ import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import Chart from 'chart.js';
 import Color from 'color';
 import moment from 'moment';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import { Ref } from 'vue-property-decorator';
 
 
@@ -87,7 +87,7 @@ export default class PayoutTargetStatsView
 
         for (const idx in this.chartData) {
             this.chartData[idx].raw = this.chartData[idx].raw / 1000000000000.0;
-            this.chartData[idx].formatted = numeral(this.chartData[idx].raw).format('0.00 a') + 'PHA';
+            this.chartData[idx].formatted = numbro(this.chartData[idx].raw).format('0.00 a') + 'PHA';
         }
 
         if (!this.chart) {

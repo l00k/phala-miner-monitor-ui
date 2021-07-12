@@ -33,7 +33,7 @@ import BaseComponent from '@/core/Vue/BaseComponent.vue';
 
 
 @Component
-export default class BeCard
+export default class UiBlock
     extends BaseComponent
 {
 
