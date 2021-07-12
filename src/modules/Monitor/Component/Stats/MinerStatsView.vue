@@ -204,7 +204,7 @@ export default class MinerStatsView
                     responsive: true,
                     scales: {
                         xAxes: [ { stacked: true } ],
-                        yAxes: [ { stacked: true } ],
+                        yAxes: [ { type: 'logarithmic', stacked: true, } ],
                     },
                     tooltips: {
                         callbacks: {
