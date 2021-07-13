@@ -21,7 +21,7 @@ export default class AbstractModel<T>
 {
 
     @Property()
-    public '@uuid';
+    public '@uuid' : string;
 
     public constructor(data? : RecursivePartial<T>)
     {

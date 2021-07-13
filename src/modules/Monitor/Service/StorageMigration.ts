@@ -6,6 +6,7 @@ import MonitorApi from '#/Monitor/Service/MonitorApi';
 import { StoreManager } from '@/core/Store';
 import Repository from '@/core/Store/Repository';
 import { Inject } from '@100k/intiv/ObjectManager';
+import { v4 as uuidv4 } from 'uuid';
 import {
     ToastProgrammatic as Toast,
     SnackbarProgrammatic as Snackbar,
@@ -57,6 +58,11 @@ export default class StorageMigration
                             requiresReload = true;
                             table[idx][StoreManager.STORAGE_MODEL_PROPERTY] = table[idx]['@modelName'];
                             delete table[idx]['@modelName'];
+                        }
+
+                        if (!table[idx]['@uuid']) {
+                            requiresReload = true;
+                            table[idx]['@uuid'] = uuidv4();
                         }
                     }
                 });

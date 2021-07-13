@@ -41,7 +41,7 @@ export default class Database
     {
         return (model : StorageModelClass, uuid : string) => {
             return this.tables[model.STORAGE_MODEL]
-                ? this.tables[model.STORAGE_MODEL].find(object => object['@uuid'] == uuid)
+                ? this.tables[model.STORAGE_MODEL].find(object => object['@uuid'].valueOf() == uuid.valueOf())
                 : null;
         }
     }
@@ -61,11 +61,14 @@ export default class Database
             object['@uuid'] = uuidv4();
         }
 
-        const existing = table.find(_object => _object['@uuid'] == object['@uuid']);
+        const existing = table.find(_object => _object['@uuid'].valueOf() == object['@uuid'].valueOf());
+
         if (existing) {
+            console.log('update')
             Object.assign(existing, object);
         }
         else {
+            console.log('crete')
             table.push(object);
         }
     }
@@ -78,7 +81,7 @@ export default class Database
             return;
         }
 
-        const found = table.findIndex(_object => _object['@uuid'] == object['@uuid']);
+        const found = table.findIndex(_object => _object['@uuid'].valueOf() == object['@uuid'].valueOf());
         if (found !== -1) {
             this.tables[model.STORAGE_MODEL].splice(found, 1);
         }
