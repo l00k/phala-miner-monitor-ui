@@ -55,8 +55,6 @@ export default class Database
 
         const table = this.tables[model.STORAGE_MODEL];
 
-        console.log(object['@uuid']);
-
         if (!object['@uuid']) {
             object['@uuid'] = uuidv4();
         }
@@ -64,11 +62,9 @@ export default class Database
         const existing = table.find(_object => _object['@uuid'].valueOf() == object['@uuid'].valueOf());
 
         if (existing) {
-            console.log('update')
             Object.assign(existing, object);
         }
         else {
-            console.log('crete')
             table.push(object);
         }
     }
