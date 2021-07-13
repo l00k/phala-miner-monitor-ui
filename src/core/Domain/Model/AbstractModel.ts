@@ -1,5 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import { Properties, PropertySymbol, MappingSymbol, ClassConstructor, GroupSymbol } from './def';
+import Property from './Property';
 import PropertyDescriptor from './PropertyDescriptor';
 
 
@@ -18,6 +19,9 @@ type SerializationOptions = {
 
 export default class AbstractModel<T>
 {
+
+    @Property()
+    public '@uuid';
 
     public constructor(data? : RecursivePartial<T>)
     {

@@ -58,13 +58,12 @@ export default class FormView
     public show(miner : Miner)
     {
         this.miner = miner;
-
         this.isModalVisible = true;
     }
 
     protected async submit()
     {
-        const isNew = !this.miner['@id'];
+        const isNew = !this.miner['@uuid'];
 
         const result = await this.minerService.fetchNew(this.miner);
         if (result) {

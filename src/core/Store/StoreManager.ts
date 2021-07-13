@@ -55,7 +55,9 @@ export default class StoreManager
                 const modelName = value[StoreManager.STORAGE_MODEL_PROPERTY];
                 if (modelName) {
                     delete value[StoreManager.STORAGE_MODEL_PROPERTY];
+
                     const Model = this.models[modelName];
+
                     object[property] = new Model();
                     object[property].setData(value);
                 }

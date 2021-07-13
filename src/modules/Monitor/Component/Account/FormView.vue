@@ -62,13 +62,12 @@ export default class FormView
     public show(account : Account)
     {
         this.account = account;
-
         this.isModalVisible = true;
     }
 
     protected async submit()
     {
-        const isNew = !this.account['@id'];
+        const isNew = !this.account['@uuid'];
 
         const result = await this.accountService.fetchNew(this.account);
         if (result) {
