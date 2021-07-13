@@ -1,7 +1,6 @@
-import PolkadotApi from '#/Polkadot/Service/Api/PolkadotApi';
+import PolkadotApi from '#/Polkadot/Service/PolkadotApi';
 import { ApiPromise } from '@polkadot/api';
-import PhalaParachainTypes from '../../etc/phala-types.json';
-import { poc4 } from '@phala/typedefs';
+import { dev } from '@phala/typedefs';
 
 
 const env = process.env.NODE_ENV || 'production';
@@ -16,14 +15,9 @@ export default class PhalaApi
 
     protected createApi() : Promise<any>
     {
-        const types = {
-            ...poc4,
-            ...PhalaParachainTypes
-        };
-
         return ApiPromise.create({
             provider: this.wsProvider,
-            types: PhalaParachainTypes,
+            types: dev,
         }).then((api) => this.bindApi(api));
     }
 

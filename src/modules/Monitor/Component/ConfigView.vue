@@ -75,7 +75,7 @@ import ConnectFormView from '#/Monitor/Component/Config/ConnectFormView.vue';
 import AppState from '#/Monitor/Domain/Model/AppState';
 import AppStateService from '#/Monitor/Domain/Service/AppStateService';
 import StorageMigration from '#/Monitor/Service/StorageMigration';
-import PhalaApi from '#/Phala/Service/Api/PhalaApi';
+import PhalaApi from '#/Phala/Service/PhalaApi';
 import { Component } from '@/core/Vue/Annotations';
 import BaseComponent from '@/core/Vue/BaseComponent.vue';
 import { Inject } from '@100k/intiv/ObjectManager';
