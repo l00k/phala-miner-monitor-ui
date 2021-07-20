@@ -531,7 +531,7 @@ export default class MinersView
 
     public separateStashAccount(miner : Miner) : boolean
     {
-        return miner.controllerAccount.address !== miner.stashAccount.address;
+        return miner.stashAccount && miner.controllerAccount.address !== miner.stashAccount.address;
     }
 
     public showMinerForm(miner : Miner)
