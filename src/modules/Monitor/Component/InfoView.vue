@@ -1,10 +1,10 @@
 <template>
     <b-message
-        type="is-danger"
+        type="is-info"
         class="mb-6"
     >
-        Monitor is currently facing indexing issues.
-        It will be resolved asap.
+        <span class="is-small is-bold">2021-07-21 04:14 UTC</span><br/>
+        Indexing issues resolved. Tool works properly.
     </b-message>
 </template>
 
