@@ -1,4 +1,4 @@
-# phala-miner-monitor
+# phala-miner-monitor (discontinued)
 Tool to monitor miners status
 
 ![Preview](preview.jpg)
