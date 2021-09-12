@@ -3,7 +3,7 @@ Tool to monitor miners status
 
 ![Preview](preview.jpg)
 
-**NOTE!**
-All saved informations are stored in browser local storage.
+Server side:
+https://github.com/l00k/phala-miner-monitor-server
 
 Feel free to contact me on phala discord @l00k
